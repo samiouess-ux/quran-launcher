@@ -88,6 +88,8 @@ jobs:
         run: python src/build_official_audio_inventory.py output/official_verse_audio_inventory.json
 
       - name: Prepare exact approved Maher Al-Muaiqly Hafs audio
+        env:
+          PYTHONPATH: src
         run: |
           python - <<'PY'
           from pathlib import Path

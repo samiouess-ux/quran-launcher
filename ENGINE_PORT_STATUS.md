@@ -53,3 +53,6 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - These are code changes only; the GitHub Actions render/test result for commits `5870d8e` and `167f4af` must be checked before calling the effects verified.
 - Existing limitations remain: only Ash-Sharh 94:5–6 has exact user-reviewed audio; its current sample is 9.51 seconds. Do not fabricate 30–40 second content or mark other visual templates approved without review.
 - No scheduler/cron, Telegram, original engine repository, default branch, or GitHub Pages changes were made.
+
+- Follow-up robustness fix: skipped/unavailable background candidates now advance the candidate cursor rather than risking a duplicate download when filling the crossfade reel.
+- Latest renderer commit: `375216afd7a20aee342ea4357f0110e8a4571a02`. Runtime FFmpeg validation is still pending; no success is claimed until the Actions render completes and its output is inspected.

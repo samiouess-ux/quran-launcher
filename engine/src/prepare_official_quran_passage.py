@@ -13,8 +13,8 @@ from pathlib import Path
 from remotezip import RemoteZip
 
 ARCHIVE_URL = "https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip"
-TARGET_SECONDS = 60.0
-MAX_SECONDS = 65.0
+TARGET_SECONDS = 35.0
+MAX_SECONDS = 40.0
 
 
 def probe_duration(path: Path) -> float:

@@ -67,6 +67,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_background_rotation.py' -v
           python -m unittest discover -s tests -p 'test_validate_content_manifest.py' -v
           python -m unittest discover -s tests -p 'test_build_official_audio_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_prepare_official_quran_passage.py' -v
 
       - name: Validate approved Quran text and manifest
         env:

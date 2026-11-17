@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10251f"><title>محرك فيديوهات القرآن الكريم V2</title><link rel="stylesheet" href="styles.css?v=410a9c2"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10251f"><title>محرك فيديوهات القرآن الكريم V2</title><link rel="stylesheet" href="styles.css?v=13795c4"></head>
 <body><main class="app">
 <header class="top"><div class="mark">ق</div><div><p class="eyebrow">الإصدار الثاني المستقل</p><h1>صانع فيديوهات القرآن الكريم</h1><p class="sub">اختَر السورة والآيات من القوائم، ثم أنشئ الفيديو</p></div><span class="status"><i></i> تجريبي</span></header>
 <div class="layout">
@@ -9,10 +9,10 @@
 <div class="ayah-range"><div><label for="ayahFrom">من الآية</label><input id="ayahFrom" type="number" min="1" value="1"></div><div><label for="ayahTo">إلى الآية</label><input id="ayahTo" type="number" min="1" value="1"></div></div>
 <p id="surahInfo" class="hint">اختر السورة لتحميل آياتها تلقائيًا.</p>
 <label for="ayah">نص الآيات المختارة (يُملأ آليًا)</label><textarea id="ayah" rows="5" readonly>اختر سورة...</textarea>
-<label for="reciter">اسم القارئ (اختياري)</label><input id="reciter" placeholder="اسم القارئ">
+<label for="reciter">القارئ</label><select id="reciter"><option value="">اختر القارئ</option><option value="Alafasy_128kbps">مشاري العفاسي</option><option value="MaherAlMuaiqly128kbps">ماهر المعيقلي</option><option value="Husary_128kbps">محمود خليل الحصري</option><option value="Abdurrahmaan_As-Sudais_128kbps">عبدالرحمن السديس</option><option value="Abu_Bakr_Ash-Shaatree_128kbps">أبو بكر الشاطري</option><option value="Minshawy_Murattal_128kbps">محمد صديق المنشاوي</option><option value="Ghamadi_40kbps">سعد الغامدي</option><option value="Hani_Rifai_64kbps">هاني الرفاعي</option></select><p class="hint">اختر القارئ وسيُستخدم صوته تلقائيًا للآيات المحددة.</p>
 <h2>2 — الصوت والخلفية</h2>
 <label class="filepick" for="audio"><span>اختيار ملف التلاوة الصوتية</span><small id="audioName">لم يتم اختيار ملف صوتي</small></label><input class="hidden" id="audio" type="file" accept="audio/*">
 <label class="filepick" for="background"><span>اختيار صورة خلفية (اختياري)</span><small id="imageName">سيتم استعمال خلفية افتراضية</small></label><input class="hidden" id="background" type="file" accept="image/*">
 <div class="actions"><button id="preview" type="button" class="secondary">تحديث المعاينة</button><button id="render" type="button">إنشاء الفيديو</button></div><p id="status" class="statusline" role="status">اختر السورة والآيات، ثم ملف التلاوة.</p></section>
 <section class="panel preview-panel"><h2>3 — معاينة الفيديو</h2><div class="screen"><canvas id="stage" width="1280" height="720"></canvas></div><div class="actions"><a id="download" class="download disabled" aria-disabled="true">تحميل الفيديو</a></div><p class="note">يتم إنشاء الفيديو داخل المتصفح بصيغة WebM مع صوت التلاوة. لا يتم رفع ملفاتك إلى خادم.</p></section>
-</div><footer>المحرك الثاني مستقل — المحرك القديم لم يتم تعديله</footer></main><script src="src/app.js?v=410a9c2"></script></body></html>
+</div><footer>المحرك الثاني مستقل — المحرك القديم لم يتم تعديله</footer></main><script src="src/app.js?v=13795c4"></script></body></html>

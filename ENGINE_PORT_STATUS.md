@@ -92,3 +92,15 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - No new Quran passage was approved, no audio approval was transferred, and no translation rights were presumed. The current manifest pool is intentionally not expanded until each exact Arabic/English/audio combination has been reviewed.
 - Changes are isolated to `feature/islamic-tiktok-engine-port`; no UI, main branch, Telegram bot/webhook, scheduler, or source repository changes.
 - Pending verification: GitHub Actions must run the newly added rotation tests successfully before this addition is considered validated.
+
+
+## Content rotation hardening — 2026-11-17
+- Corrected the earlier pending-verification note: workflow run 44183829571 (run 30, commit 24003a6c3c903ec147c29c939b82136824b89f62) completed successfully. Its full render, technical MP4 verification, and review-only artifact upload passed.
+- Hardened `engine/src/content_rotation.py`: non-object JSON roots, unreadable/invalid JSON, malformed publishing metadata, missing approval metadata, and auto-publish values other than explicit false are treated as ineligible rather than causing an exception or weakening the gate.
+- Batch size validation now explicitly rejects booleans (Python treats bool as int).
+- Expanded `engine/tests/test_content_rotation.py` with malformed root/approval metadata and boolean batch-size regressions.
+- Workflow run 44188036449 (run 31, commit 7c1ba87554cea464e6aa6ea8da4ed3506cc3eb4f) completed successfully. The full test step, Quran validation, official audio preparation, render, MP4 verification, and review-only artifact upload all passed.
+- Workflow run 44188042971 (run 32, commit bfdc379a12f5c272fd6067f533d2f851a1ff5cf2) is validating the expanded malformed-metadata tests; its final result is pending at this update.
+- These changes only harden the existing selector and its tests. They do not enable content rotation in the production renderer because there is still no pool of distinct user-reviewed Quran/audio manifests.
+- The active renderer remains pinned to the unchanged Ash-Sharh 94:5–6 approved sample. No new recitation was marked approved, no translation reuse rights were presumed, and no new content was added to the production pool.
+- No changes to the launcher UI, `main`, original IslamicTikTokAutomation repository, Telegram bot/webhook, cron, or TikTok publishing.

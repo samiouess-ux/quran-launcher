@@ -100,7 +100,7 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Batch size validation now explicitly rejects booleans (Python treats bool as int).
 - Expanded `engine/tests/test_content_rotation.py` with malformed root/approval metadata and boolean batch-size regressions.
 - Workflow run 44188036449 (run 31, commit 7c1ba87554cea464e6aa6ea8da4ed3506cc3eb4f) completed successfully. The full test step, Quran validation, official audio preparation, render, MP4 verification, and review-only artifact upload all passed.
-- Workflow run 44188042971 (run 32, commit bfdc379a12f5c272fd6067f533d2f851a1ff5cf2) is validating the expanded malformed-metadata tests; its final result is pending at this update.
+- Workflow run 44188042971 (run 32, commit bfdc379a12f5c272fd6067f533d2f851a1ff5cf2) completed successfully. The expanded malformed-metadata tests, Quran validation, official audio preparation, render, MP4 verification, and review-only artifact upload all passed. Artifact ID: 14374488474 (expires 2026-11-24).
 - These changes only harden the existing selector and its tests. They do not enable content rotation in the production renderer because there is still no pool of distinct user-reviewed Quran/audio manifests.
 - The active renderer remains pinned to the unchanged Ash-Sharh 94:5–6 approved sample. No new recitation was marked approved, no translation reuse rights were presumed, and no new content was added to the production pool.
 - No changes to the launcher UI, `main`, original IslamicTikTokAutomation repository, Telegram bot/webhook, cron, or TikTok publishing.

@@ -1,0 +1,526 @@
+{
+  "schema_version": 1,
+  "source": "Pexels",
+  "license": "Pexels License; each source page was marked Free during research. The license permits free use subject to its restrictions; source and creator are retained here.",
+  "usage": "Background imagery only. Downloaded at 1800px wide; crop to 9:16 in renderer.",
+  "candidates": [
+    {
+      "id": "pexels-32617834",
+      "photo_id": 32617834,
+      "creator": "Alper Tunga Danyıldız",
+      "description": "Mosque village landscape",
+      "source_page_url": "https://www.pexels.com/photo/idyllic-village-landscape-with-mosque-and-greenery-32617834/",
+      "image_url": "https://images.pexels.com/photos/32617834/pexels-photo-32617834.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-32617834.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "nature"
+      ]
+    },
+    {
+      "id": "pexels-32815080",
+      "photo_id": 32815080,
+      "creator": "Aydın Kiraz",
+      "description": "Hilltop mosque and nature",
+      "source_page_url": "https://www.pexels.com/photo/stunning-hilltop-mosque-surrounded-by-nature-32815080/",
+      "image_url": "https://images.pexels.com/photos/32815080/pexels-photo-32815080.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-32815080.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "nature"
+      ]
+    },
+    {
+      "id": "pexels-36917116",
+      "photo_id": 36917116,
+      "creator": "Abdullah Öğük",
+      "description": "Mosque among lush trees",
+      "source_page_url": "https://www.pexels.com/photo/beautiful-mosque-surrounded-by-lush-trees-36917116/",
+      "image_url": "https://images.pexels.com/photos/36917116/pexels-photo-36917116.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-36917116.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "forest",
+        "nature"
+      ]
+    },
+    {
+      "id": "pexels-34721938",
+      "photo_id": 34721938,
+      "creator": "Beneid",
+      "description": "Historic mosque in desert",
+      "source_page_url": "https://www.pexels.com/photo/historic-mosque-with-tower-in-desert-landscape-34721938/",
+      "image_url": "https://images.pexels.com/photos/34721938/pexels-photo-34721938.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-34721938.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "desert"
+      ]
+    },
+    {
+      "id": "pexels-29080198",
+      "photo_id": 29080198,
+      "creator": "Ömer Derinyar",
+      "description": "Mosque and urban minaret",
+      "source_page_url": "https://www.pexels.com/photo/beautiful-mosque-with-tall-minaret-in-urban-setting-29080198/",
+      "image_url": "https://images.pexels.com/photos/29080198/pexels-photo-29080198.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-29080198.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "urban"
+      ]
+    },
+    {
+      "id": "pexels-37099396",
+      "photo_id": 37099396,
+      "creator": "Sinan Aslan",
+      "description": "Historic mosque architecture",
+      "source_page_url": "https://www.pexels.com/photo/stunning-outdoor-view-of-historic-mosque-architecture-37099396/",
+      "image_url": "https://images.pexels.com/photos/37099396/pexels-photo-37099396.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-37099396.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "architecture"
+      ]
+    },
+    {
+      "id": "pexels-16648000",
+      "photo_id": 16648000,
+      "creator": "Rahib Yaqubov",
+      "description": "Field with distant minarets",
+      "source_page_url": "https://www.pexels.com/photo/grass-field-and-coniferous-trees-with-the-view-of-four-minarets-in-distance-16648000/",
+      "image_url": "https://images.pexels.com/photos/16648000/pexels-photo-16648000.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-16648000.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "nature"
+      ]
+    },
+    {
+      "id": "pexels-30720771",
+      "photo_id": 30720771,
+      "creator": "Sami TÜRK",
+      "description": "Historic mosque framed by trees",
+      "source_page_url": "https://www.pexels.com/photo/historic-mosque-framed-by-trees-and-iron-gates-30720771/",
+      "image_url": "https://images.pexels.com/photos/30720771/pexels-photo-30720771.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-30720771.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "forest"
+      ]
+    },
+    {
+      "id": "pexels-5722258",
+      "photo_id": 5722258,
+      "creator": "Anfisa Eremina",
+      "description": "Mosque behind trees",
+      "source_page_url": "https://www.pexels.com/photo/view-of-mosque-behind-trees-5722258/",
+      "image_url": "https://images.pexels.com/photos/5722258/pexels-photo-5722258.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-5722258.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "rural",
+        "nature"
+      ]
+    },
+    {
+      "id": "pexels-33425960",
+      "photo_id": 33425960,
+      "creator": "Tahir Xəlfəquliyev",
+      "description": "Rural mosque landscape",
+      "source_page_url": "https://www.pexels.com/photo/scenic-view-of-mosque-and-minaret-in-rural-landscape-33425960/",
+      "image_url": "https://images.pexels.com/photos/33425960/pexels-photo-33425960.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-33425960.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "desert"
+      ]
+    },
+    {
+      "id": "pexels-11880826",
+      "photo_id": 11880826,
+      "creator": "Mostafa Ft.shots",
+      "description": "Desert landscape",
+      "source_page_url": "https://www.pexels.com/photo/scenic-view-of-the-desert-11880826/",
+      "image_url": "https://images.pexels.com/photos/11880826/pexels-photo-11880826.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-11880826.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mountains",
+        "sea",
+        "forest",
+        "nature"
+      ]
+    },
+    {
+      "id": "pexels-35652156",
+      "photo_id": 35652156,
+      "creator": "Nothing Ahead",
+      "description": "Mountain ocean forest",
+      "source_page_url": "https://www.pexels.com/photo/scenic-mountain-and-ocean-view-with-lush-forest-35652156/",
+      "image_url": "https://images.pexels.com/photos/35652156/pexels-photo-35652156.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-35652156.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mountains",
+        "sea"
+      ]
+    },
+    {
+      "id": "pexels-34321267",
+      "photo_id": 34321267,
+      "creator": "Andrea Gambirasio",
+      "description": "Coastal mountains and ocean",
+      "source_page_url": "https://www.pexels.com/photo/scenic-coastal-landscape-with-rocky-mountains-and-ocean-34321267/",
+      "image_url": "https://images.pexels.com/photos/34321267/pexels-photo-34321267.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-34321267.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mountains",
+        "sunset"
+      ]
+    },
+    {
+      "id": "pexels-33406291",
+      "photo_id": 33406291,
+      "creator": "Davide Comunian",
+      "description": "Mountain sunset",
+      "source_page_url": "https://www.pexels.com/photo/serene-mountain-landscape-at-sunset-33406291/",
+      "image_url": "https://images.pexels.com/photos/33406291/pexels-photo-33406291.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-33406291.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "sunset",
+        "forest",
+        "mountains"
+      ]
+    },
+    {
+      "id": "pexels-3832482",
+      "photo_id": 3832482,
+      "creator": "Chris F",
+      "description": "Sunset over pine forest",
+      "source_page_url": "https://www.pexels.com/photo/sunset-sky-over-mountains-and-pine-forest-3832482/",
+      "image_url": "https://images.pexels.com/photos/3832482/pexels-photo-3832482.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-3832482.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "sunset",
+        "mountains"
+      ]
+    },
+    {
+      "id": "pexels-5300216",
+      "photo_id": 5300216,
+      "creator": "Yunus Eren Tekneci",
+      "description": "Sunset mountain landscape",
+      "source_page_url": "https://www.pexels.com/photo/sunset-over-mountains-nature-landscape-5300216/",
+      "image_url": "https://images.pexels.com/photos/5300216/pexels-photo-5300216.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-5300216.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "river",
+        "mountains",
+        "sunset"
+      ]
+    },
+    {
+      "id": "pexels-13721885",
+      "photo_id": 13721885,
+      "creator": "Andreas Ebner",
+      "description": "River and mountains at sunset",
+      "source_page_url": "https://www.pexels.com/photo/beautiful-landscape-of-river-and-mountains-at-sunset-13721885/",
+      "image_url": "https://images.pexels.com/photos/13721885/pexels-photo-13721885.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-13721885.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mountains",
+        "sunset"
+      ]
+    },
+    {
+      "id": "pexels-20287033",
+      "photo_id": 20287033,
+      "creator": "Johannes Plenio",
+      "description": "Scenic mountains at sunset",
+      "source_page_url": "https://www.pexels.com/photo/scenic-mountains-landscape-at-sunset-20287033/",
+      "image_url": "https://images.pexels.com/photos/20287033/pexels-photo-20287033.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-20287033.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mountains",
+        "nature",
+        "sunset"
+      ]
+    },
+    {
+      "id": "pexels-13909011",
+      "photo_id": 13909011,
+      "creator": "Ferencz Istvan",
+      "description": "Meadow and mountains at sunset",
+      "source_page_url": "https://www.pexels.com/photo/landscape-of-a-meadow-trees-and-mountains-under-a-sunset-sky-13909011/",
+      "image_url": "https://images.pexels.com/photos/13909011/pexels-photo-13909011.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-13909011.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mountains",
+        "forest",
+        "sunset"
+      ]
+    },
+    {
+      "id": "pexels-1681875",
+      "photo_id": 1681875,
+      "creator": "Luis Quintero",
+      "description": "Sunset mountain forest",
+      "source_page_url": "https://www.pexels.com/photo/sunset-on-mountain-1681875/",
+      "image_url": "https://images.pexels.com/photos/1681875/pexels-photo-1681875.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-1681875.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "nature"
+      ]
+    },
+    {
+      "id": "pexels-34219158",
+      "photo_id": 34219158,
+      "creator": "Ayşegül Aytören",
+      "description": "Ornate mosque mihrab and prayer hall",
+      "source_page_url": "https://www.pexels.com/photo/intricate-islamic-architecture-of-mosque-interior-34219158/",
+      "image_url": "https://images.pexels.com/photos/34219158/pexels-photo-34219158.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-34219158.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "architecture",
+        "islamic_art"
+      ]
+    },
+    {
+      "id": "pexels-31607767",
+      "photo_id": 31607767,
+      "creator": "Mohammed Alim",
+      "description": "Mosque interior with geometric stained glass and prayer rugs",
+      "source_page_url": "https://www.pexels.com/photo/elegant-islamic-architecture-with-stained-glass-windows-31607767/",
+      "image_url": "https://images.pexels.com/photos/31607767/pexels-photo-31607767.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-31607767.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "architecture",
+        "islamic_art"
+      ]
+    },
+    {
+      "id": "pexels-34993385",
+      "photo_id": 34993385,
+      "creator": "Muhtelifane",
+      "description": "Open Quran on a wooden stand in a mosque",
+      "source_page_url": "https://www.pexels.com/photo/open-quran-on-stand-in-mosque-interior-34993385/",
+      "image_url": "https://images.pexels.com/photos/34993385/pexels-photo-34993385.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-34993385.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "quran",
+        "prayer"
+      ]
+    },
+    {
+      "id": "pexels-31433867",
+      "photo_id": 31433867,
+      "creator": "Muhammed Hanefi",
+      "description": "Quran on a stand beside a warmly lit mosque window",
+      "source_page_url": "https://www.pexels.com/photo/warm-interior-of-mosque-with-quran-display-31433867/",
+      "image_url": "https://images.pexels.com/photos/31433867/pexels-photo-31433867.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-31433867.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "quran",
+        "prayer",
+        "architecture"
+      ]
+    },
+    {
+      "id": "pexels-34317177",
+      "photo_id": 34317177,
+      "creator": "Omar Ramadan",
+      "description": "Mosque prayer niche with Arabic calligraphy",
+      "source_page_url": "https://www.pexels.com/photo/interior-of-mosque-prayer-area-with-arabic-calligraphy-34317177/",
+      "image_url": "https://images.pexels.com/photos/34317177/pexels-photo-34317177.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-34317177.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "calligraphy",
+        "prayer",
+        "architecture"
+      ]
+    },
+    {
+      "id": "pexels-40352601",
+      "photo_id": 40352601,
+      "creator": "AmirHadi Manavi Moghadam",
+      "description": "Open Quran with lantern and prayer beads",
+      "source_page_url": "https://www.pexels.com/photo/holy-quran-with-lantern-and-prayer-beads-40352601/",
+      "image_url": "https://images.pexels.com/photos/40352601/pexels-photo-40352601.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-40352601.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "quran",
+        "prayer",
+        "lantern"
+      ]
+    },
+    {
+      "id": "pexels-16483164",
+      "photo_id": 16483164,
+      "creator": "casper somia",
+      "description": "Prayer beads and candle lantern",
+      "source_page_url": "https://www.pexels.com/photo/islamic-prayer-beads-and-a-candle-16483164/",
+      "image_url": "https://images.pexels.com/photos/16483164/pexels-photo-16483164.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-16483164.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "prayer",
+        "tasbih",
+        "lantern"
+      ]
+    },
+    {
+      "id": "pexels-36704278",
+      "photo_id": 36704278,
+      "creator": "Badr Mo",
+      "description": "Islamic architectural details and ornate lantern",
+      "source_page_url": "https://www.pexels.com/photo/intricate-islamic-architectural-details-with-lantern-36704278/",
+      "image_url": "https://images.pexels.com/photos/36704278/pexels-photo-36704278.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-36704278.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "islamic_art",
+        "architecture",
+        "lantern",
+        "calligraphy"
+      ]
+    },
+    {
+      "id": "pexels-28975736",
+      "photo_id": 28975736,
+      "creator": "Beneid",
+      "description": "Islamic geometric patterns and Arabic calligraphy in Madinah",
+      "source_page_url": "https://www.pexels.com/photo/intricate-islamic-architecture-in-madinah-28975736/",
+      "image_url": "https://images.pexels.com/photos/28975736/pexels-photo-28975736.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-28975736.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "islamic_art",
+        "calligraphy",
+        "architecture"
+      ]
+    },
+    {
+      "id": "pexels-35720587",
+      "photo_id": 35720587,
+      "creator": "Onur",
+      "description": "Historic mosque courtyard with stone arches",
+      "source_page_url": "https://www.pexels.com/photo/historic-mosque-courtyard-with-stone-arches-35720587/",
+      "image_url": "https://images.pexels.com/photos/35720587/pexels-photo-35720587.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-35720587.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "architecture",
+        "courtyard"
+      ]
+    },
+    {
+      "id": "pexels-38901615",
+      "photo_id": 38901615,
+      "creator": "Melike Elif Erdem",
+      "description": "Pilgrims gathered around the Kaaba in Mecca",
+      "source_page_url": "https://www.pexels.com/photo/muslim-pilgrims-at-the-kaaba-in-mecca-38901615/",
+      "image_url": "https://images.pexels.com/photos/38901615/pexels-photo-38901615.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-38901615.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "kaaba",
+        "mecca",
+        "hajj",
+        "pilgrimage"
+      ]
+    },
+    {
+      "id": "pexels-16106055",
+      "photo_id": 16106055,
+      "creator": "Bayram Yalçın",
+      "description": "Mosque minaret silhouette beneath a crescent moon",
+      "source_page_url": "https://www.pexels.com/photo/silhouette-of-minaret-and-moon-in-crescent-16106055/",
+      "image_url": "https://images.pexels.com/photos/16106055/pexels-photo-16106055.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-16106055.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "night",
+        "moon",
+        "minaret"
+      ]
+    },
+    {
+      "id": "pexels-31584135",
+      "photo_id": 31584135,
+      "creator": "Ahmad Shakir Shamsulbadri",
+      "description": "Illuminated mosque minarets at night",
+      "source_page_url": "https://www.pexels.com/photo/illuminated-mosque-minarets-at-night-31584135/",
+      "image_url": "https://images.pexels.com/photos/31584135/pexels-photo-31584135.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-31584135.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "mosque",
+        "night",
+        "minaret",
+        "architecture"
+      ]
+    },
+    {
+      "id": "pexels-2233416",
+      "photo_id": 2233416,
+      "creator": "Ahmed Aqtai",
+      "description": "Warm Ramadan lantern with crescent motifs",
+      "source_page_url": "https://www.pexels.com/photo/photo-of-ramadan-light-on-top-of-table-2233416/",
+      "image_url": "https://images.pexels.com/photos/2233416/pexels-photo-2233416.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-2233416.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "ramadan",
+        "lantern",
+        "crescent"
+      ]
+    },
+    {
+      "id": "pexels-36521625",
+      "photo_id": 36521625,
+      "creator": "Elif Cemre Akyürek",
+      "description": "Ramadan table setting with lanterns and tea",
+      "source_page_url": "https://www.pexels.com/photo/cozy-ramadan-table-setting-with-lanterns-36521625/",
+      "image_url": "https://images.pexels.com/photos/36521625/pexels-photo-36521625.jpeg?auto=compress&cs=tinysrgb&w=1800",
+      "local_path": "assets/background_photos/pexels-36521625.jpg",
+      "license": "Pexels License — Free download",
+      "tags": [
+        "ramadan",
+        "lantern",
+        "tea",
+        "still_life"
+      ]
+    }
+  ]
+}

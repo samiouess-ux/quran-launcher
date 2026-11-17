@@ -104,3 +104,14 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - These changes only harden the existing selector and its tests. They do not enable content rotation in the production renderer because there is still no pool of distinct user-reviewed Quran/audio manifests.
 - The active renderer remains pinned to the unchanged Ash-Sharh 94:5–6 approved sample. No new recitation was marked approved, no translation reuse rights were presumed, and no new content was added to the production pool.
 - No changes to the launcher UI, `main`, original IslamicTikTokAutomation repository, Telegram bot/webhook, cron, or TikTok publishing.
+
+
+## Source-to-destination port audit — 2026-11-17
+- Compared the recursive file trees of source branch `IslamicTikTokAutomation:feature/telegram-review-notifications` and destination branch `quran-launcher:feature/islamic-tiktok-engine-port`.
+- Source contains 196 tracked files; destination contains 38 tracked files.
+- 23 source files have byte-identical counterparts under `engine/`; 8 counterparts differ and require deliberate review rather than blind overwrite.
+- 165 source files do not yet have counterparts. This includes 23 Python source modules, 35 test files, the existing Al-Ikhlas candidate manifest, 5 data/reference/history files, and all 36 tracked background-photo assets.
+- Missing source modules include the original orchestration entry point, Quran batch rendering, daily content selection, requested-passage handling, dua renderer, cover/background review tooling, and Telegram request/delivery modules. These are not all to be activated: Telegram delivery/bot integration remains deferred and must not be copied into an active workflow without a separate safe integration.
+- The current destination launcher is still a narrow GitHub Actions launcher, not a complete port of the original engine's capabilities.
+- Correct next work is a dependency-aware port of the original engine modules and their tests, plus required reviewed local assets/manifests, into the destination feature branch. Preserve the current working renderer and UI; do not bulk-copy legacy workflows, secrets, generated output, or Telegram deployment wiring.
+- This audit is read-only with respect to the source repository. No source files, source workflows, Telegram bot/webhook, destination main branch, Pages deployment, scheduler, or launcher UI were changed by this audit.

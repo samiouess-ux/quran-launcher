@@ -84,3 +84,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Corrected stale top-level metadata in `engine/data/background_candidates.json`: it now accurately states that the active renderer consumes the catalog and documents the strict 9:16 eligibility filter. This was a documentation-only correction; selection/render behavior was not changed.
 - Safe next blocker: build a separate, fail-closed passage preparation pipeline that verifies exact Arabic and Saheeh International text against trusted catalogs, attaches only the matching official Hafs audio, and emits preview-only manifests until the exact recording is reviewed. The current hardcoded known-good 94:5–6 render remains unchanged.
 - No launcher UI, default branch, original engine repository, Telegram bot/webhook, or scheduler was changed.
+
+
+## Content rotation safety tests — 2026-11-17
+- Added `engine/tests/test_content_rotation.py` to cover explicit `rotation_approved` gating, mandatory user-review/approval-required metadata, auto-publish rejection, recent-item exclusion, distinct batch selection, insufficient-pool fail-closed behavior, unsupported content types, and malformed manifest handling.
+- Added this test suite to the active root GitHub Actions workflow. This validates the existing rotation helper but does not connect it to production rendering: the active workflow remains pinned to the known-good Ash-Sharh 94:5–6 manifest.
+- No new Quran passage was approved, no audio approval was transferred, and no translation rights were presumed. The current manifest pool is intentionally not expanded until each exact Arabic/English/audio combination has been reviewed.
+- Changes are isolated to `feature/islamic-tiktok-engine-port`; no UI, main branch, Telegram bot/webhook, scheduler, or source repository changes.
+- Pending verification: GitHub Actions must run the newly added rotation tests successfully before this addition is considered validated.

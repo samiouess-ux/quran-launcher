@@ -33,3 +33,14 @@ These require reviewed source/audio coverage and a secure authenticated backend 
 
 ## Next safe integration step
 Build and verify a secure, low-cost authenticated workflow trigger before promising one-tap generation from the launcher. Extend surah/reciter/background options only after each exact Quran text, translation, audio file, rights, and renderer manifest passes validation.
+
+
+## Daily automation investigation — 2026-11-17
+- Confirmed GitHub's documented restriction: `schedule`, `workflow_dispatch`, and `repository_dispatch` require the workflow file to exist on the repository default branch; scheduled workflows run only from that branch.
+- The default branch is `main`. It remains untouched by this work, per the project safety boundary.
+- Therefore adding a cron trigger to this feature branch would be misleading: it would not produce scheduled runs.
+- The current launcher workflow hardcodes the single user-approved sample passage Ash-Sharh 94:5–6. Running it three times daily would repeat the same passage, contrary to the no-repeat requirement.
+- `content_rotation.py` selects only manifests explicitly marked `rotation_approved: true`; the current sample manifest is not such a production rotation entry. The draft 94:1–8 manifest is explicitly unapproved for production audio.
+- The approved moving-background catalog contains multiple user-approved candidates, but this does not solve the missing approved Quran passage pool or scheduler trigger.
+- Safe decision: do not add a fake schedule, do not repeat the same clip, do not place a GitHub token in the public launcher, and do not modify `main` or the original `IslamicTikTokAutomation` repository.
+- Remaining prerequisites for hands-off daily operation: an approved pool of distinct Quran passage manifests with verified Arabic + Saheeh International English + exact official audio, and an authorized scheduling trigger that does not violate the branch protection boundary. Telegram delivery remains separate and must be connected without changing the original bot/webhook.

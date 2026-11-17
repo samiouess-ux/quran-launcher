@@ -27,6 +27,15 @@ $("render").addEventListener("click",async()=>{
   audioElement=new Audio(audioUrl);audioElement.preload="auto";const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)throw new Error("المتصفح لا يدعم تشغيل الصوت داخل التسجيل.");
   if(!audioContext){audioContext=new AudioCtx();audioSource=audioContext.createMediaElementSource(audioElement);}
   destination=audioContext.createMediaStreamDestination();audioSource.connect(destination);await audioContext.resume();
+draw();canvasStream=canvas.captureStream(30);
+  const stream=new MediaStream([...canvasStream.getVideoTracks(),...destination.stream.getAudioTracks()]);
+  const mime=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].find(t=>MediaRecorder.isTypeSupported(t));recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);const chunks=[];
+  recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
+  recorder.onerror=()=>{$("status").textContent="حدث خطأ أثناء تسجيل الفيديو.";button.disabled=false;canvasStream.getTracks().forEach(t=>t.stop());destination.stream.getTracks().forEach(t=>t.stop());};
+  recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||"video/webm"});if(!blob.size){$("status").textContent="لم يتم إنشاء ملف الفيديو. حاول مجدداً.";button.disabled=false;return;}const url=URL.createObjectURL(blob);$("download").href=url;$("download").download="quran-video.webm";$("download").classList.remove("disabled");$("download").setAttribute("aria-disabled","false");$("download").textContent="تحميل الفيديو ("+(blob.size/1024/1024).toFixed(1)+" MB)";$("status").textContent="اكتمل إنشاء الفيديو! اضغط تحميل الفيديو لحفظه.";button.disabled=false;canvasStream.getTracks().forEach(t=>t.stop());destination.stream.getTracks().forEach(t=>t.stop());};
+  recorder.start(250);$("status").textContent="جارٍ تسجيل الفيديو مع التلاوة...";audioElement.onended=()=>{if(recorder.state!=="inactive")recorder.stop();};audioElement.onerror=()=>{if(recorder.state!=="inactive")recorder.stop();$("status").textContent="تعذّر قراءة ملف الصوت. جرّب MP3 أو WAV.";};await audioElement.play();
+ }catch(err){$("status").textContent=err.message||"تعذّر إنشاء الفيديو. تحقق من صلاحية تشغيل الصوت.";button.disabled=false;if(canvasStream)canvasStream.getTracks().forEach(t=>t.stop());if(destination)destination.stream.getTracks().forEach(t=>t.stop());}
+});
 surahNames.forEach((name,i)=>{const option=document.createElement("option");option.value=String(i+1);option.textContent=(i+1)+" — "+name;$("surahSelect").appendChild(option);});
 async function loadSurah(number){
  if(!number)return;
@@ -53,13 +62,4 @@ function updateAyahRange(){
 $("surahSelect").addEventListener("change",event=>loadSurah(event.target.value));
 ["ayahFrom","ayahTo"].forEach(id=>$(id).addEventListener("change",updateAyahRange));
 
-draw();canvasStream=canvas.captureStream(30);
-  const stream=new MediaStream([...canvasStream.getVideoTracks(),...destination.stream.getAudioTracks()]);
-  const mime=["video/webm;codecs=vp9,opus","video/webm;codecs=vp8,opus","video/webm"].find(t=>MediaRecorder.isTypeSupported(t));recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);const chunks=[];
-  recorder.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data);};
-  recorder.onerror=()=>{$("status").textContent="حدث خطأ أثناء تسجيل الفيديو.";button.disabled=false;canvasStream.getTracks().forEach(t=>t.stop());destination.stream.getTracks().forEach(t=>t.stop());};
-  recorder.onstop=()=>{const blob=new Blob(chunks,{type:recorder.mimeType||"video/webm"});if(!blob.size){$("status").textContent="لم يتم إنشاء ملف الفيديو. حاول مجدداً.";button.disabled=false;return;}const url=URL.createObjectURL(blob);$("download").href=url;$("download").download="quran-video.webm";$("download").classList.remove("disabled");$("download").setAttribute("aria-disabled","false");$("download").textContent="تحميل الفيديو ("+(blob.size/1024/1024).toFixed(1)+" MB)";$("status").textContent="اكتمل إنشاء الفيديو! اضغط تحميل الفيديو لحفظه.";button.disabled=false;canvasStream.getTracks().forEach(t=>t.stop());destination.stream.getTracks().forEach(t=>t.stop());};
-  recorder.start(250);$("status").textContent="جارٍ تسجيل الفيديو مع التلاوة...";audioElement.onended=()=>{if(recorder.state!=="inactive")recorder.stop();};audioElement.onerror=()=>{if(recorder.state!=="inactive")recorder.stop();$("status").textContent="تعذّر قراءة ملف الصوت. جرّب MP3 أو WAV.";};await audioElement.play();
- }catch(err){$("status").textContent=err.message||"تعذّر إنشاء الفيديو. تحقق من صلاحية تشغيل الصوت.";button.disabled=false;if(canvasStream)canvasStream.getTracks().forEach(t=>t.stop());if(destination)destination.stream.getTracks().forEach(t=>t.stop());}
-});
 draw();

@@ -66,7 +66,7 @@ jobs:
         env:
           PYTHONPATH: src
         run: |
-          python src/validate_quran_text.py --manifest content/first_video.json --reference data/reference/surah_ash_sharh_94_1_8_approved.json
+          python src/validate_quran_text.py --manifest content/first_video.json --reference data/reference/quran_text_uthmani.json
           python - <<'PY'
           import json
           from pathlib import Path

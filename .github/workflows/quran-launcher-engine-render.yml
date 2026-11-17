@@ -51,7 +51,7 @@ jobs:
           PY
 
       - name: Install Python renderer dependencies
-        run: python -m pip install --disable-pip-version-check pillow remotezip
+        run: python -m pip install --disable-pip-version-check pillow remotezip requests
 
       - name: Run original renderer safety regression tests
         env:
@@ -60,6 +60,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_render_video_duration.py' -v
           python -m unittest discover -s tests -p 'test_background_rotation.py' -v
           python -m unittest discover -s tests -p 'test_validate_content_manifest.py' -v
+          python -m unittest discover -s tests -p 'test_build_official_audio_inventory.py' -v
 
       - name: Validate approved Quran text and manifest
         env:
@@ -77,25 +78,27 @@ jobs:
           print('Approved Surah Ash-Sharh 94:5–6 manifest validated.')
           PY
 
+      - name: Build checksum-pinned official Hafs archive inventory
+        run: python src/build_official_audio_inventory.py output/official_verse_audio_inventory.json
+
       - name: Prepare exact approved Maher Al-Muaiqly Hafs audio
         run: |
           python - <<'PY'
           from pathlib import Path
           from remotezip import RemoteZip
-          import subprocess
-          url = 'https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip'
+          from zipfile import ZipFile
+          import json, subprocess
+          inventory = json.loads(Path('output/official_verse_audio_inventory.json').read_text(encoding='utf-8'))
+          archive_path = inventory.get('archive_path')
+          archive = ZipFile(archive_path) if archive_path else RemoteZip(inventory['source_url'])
           work = Path('build/audio')
           work.mkdir(parents=True, exist_ok=True)
           durations = {}
-          with RemoteZip(url) as archive:
-              names = archive.namelist()
+          with archive:
               for verse in (5, 6):
-                  suffix = f'10-094{verse:03d}-A08.mp3'
-                  matches = [name for name in names if name.endswith(suffix)]
-                  if len(matches) != 1:
-                      raise RuntimeError(f'Expected one official Hafs audio file for verse {verse}; found {matches}')
+                  member = inventory['verses'][f'94:{verse}']
                   source = work / f'verse_{verse:02d}_source.mp3'
-                  with archive.open(matches[0]) as src, source.open('wb') as dst:
+                  with archive.open(member) as src, source.open('wb') as dst:
                       while chunk := src.read(1024 * 1024):
                           dst.write(chunk)
                   processed = work / f'verse_{verse:02d}.mp3'

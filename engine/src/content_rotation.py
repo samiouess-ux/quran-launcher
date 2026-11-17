@@ -11,32 +11,45 @@ from pathlib import Path
 from typing import Iterable
 
 
+SUPPORTED_CONTENT_TYPES = {"quran", "dua", "dhikr"}
+
+
 def choose_manifest(
     content_dir: Path,
     content_type: str,
     recent_ids: Iterable[str] = (),
     rotation_key: str = "",
 ) -> Path:
-    if content_type not in {"quran", "dua", "dhikr"}:
+    if content_type not in SUPPORTED_CONTENT_TYPES:
         raise ValueError("Unsupported content type.")
     recent = set(recent_ids)
     eligible: list[tuple[str, Path]] = []
     for path in sorted(content_dir.glob("*.json")):
         try:
             data = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
+        except (OSError, UnicodeError, json.JSONDecodeError):
+            continue
+
+        # Treat malformed structures as ineligible data, never as a reason
+        # to crash the rotation process or weaken the approval gate.
+        if not isinstance(data, dict):
+            continue
+        publishing = data.get("publishing")
+        if not isinstance(publishing, dict):
             continue
         if data.get("content_type", "quran") != content_type:
             continue
         if data.get("rotation_approved") is not True:
             continue
-        if data.get("publishing", {}).get("approval_required") is not True:
+        if publishing.get("approval_required") is not True:
             continue
-        if data.get("publishing", {}).get("auto_publish", False):
+        if publishing.get("auto_publish", False) is not False:
             continue
+
         item_id = data.get("id")
-        if isinstance(item_id, str) and item_id and item_id not in recent:
+        if isinstance(item_id, str) and item_id.strip() and item_id not in recent:
             eligible.append((item_id, path))
+
     if not eligible:
         raise FileNotFoundError(
             f"No eligible non-recent {content_type} manifest; refusing to repeat or invent content."
@@ -53,7 +66,7 @@ def choose_manifests(
     rotation_key: str = "",
 ) -> list[Path]:
     """Select a batch of distinct approved manifests or fail without a partial batch."""
-    if not isinstance(count, int) or count < 1:
+    if isinstance(count, bool) or not isinstance(count, int) or count < 1:
         raise ValueError("count must be a positive integer.")
     recent = set(recent_ids)
     selected: list[Path] = []

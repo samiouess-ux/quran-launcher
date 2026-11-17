@@ -1,0 +1,122 @@
+{
+  "id": "test_surah_ash_sharh_94_5_6",
+  "source": {
+    "surah_number": 94,
+    "surah_name_ar": "الشرح",
+    "surah_name_en": "Ash-Sharh",
+    "verses": [
+      5,
+      6
+    ],
+    "arabic_source": "Tanzil text as displayed by QuranEnc",
+    "english_translation": "Sahih International",
+    "translation_source_url": "https://legacy.quran.com/94/5-6",
+    "note": "The English translation conveys the meaning of the Arabic; only the Arabic text is the Quran. Verify the exact displayed wording against the cited source before rendering.",
+    "translation_verified": true
+  },
+  "verses": [
+    {
+      "number": 5,
+      "arabic": "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا",
+      "english": "For indeed, with hardship [will be] ease."
+    },
+    {
+      "number": 6,
+      "arabic": "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+      "english": "Indeed, with hardship [will be] ease."
+    }
+  ],
+  "audio": {
+    "required": true,
+    "music_allowed": false,
+    "preferred_reciters": [],
+    "selected_reciter": "Maher Al-Muaiqly",
+    "recitation": "Hafs",
+    "rights_verified_for_official_complex_recordings": true,
+    "rights_source_url": "https://qurancomplex.gov.sa/quran-audios/",
+    "exact_audio_file_downloaded": true,
+    "exact_audio_file_listened_and_checked": true,
+    "production_blocked_until_exact_audio_checked": false,
+    "license_research_candidates": [
+      {
+        "reciter": "Maher Al-Muaiqly",
+        "source": "King Fahd Complex for the Printing of the Holy Quran",
+        "source_url": "https://qurancomplex.gov.sa/quran-audio-hafs-muaiqly/",
+        "license_url": "https://qurancomplex.gov.sa/quran-audios/",
+        "permission_summary": "Official page states the listed digital recitations are made available free for public use in apps, websites, broadcast channels, and private/institutional works, inside and outside Saudi Arabia.",
+        "surah_ash_sharh_listed_on_separate_reciter_page": "https://maheralmuaiqly.com/ar/quran/107",
+        "status": "approved_official_collection_and_exact_audio_user_reviewed",
+        "exact_recording_user_reviewed": true
+      }
+    ],
+    "extracted_verses": [
+      5,
+      6
+    ],
+    "combined_audio_file": "maher_almuaiqly_ash_sharh_verses_5_6.mp3",
+    "combined_audio_duration_seconds": 15.882449,
+    "combined_audio_sha256": "3e2a91674ce2ee604885e06fba0ee67c425e5dbece54cc3256803e3b5f02c5a0",
+    "github_actions_run_id": "41164756151",
+    "github_actions_artifact_id": "13028735937",
+    "github_actions_artifact_name": "maher-ash-sharh-verses-5-6-review",
+    "note": "Internal provenance and rights records are retained for compliance. Do not mention the reciter in the public video or caption.",
+    "user_review": "User confirmed exact verses 94:5–6 sequence is correct; do not include reciter name in public-facing output.",
+    "approved_for_first_test_video": true,
+    "public_reciter_attribution": false,
+    "official_verse_archive_url": "https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip",
+    "archive_entries": {
+      "5": "ayat-12-1-2020/094 Ash-Sharh ƒΘ¼⌐Ñ/10-094005-A08.mp3",
+      "6": "ayat-12-1-2020/094 Ash-Sharh ƒΘ¼⌐Ñ/10-094006-A08.mp3"
+    },
+    "production_audio_file": "build/audio/ash_sharh_94_5_6.mp3"
+  },
+  "visual": {
+    "format": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "background_style": "calm_nature_scenery",
+    "background_source": "Mixkit",
+    "arabic_text_size": "large_primary",
+    "english_text_size": "smaller_secondary",
+    "gentle_motion": true,
+    "background_candidate": {
+      "provider": "Mixkit",
+      "title": "Waterfall Between Green Hills",
+      "source_url": "https://mixkit.co/free-stock-video/waterfall-between-green-hills-100174/",
+      "direct_video_url": "https://assets.mixkit.co/active_storage/video_items/100174/1721166924/100174-video-720.mp4",
+      "source_resolution": "720x1280",
+      "user_approved": true,
+      "note": "User approved the representative preview; source is upscaled to 1080x1920 during rendering.",
+      "approved": true,
+      "downloaded": true
+    },
+    "template": "ornate_gold_classic"
+  },
+  "publishing": {
+    "approval_required": true,
+    "auto_publish": false
+  },
+  "caption": {
+    "languages": [
+      "ar",
+      "en"
+    ],
+    "include_surah_name": true,
+    "include_verse_range": true,
+    "include_description": true,
+    "include_relevant_hashtags": true,
+    "mention_reciter": false,
+    "arabic": "سورة الشرح | الآيتان 5–6\nفإن مع العسر يسرا.",
+    "english": "Surah Ash-Sharh | Verses 5–6\nIndeed, with hardship comes ease.",
+    "hashtags_ar": [
+      "#القرآن_الكريم",
+      "#سورة_الشرح"
+    ],
+    "hashtags_en": [
+      "#Quran",
+      "#AshSharh"
+    ],
+    "status": "draft_for_review"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "script": "uthmani",
+  "surah_number": 94,
+  "surah_name_ar": "الشرح",
+  "surah_name_en": "Ash-Sharh",
+  "source_name": "Tanzil Quran Text (Uthmani, Version 1.1)",
+  "source_url": "https://tanzil.net/download/",
+  "source_download_endpoint": "https://tanzil.net/pub/download/index.php",
+  "source_format": "UTF-8 txt-2; marks, sajdah and tatweel enabled",
+  "source_sha256": "bf4f57b968d03f4131c070b1e285da9be0e0a108a21c910e872801ca273312c8",
+  "unicode_normalization": "none",
+  "basmala": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+  "basmala_handling": "The exact basmala prefix in the raw 94:1 record is stored separately; verse 94:1 contains the exact remaining source string. No other characters or marks were changed.",
+  "source_note": "Exact extraction from the downloaded Tanzil Uthmani v1.1 source. User approved this eight-verse text for the second video on 2026-10-31. Original downloaded source and SHA-256 are retained in the workflow artifact.",
+  "review_status": "reviewed",
+  "approval_scope": "Second video: Surah Ash-Sharh 94:1-8 only. Does not replace or modify the separate reviewed 94:5-6 reference or first video manifest.",
+  "verses": {
+    "94:1": "أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ",
+    "94:2": "وَوَضَعْنَا عَنكَ وِزْرَكَ",
+    "94:3": "ٱلَّذِىٓ أَنقَضَ ظَهْرَكَ",
+    "94:4": "وَرَفَعْنَا لَكَ ذِكْرَكَ",
+    "94:5": "فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+    "94:6": "إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+    "94:7": "فَإِذَا فَرَغْتَ فَٱنصَبْ",
+    "94:8": "وَإِلَىٰ رَبِّكَ فَٱرْغَب"
+  }
+}

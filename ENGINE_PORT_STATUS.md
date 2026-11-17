@@ -59,3 +59,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 
 - Readability improvement: Arabic surah title, Arabic ayah text, ayah-number ornament, and Saheeh International English overlay now use a restrained dark stroke for legibility over bright moving footage. Original Quran strings and colors are unchanged.
 - Renderer commit: `350fda0c9aaf9ce7e26974243828007bb9c9c9bc`.
+
+
+## Passage duration alignment — 2026-11-17
+- Corrected the official contiguous-ayah preparation defaults from a 60s target / 65s cap to a 35s target / 40s hard cap, matching the intended short-form production limit.
+- Added regression tests for target/cap values, contiguous selection, no-over-cap behavior, preserving a single long ayah without trimming, and rejecting an ayah that alone exceeds 40s.
+- Added the new test file to the isolated feature-branch Actions workflow.
+- Commits: 2c562cf6ddf9373ced62b2f6203d1cd52aa749df (duration defaults), 9a150c75121848d7fc97bf20bc51dfeca011e64f (tests), bf83f151b4e82a7dc631ed7edc0ad220b45927f9 (workflow).
+- Runtime validation is pending the Actions run triggered by the feature-branch push. The currently approved launcher sample remains 9.51s; this change does not invent extra approved verses or claim the current sample is 35s.

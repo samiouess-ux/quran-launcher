@@ -1,0 +1,13 @@
+{
+  "languages": ["ar", "en"],
+  "video": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 30
+  },
+  "schedule": {
+    "videos_per_day": 2
+  },
+  "approval_required": true,
+  "auto_publish": false
+}

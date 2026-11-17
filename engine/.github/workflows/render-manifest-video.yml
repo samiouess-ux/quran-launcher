@@ -1,0 +1,355 @@
+name: Render manifest video for review
+
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: Repository path to a reviewed content JSON manifest
+        required: true
+        default: content/first_video.json
+        type: string
+      use_rotation:
+        description: Select an eligible reviewed manifest instead of the explicit path
+        required: false
+        default: true
+        type: boolean
+      content_type:
+        description: Content type for reviewed-manifest rotation
+        required: false
+        default: quran
+        type: choice
+        options: [quran, dua, dhikr]
+      recent_manifest_ids:
+        description: Newline-separated manifest IDs already used
+        required: false
+        default: ''
+        type: string
+      send_to_telegram:
+        description: Send the finished review MP4 to your Telegram (TikTok publishing stays manual)
+        required: false
+        default: true
+        type: boolean
+      rotation_key:
+        description: Stable key for deterministic manifest selection
+        required: false
+        default: ''
+        type: string
+      use_photo_backgrounds:
+        description: Use downloaded free Pexels photos with gentle motion and crossfades
+        required: false
+        default: true
+        type: boolean
+      use_background_rotation:
+        description: Rotate through the visually approved and verified backgrounds
+        required: false
+        default: true
+        type: boolean
+      recent_background_ids:
+        description: Newline-separated background IDs used recently (avoid repeats)
+        required: false
+        default: ''
+        type: string
+      background_rotation_key:
+        description: Optional seed; blank means a fresh random photo rotation
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+
+      - name: Install FFmpeg and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg fonts-hosny-amiri fonts-noto-core fonts-dejavu-core
+          fc-cache -f
+          python - <<'PY'
+          import subprocess
+          match = subprocess.check_output(['fc-match', '-f', '%{family}|%{style}|%{file}', 'Amiri:style=Bold'], text=True).strip()
+          print('Resolved approved Arabic font:', match)
+          family, style, path = match.split('|', 2)
+          if 'Amiri' not in family or 'Bold' not in style or not path.endswith(('.ttf', '.otf')):
+              raise SystemExit('Required Amiri Bold font is unavailable; refusing to render with a fallback font.')
+          PY
+          pip install pillow remotezip
+          python --version
+          ffmpeg -version | head -n 1
+
+      - name: Select reviewed manifest (optional rotation)
+        id: selection
+        shell: bash
+        env:
+          USE_ROTATION: ${{ inputs.use_rotation }}
+          CONTENT_TYPE: ${{ inputs.content_type }}
+          RECENT_IDS: ${{ inputs.recent_manifest_ids }}
+          ROTATION_KEY: ${{ inputs.rotation_key }}
+          EXPLICIT_MANIFEST: ${{ inputs.manifest }}
+        run: |
+          if [ "$USE_ROTATION" = "true" ]; then
+            rotation_key="${ROTATION_KEY:-run-${GITHUB_RUN_ID}}"
+            args=(--content-type "$CONTENT_TYPE" --rotation-key "$rotation_key")
+            while IFS= read -r item; do
+              [ -n "$item" ] && args+=(--recent-id "$item")
+            done <<< "$RECENT_IDS"
+            selected=$(python src/select_review_manifest.py "${args[@]}")
+          else
+            selected="${EXPLICIT_MANIFEST:-content/first_video.json}"
+          fi
+          echo "manifest=$selected" >> "$GITHUB_OUTPUT"
+          echo "Selected review manifest: $selected"
+
+      - name: Validate Quran reference snapshot structure
+        run: |
+          python src/validate_quran_reference.py data/reference/quran_text_uthmani.json
+
+      - name: Run Quran validation regression tests
+        run: |
+          python -m unittest discover -s tests -v
+
+      - name: Validate exact Quran Arabic text
+        shell: bash
+        run: |
+          manifest='${{ steps.selection.outputs.manifest }}'
+          if [ "$manifest" = 'content/second_video_ash_sharh_94_1_8_draft.json' ]; then
+            python src/validate_quran_text.py --manifest "$manifest" --reference data/reference/surah_ash_sharh_94_1_8_approved.json
+          else
+            python src/validate_quran_text.py --manifest "$manifest"
+          fi
+
+      - name: Download and verify complete KFGQPC audio archive
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          import hashlib
+          url = 'https://cdn.quran.ws/KFGQPC/resources/quran-audios/ayat-12-1-2020/ayat-12-1-2020.zip'
+          expected_sha256 = '3edcc70407f9d19c972c002c69a43cc245a62a0fcc497d3c719406a69965e18e'
+          target = Path('build/cache/kfgqpc-ayat-12-1-2020.zip')
+          target.parent.mkdir(parents=True, exist_ok=True)
+          digest, total = hashlib.sha256(), 0
+          request = Request(url, headers={'User-Agent': 'QuranVideoBuilder/1.0'})
+          with urlopen(request, timeout=90) as response, target.open('wb') as output:
+              while True:
+                  chunk = response.read(8 * 1024 * 1024)
+                  if not chunk: break
+                  total += len(chunk)
+                  if total > 900 * 1024 * 1024: raise RuntimeError('Archive exceeded 900 MiB safety limit.')
+                  digest.update(chunk)
+                  output.write(chunk)
+          actual = digest.hexdigest()
+          print(f'Downloaded {total} bytes; SHA-256={actual}')
+          if actual != expected_sha256:
+              target.unlink(missing_ok=True)
+              raise SystemExit('Archive SHA-256 mismatch; refusing to extract unverified audio.')
+          print('KFGQPC archive checksum verified.')
+          PY
+
+      - name: Prepare review-only Ash-Sharh candidate audio and per-verse timing
+        if: steps.selection.outputs.manifest == 'content/second_video_ash_sharh_94_1_8_draft.json'
+        shell: bash
+        run: |
+          python - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          import json, subprocess
+
+          work = Path('build/audio/processed')
+          work.mkdir(parents=True, exist_ok=True)
+          durations = {}
+          with ZipFile('build/cache/kfgqpc-ayat-12-1-2020.zip') as archive:
+              names = archive.namelist()
+              for verse in range(1, 9):
+                  suffix = f'10-094{verse:03d}-A08.mp3'
+                  matches = [n for n in names if n.endswith(suffix)]
+                  if len(matches) != 1:
+                      raise RuntimeError(f'Expected one official source for verse {verse}, got {matches}')
+                  source = work / f'original_{verse:02d}.mp3'
+                  with archive.open(matches[0]) as src, source.open('wb') as dst:
+                      while chunk := src.read(1024 * 1024): dst.write(chunk)
+                  processed = work / f'verse_{verse:02d}.mp3'
+                  subprocess.run(['ffmpeg','-hide_banner','-y','-i',str(source),'-c:a','libmp3lame','-q:a','2',str(processed)],check=True)
+                  duration = float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','default=nw=1:nk=1',str(processed)],text=True).strip())
+                  durations[str(verse)] = duration
+          concat = work / 'concat.txt'
+          concat.write_text(''.join(f"file '{(work / f'verse_{n:02d}.mp3').resolve()}'\n" + ("file 'silence_020ms.mp3'\n" if n < 8 else '') for n in range(1,9)), encoding='utf-8')
+          silence = work / 'silence_020ms.mp3'
+          subprocess.run(['ffmpeg','-hide_banner','-y','-f','lavfi','-i','anullsrc=r=44100:cl=stereo','-t','0.02','-c:a','libmp3lame','-q:a','2',str(silence)],check=True)
+          # Rebuild concat list now that the inter-verse silence asset exists.
+          concat.write_text(''.join(f"file '{(work / f'verse_{n:02d}.mp3').resolve()}'\n" + (f"file '{silence.resolve()}'\n" if n < 8 else '') for n in range(1,9)), encoding='utf-8')
+          output = Path('output/ash_sharh_94_1_8_approved_audio.mp3')
+          output.parent.mkdir(parents=True, exist_ok=True)
+          subprocess.run(['ffmpeg','-hide_banner','-y','-f','concat','-safe','0','-i',str(concat),'-c:a','libmp3lame','-q:a','2',str(output)],check=True)
+          manifest = json.loads(Path('content/second_video_ash_sharh_94_1_8_draft.json').read_text(encoding='utf-8'))
+          manifest['audio']['production_audio_file'] = str(output)
+          manifest['audio']['processed_verse_durations_seconds'] = durations
+          manifest['audio']['inter_verse_silence_seconds'] = 0.02
+          Path('build/manifest_for_render.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('Processed verse durations:', json.dumps(durations,sort_keys=True))
+          print('Production audio duration:', subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','default=nw=1:nk=1',str(output)],text=True).strip())
+          PY
+
+      - name: Extract Al-Ikhlas exact official recitation for listening review only
+        if: steps.selection.outputs.manifest == 'content/candidate_surah_al_ikhlas_112_1_4.json'
+        shell: bash
+        run: |
+          python - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          import subprocess
+
+          out = Path('output/al_ikhlas_audio_review')
+          out.mkdir(parents=True, exist_ok=True)
+          with ZipFile('build/cache/kfgqpc-ayat-12-1-2020.zip') as archive:
+              names = archive.namelist()
+              for verse in range(1, 5):
+                  suffix = f'10-112{verse:03d}-A08.mp3'
+                  matches = [name for name in names if name.endswith(suffix)]
+                  if len(matches) != 1:
+                      raise RuntimeError(f'Expected exactly one archive entry ending {suffix}; found: {matches}')
+                  target = out / f'al_ikhlas_112_{verse:03d}_source.mp3'
+                  with archive.open(matches[0]) as source, target.open('wb') as dest:
+                      while chunk := source.read(1024 * 1024):
+                          dest.write(chunk)
+                  duration = subprocess.check_output(
+                      ['ffprobe', '-v', 'error', '-show_entries', 'format=duration',
+                       '-of', 'default=nw=1:nk=1', str(target)], text=True).strip()
+                  print(f'Verse {verse}: archive entry={matches[0]} duration={duration}s bytes={target.stat().st_size}')
+          print('These are unmodified source clips for user listening review only; no production approval is implied.')
+          PY
+
+      - name: Prepare exact approved Ash-Sharh 94:5-6 audio
+        if: steps.selection.outputs.manifest == 'content/first_video.json'
+        shell: bash
+        run: |
+          python - <<'PY'
+          from zipfile import ZipFile
+          from pathlib import Path
+          import json, subprocess
+          work = Path('build/audio')
+          work.mkdir(parents=True, exist_ok=True)
+          durations = {}
+          with ZipFile('build/cache/kfgqpc-ayat-12-1-2020.zip') as archive:
+              names = archive.namelist()
+              for verse in (5, 6):
+                  suffix = '10-094%03d-A08.mp3' % verse
+                  matches = [name for name in names if name.endswith(suffix)]
+                  if len(matches) != 1: raise RuntimeError('Expected exactly one official audio file for verse %s; found %s' % (verse, matches))
+                  target = work / ('verse_%02d.mp3' % verse)
+                  with archive.open(matches[0]) as src, target.open('wb') as dst:
+                      while True:
+                          chunk = src.read(1024 * 1024)
+                          if not chunk: break
+                          dst.write(chunk)
+                  durations[str(verse)] = float(subprocess.check_output(['ffprobe','-v','error','-show_entries','format=duration','-of','default=nw=1:nk=1',str(target)],text=True).strip())
+          # Trim only long leading/trailing silence on each verse. Keep 100ms
+          # safety padding so quiet recitation endings are not clipped.
+          for verse in (5, 6):
+              source = work / ('verse_%02d.mp3' % verse)
+              processed = work / ('processed_%02d.mp3' % verse)
+              subprocess.run([
+                  'ffmpeg','-hide_banner','-y','-i',str(source),
+                  '-af','silenceremove=start_periods=1:start_duration=0.15:start_threshold=-50dB:start_silence=0.10:stop_periods=1:stop_duration=0.15:stop_threshold=-50dB:stop_silence=0.10',
+                  '-c:a','libmp3lame','-q:a','2',str(processed)
+              ],check=True)
+          concat = work / 'concat.txt'
+          concat.write_text("\n".join([
+              "file '%s'" % (work / 'processed_05.mp3').resolve(),
+              "file '%s'" % (work / 'processed_06.mp3').resolve(),
+          ]) + "\n", encoding='utf-8')
+          output = work / 'ash_sharh_94_5_6.mp3'
+          subprocess.run(['ffmpeg','-hide_banner','-y','-f','concat','-safe','0','-i',str(concat),'-c:a','libmp3lame','-q:a','2',str(output)],check=True)
+          manifest = json.loads(Path('content/first_video.json').read_text(encoding='utf-8'))
+          manifest['audio']['production_audio_file'] = str(output)
+          manifest['audio']['processed_verse_durations_seconds'] = durations
+          manifest['audio']['inter_verse_silence_seconds'] = 0.02
+          Path('build/first_video_manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
+          print('Verified source verse durations:', json.dumps(durations,sort_keys=True))
+          print('Prepared approved continuous recitation; long leading/trailing silences trimmed with 100ms safety padding, no added inter-verse silence.')
+          PY
+      - name: Render video and caption for review
+        shell: bash
+        env:
+          USE_BACKGROUND_ROTATION: ${{ inputs.use_background_rotation }}
+          USE_PHOTO_BACKGROUNDS: ${{ inputs.use_photo_backgrounds }}
+          RECENT_BACKGROUND_IDS: ${{ inputs.recent_background_ids }}
+          BACKGROUND_ROTATION_KEY: ${{ inputs.background_rotation_key }}
+        run: |
+          manifest='${{ steps.selection.outputs.manifest }}'
+          if [ "$manifest" = 'content/second_video_ash_sharh_94_1_8_draft.json' ]; then manifest='build/manifest_for_render.json'; fi
+          if [ "$manifest" = 'content/first_video.json' ]; then manifest='build/first_video_manifest.json'; fi
+          if [ "$manifest" = 'content/candidate_surah_al_ikhlas_112_1_4.json' ]; then echo 'Audio-probe-only run; video render intentionally skipped until audio and visual approvals.'; exit 0; fi
+          args=(--manifest "$manifest" --output output/review.mp4)
+          if [ "$USE_PHOTO_BACKGROUNDS" = "true" ]; then args+=(--use-photo-backgrounds); fi
+          if [ "$USE_BACKGROUND_ROTATION" = "true" ]; then
+            key="${BACKGROUND_ROTATION_KEY:-run-${GITHUB_RUN_ID}}"
+            args+=(--background-rotation --background-rotation-key "$key")
+            while IFS= read -r item; do
+              [ -n "$item" ] && args+=(--recent-background-id "$item")
+            done <<< "$RECENT_BACKGROUND_IDS"
+          fi
+          python src/render_video_scenes.py "${args[@]}"
+
+      - name: Verify rendered MP4 technical quality
+        if: steps.selection.outputs.manifest != 'content/candidate_surah_al_ikhlas_112_1_4.json'
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, subprocess
+          path = 'output/review.mp4'
+          raw = subprocess.check_output([
+              'ffprobe', '-v', 'error', '-show_streams', '-show_format',
+              '-of', 'json', path
+          ], text=True)
+          info = json.loads(raw)
+          video = next((s for s in info['streams'] if s.get('codec_type') == 'video'), None)
+          audio = next((s for s in info['streams'] if s.get('codec_type') == 'audio'), None)
+          duration = float(info['format']['duration'])
+          if not video or not audio:
+              raise SystemExit('Review MP4 must contain both video and audio streams.')
+          if (video.get('width'), video.get('height')) != (1080, 1920):
+              raise SystemExit(f"Expected 1080x1920, got {video.get('width')}x{video.get('height')}.")
+          if video.get('r_frame_rate') != '30/1':
+              raise SystemExit(f"Expected 30 fps, got {video.get('r_frame_rate')}.")
+          if duration > 40:
+              raise SystemExit(f"Review MP4 exceeds the hard 40-second limit: {duration:.2f}s.")
+          if duration < 1:
+              raise SystemExit(f"Review MP4 duration is invalid: {duration:.2f}s.")
+          print(f'Validated review MP4: 1080x1920, 30 fps, audio present, {duration:.2f}s')
+          PY
+
+      - name: Upload Al-Ikhlas source audio for private listening review
+        if: steps.selection.outputs.manifest == 'content/candidate_surah_al_ikhlas_112_1_4.json'
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: al-ikhlas-audio-listening-review
+          path: output/al_ikhlas_audio_review/*.mp3
+          retention-days: 7
+
+      - name: Upload review files (no publishing)
+        if: steps.selection.outputs.manifest != 'content/candidate_surah_al_ikhlas_112_1_4.json'
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: islamic-video-review
+          path: |
+            output/review.mp4
+            output/review.caption.json
+          retention-days: 7
+
+      - name: Send review MP4 to Telegram
+        if: github.event_name == 'workflow_dispatch' && steps.selection.outputs.manifest != 'content/candidate_surah_al_ikhlas_112_1_4.json' && inputs.send_to_telegram == true
+        env:
+          TG_BOT_TOKEN: ${{ secrets.TG_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python src/send_telegram.py --video output/review.mp4 --caption output/review.caption.json

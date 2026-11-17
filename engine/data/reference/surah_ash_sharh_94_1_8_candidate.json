@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "script": "uthmani",
+  "surah_number": 94,
+  "surah_name_ar": "الشرح",
+  "surah_name_en": "Ash-Sharh",
+  "source_name": "Tanzil Uthmani v1.1 as displayed by Quran TV",
+  "source_url": "https://quran.tv/dyu/chapter/ash-sharh/",
+  "cross_check_source_url": "https://quran.com/ash-sharh",
+  "source_note": "Candidate full-surah snapshot for review. Text is copied as displayed by the cited Tanzil Uthmani v1.1 source. Do not normalize, strip, autocorrect, or rewrite any Arabic characters or marks.",
+  "review_status": "candidate_source_checked_not_yet_user_approved",
+  "verses": {
+    "94:1": "أَلَمۡ نَشۡرَحۡ لَكَ صَدۡرَكَ",
+    "94:2": "وَوَضَعۡنَا عَنكَ وِزۡرَكَ",
+    "94:3": "ٱلَّذِيٓ أَنقَضَ ظَهۡرَكَ",
+    "94:4": "وَرَفَعۡنَا لَكَ ذِكۡرَكَ",
+    "94:5": "فَإِنَّ مَعَ ٱلۡعُسۡرِ يُسۡرًا",
+    "94:6": "إِنَّ مَعَ ٱلۡعُسۡرِ يُسۡرࣰا",
+    "94:7": "فَإِذَا فَرَغۡتَ فَٱنصَبۡ",
+    "94:8": "وَإِلَىٰ رَبِّكَ فَٱرۡغَب"
+  }
+}

@@ -1,6 +1,12 @@
 name: Quran Launcher — Original Engine MP4 Render
 
 on:
+  push:
+    branches: [feature/islamic-tiktok-engine-port]
+    paths:
+      - '.github/workflows/quran-launcher-engine-render.yml'
+      - 'engine/**'
+      - 'ENGINE_PORT_STATUS.md'
   workflow_dispatch:
     inputs:
       background_rotation_key:

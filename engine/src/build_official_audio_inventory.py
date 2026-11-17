@@ -188,14 +188,32 @@ def inventory_from_metadata(metadata: dict, archive_url: str, archive_path: str 
     }
 
 
+def verify_cached_archive(path: Path) -> str | None:
+    """Reuse a cached archive only when its exact size and pinned SHA-256 match."""
+    if not path.is_file():
+        return None
+    digest = hashlib.sha256()
+    total = 0
+    with path.open("rb") as source:
+        while chunk := source.read(8 * 1024 * 1024):
+            total += len(chunk)
+            digest.update(chunk)
+    if total != EXPECTED_ARCHIVE_BYTES or digest.hexdigest() != EXPECTED_ARCHIVE_SHA256:
+        path.unlink(missing_ok=True)
+        print("Cached Quran audio archive failed its pinned size/SHA-256 check; it will be downloaded again.")
+        return None
+    print(f"Reusing checksum-verified cached Quran audio archive: {path}")
+    return str(path)
+
+
 def build_inventory(archive_destination: Path | None = None) -> dict:
     session = create_archive_session()
     try:
         archive_url, supports_ranges = select_archive_url(session)
         metadata = fetch_archive_metadata(session)
-        archive_path = None
-        if not supports_ranges:
-            archive_destination = archive_destination or Path("output/kfgqpc_maher_verified.zip")
+        archive_destination = archive_destination or Path("output/kfgqpc_maher_verified.zip")
+        archive_path = verify_cached_archive(archive_destination)
+        if archive_path is None and not supports_ranges:
             archive_path = download_verified_archive(session, archive_url, archive_destination)
         return inventory_from_metadata(metadata, archive_url, archive_path)
     finally:

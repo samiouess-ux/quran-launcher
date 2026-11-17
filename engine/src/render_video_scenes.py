@@ -519,6 +519,7 @@ def main() -> None:
         "-map", f"[{current}]", "-map", "1:a", "-t", str(duration),
         "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
         "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k",
+        "-map_metadata", "-1", "-map_chapters", "-1",
         "-movflags", "+faststart", str(output)
     ])
 

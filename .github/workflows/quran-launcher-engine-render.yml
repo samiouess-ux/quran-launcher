@@ -33,6 +33,12 @@ jobs:
       - name: Check out isolated launcher branch
         uses: actions/checkout@v4
 
+      - name: Restore checksum-pinned official audio archive cache
+        uses: actions/cache@v4
+        with:
+          path: engine/output/kfgqpc_maher_verified.zip
+          key: kfgqpc-maher-archive-3edcc70407f9d19c972c002c69a43cc245a62a0fcc497d3c719406a69965e18e
+
       - name: Install FFmpeg and approved Arabic fonts
         run: |
           sudo apt-get update

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10251f">
+  <title>محرك فيديوهات القرآن الكريم — V2</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <div class="mark">ق</div>
+      <div><p class="eyebrow">مشروع مستقل — الإصدار الثاني</p><h1>محرك فيديوهات القرآن الكريم</h1></div>
+      <span class="status"><i></i> نسخة تجريبية</span>
+    </header>
+
+    <section class="panel">
+      <h2>إعداد الفيديو</h2>
+      <label for="surah">اسم السورة</label>
+      <input id="surah" type="text" placeholder="مثال: سورة الرحمن">
+      <label for="reciter">القارئ</label>
+      <input id="reciter" type="text" placeholder="اسم القارئ">
+      <label for="ayah">نص الآيات</label>
+      <textarea id="ayah" rows="5" placeholder="ألصق نص الآيات هنا..."></textarea>
+      <div class="actions">
+        <button id="preview" type="button">معاينة النص</button>
+        <button id="clear" class="secondary" type="button">مسح الحقول</button>
+      </div>
+    </section>
+
+    <section class="panel preview-panel">
+      <h2>معاينة المحتوى</h2>
+      <div id="previewArea" class="preview-area">
+        <p class="placeholder">ستظهر معاينة معلومات الفيديو هنا.</p>
+      </div>
+      <p class="note">هذه مرحلة تأسيس الواجهة فقط؛ لم يتم بعد توليد ملف فيديو فعلي.</p>
+    </section>
+    <footer>المحرك الثاني مستقل — لا يغيّر المحرك القديم</footer>
+  </main>
+  <script src="src/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+{
+  "id": "candidate_surah_al_ikhlas_112_1_4",
+  "content_type": "quran",
+  "status": "candidate_not_approved_for_rotation",
+  "rotation_approved": false,
+  "source": {
+    "surah_number": 112,
+    "surah_name_ar": "الإخلاص",
+    "surah_name_en": "Al-Ikhlas",
+    "verses": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "arabic_source": "Quran.com Uthmani text",
+    "arabic_source_url": "https://quran.com/al-ikhlas",
+    "english_translation": "Sahih International",
+    "translation_source_url": "https://legacy.quran.com/112/1-4",
+    "translation_verified": true,
+    "note": "Candidate only. Arabic and Sahih International wording were cross-checked against the cited Quran.com and legacy Quran.com pages. The reference snapshot, audio rights, exact recording, and visual asset are not yet approved."
+  },
+  "verses": [
+    {
+      "number": 1,
+      "arabic": "قُلْ هُوَ ٱللَّهُ أَحَدٌ",
+      "english": "Say, \"He is Allah , [who is] One,"
+    },
+    {
+      "number": 2,
+      "arabic": "ٱللَّهُ ٱلصَّمَدُ",
+      "english": "Allah , the Eternal Refuge."
+    },
+    {
+      "number": 3,
+      "arabic": "لَمْ يَلِدْ وَلَمْ يُولَدْ",
+      "english": "He neither begets nor is born,"
+    },
+    {
+      "number": 4,
+      "arabic": "وَلَمْ يَكُن لَّهُۥ كُفُوًا أَحَدٌۢ",
+      "english": "Nor is there to Him any equivalent."
+    }
+  ],
+  "audio": {
+    "required": true,
+    "kind": "quran_recitation",
+    "approved": false,
+    "exact_recording_user_reviewed": false,
+    "rights_verified": false,
+    "note": "Candidate only. Islam Sobhi / Hafs recitation source and Surah 112 download link identified. The exact file has not yet been independently downloaded and inspected; usage rights and exact-recording review remain pending.",
+    "rights_source_url": null,
+    "rights_note": "Usage rights for this exact Islam Sobhi recording have not been verified. Do not render or approve for production until the applicable MP3Quran terms and recording-specific reuse permissions are documented.",
+    "reciter_name": "إسلام صبحي",
+    "riwaya": "حفص عن عاصم",
+    "recording_source": "MP3Quran",
+    "recording_page_url": "https://mp3quran.net/ar/",
+    "recording_file_url": "https://cdn.mp3quran.net/download/audio/islam-sobhi/r1/112.mp3",
+    "recording_path": "audio/islam-sobhi/r1/112.mp3",
+    "user_audio_feedback": "User said the audio sounds good; exact-file listening review is still pending."
+  },
+  "visual": {
+    "format": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "template": "ornate_gold_classic",
+    "background_style": "calm_nature_scenery",
+    "background_candidate": null,
+    "note": "Choose an independently approved background asset before rendering."
+  },
+  "publishing": {
+    "approval_required": true,
+    "auto_publish": false
+  },
+  "caption": {
+    "languages": [
+      "ar",
+      "en"
+    ],
+    "mention_reciter": false,
+    "status": "draft_for_review",
+    "arabic": "سورة الإخلاص | الآيات 1–4",
+    "english": "Surah Al-Ikhlas | Verses 1–4",
+    "hashtags_ar": [
+      "#القرآن_الكريم",
+      "#سورة_الإخلاص"
+    ],
+    "hashtags_en": [
+      "#Quran",
+      "#AlIkhlas"
+    ]
+  }
+}

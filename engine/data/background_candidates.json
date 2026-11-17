@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "purpose": "User-approved background assets awaiting integration into the production rotation; this catalog is not itself the active render catalog.",
+  "purpose": "Approved background source catalog consumed by the original renderer when --background-rotation is enabled.",
   "license_source": "https://help.pexels.com/hc/en-us/articles/360042295174-What-is-the-license-of-the-photos-and-videos-on-Pexels",
   "license_summary": "Pexels states its uploaded photos/videos use the Pexels License and may be used free for personal and commercial purposes without attribution. Recheck the current license and clip page before downloading or enabling each asset.",
-  "activation_policy": "The original four candidates and seven additional Pexels candidates were explicitly visually approved by the user (the seven new candidates on 2026-11-08). All eleven have passed download/ffprobe verification and are approved for production integration. No candidate is active in the renderer until integration and render/legibility tests pass. The Pixabay candidate remains unapproved and disabled because no direct video URL is verified.",
+  "activation_policy": "The root launcher workflow actively passes --background-rotation and loads this catalog through background_rotation.py. Only candidates with approved=true, user_approved=true, download_verified=true, aspect_ratio=9:16, and verified HTTPS source/direct URLs are eligible. The current strict filter yields 11 eligible portrait candidates. Other approved entries with landscape or incomplete aspect-ratio metadata are excluded. The Pixabay candidate remains unapproved and disabled because no direct video URL is verified.",
   "candidates": [
     {
       "id": "pexels-ocean-shore-35036280",

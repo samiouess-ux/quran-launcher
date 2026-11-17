@@ -95,10 +95,14 @@ jobs:
           work.mkdir(parents=True, exist_ok=True)
           durations = {}
           with archive:
+              names = archive.namelist()
               for verse in (5, 6):
-                  member = inventory['verses'][f'94:{verse}']
+                  suffix = f'10-094{verse:03d}-A08.mp3'
+                  matches = [name for name in names if name.endswith(suffix)]
+                  if len(matches) != 1:
+                      raise RuntimeError(f'Expected exactly one official Hafs audio member for verse {verse}; found {matches}')
                   source = work / f'verse_{verse:02d}_source.mp3'
-                  with archive.open(member) as src, source.open('wb') as dst:
+                  with archive.open(matches[0]) as src, source.open('wb') as dst:
                       while chunk := src.read(1024 * 1024):
                           dst.write(chunk)
                   processed = work / f'verse_{verse:02d}.mp3'

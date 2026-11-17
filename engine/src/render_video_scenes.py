@@ -557,25 +557,29 @@ def main() -> None:
     current = "vbase"
     input_index = 2
     for index, (scene, arabic_overlay, english_overlay) in enumerate(scene_overlays):
-        inputs += ["-i", str(arabic_overlay), "-i", str(english_overlay)]
         start = 0.0 if index == 0 else scene_boundaries[index - 1]
         end = duration if index == len(scene_overlays) - 1 else scene_boundaries[index]
+        scene_length = max(0.05, end - start)
+        inputs += [
+            "-loop", "1", "-framerate", "30", "-t", f"{scene_length:.6f}",
+            "-i", str(arabic_overlay),
+            "-loop", "1", "-framerate", "30", "-t", f"{scene_length:.6f}",
+            "-i", str(english_overlay),
+        ]
         fade_in = 0.28 if index > 0 else 0.45
         fade_out = 0.28 if index < len(scene_overlays) - 1 else 0.0
         arabic_fade = (
-            f"[{input_index}:v]format=rgba,"
-            f"fade=t=in:st={start:.6f}:d={fade_in:.3f}:alpha=1"
+            f"[{input_index}:v]format=rgba,fade=t=in:st=0:d={fade_in:.3f}:alpha=1"
         )
         if fade_out:
-            arabic_fade += f",fade=t=out:st={max(start, end-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
+            arabic_fade += f",fade=t=out:st={max(0.0, scene_length-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
         arabic_fade += f"[ar{index}]"
         filters.append(arabic_fade)
         english_fade = (
-            f"[{input_index + 1}:v]format=rgba,"
-            f"fade=t=in:st={start:.6f}:d={fade_in:.3f}:alpha=1"
+            f"[{input_index + 1}:v]format=rgba,fade=t=in:st=0:d={fade_in:.3f}:alpha=1"
         )
         if fade_out:
-            english_fade += f",fade=t=out:st={max(start, end-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
+            english_fade += f",fade=t=out:st={max(0.0, scene_length-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
         english_fade += f"[en{index}]"
         filters.append(english_fade)
         filters.append(

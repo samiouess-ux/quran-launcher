@@ -69,6 +69,23 @@ jobs:
           python -m unittest discover -s tests -p 'test_build_official_audio_inventory.py' -v
           python -m unittest discover -s tests -p 'test_prepare_official_quran_passage.py' -v
           python -m unittest discover -s tests -p 'test_content_rotation.py' -v
+          python -m unittest discover -s tests -p 'test_asset_rotation.py' -v
+          python -m unittest discover -s tests -p 'test_background_candidates.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_review_batch.py' -v
+          python -m unittest discover -s tests -p 'test_build_requested_quran_passage.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_draft_manifests.py' -v
+          python -m unittest discover -s tests -p 'test_prepare_background_review_batch.py' -v
+          python -m unittest discover -s tests -p 'test_prepare_background_review_previews.py' -v
+          python -m unittest discover -s tests -p 'test_render_quran_review_batch.py' -v
+          python -m unittest discover -s tests -p 'test_render_quran_review_previews.py' -v
+          python -m unittest discover -s tests -p 'test_render_dua_video.py' -v
+          python -m unittest discover -s tests -p 'test_select_requested_quran_range.py' -v
+          python -m unittest discover -s tests -p 'test_validate_quran_reference.py' -v
+          python -m unittest discover -s tests -p 'test_select_review_manifest.py' -v
+          python -m unittest discover -s tests -p 'test_orchestrator.py' -v
+          python -m unittest discover -s tests -p 'test_quran_visual_templates.py' -v
+          python -m unittest discover -s tests -p 'test_quran_social_caption.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_tunisian_day_status.py' -v
 
       - name: Validate approved Quran text and manifest
         env:

@@ -227,44 +227,99 @@ def probe_media_duration(path: Path) -> float:
 
 def build_background_reel(
     candidates: list[dict], duration: float, work: Path, destination: Path
-) -> str:
-    """Loop one approved background clip to cover the complete audio duration."""
+) -> list[str]:
+    """Build a moving-video reel from multiple approved clips with soft crossfades."""
     if not math.isfinite(duration) or duration <= 0:
         raise SystemExit("Background duration must be a finite positive number.")
     if not candidates:
         raise SystemExit("No approved backgrounds are available for this render.")
 
+    transition = 0.55
+    prepared = []
+    total_coverage = 0.0
     for index, candidate in enumerate(candidates):
+        if total_coverage >= duration + transition * max(0, len(prepared) - 1):
+            break
         candidate_id = candidate["id"]
         raw_path = work / f"background_source_{index}.mp4"
-        download(candidate["direct_video_url"], raw_path)
-        clip_duration = probe_media_duration(raw_path)
-        if not math.isfinite(clip_duration) or clip_duration <= 0:
+        try:
+            download(candidate["direct_video_url"], raw_path)
+            measured = probe_media_duration(raw_path)
+        except Exception as exc:
+            print(f"Skipping unusable background {candidate_id}: {exc}")
+            continue
+        if not math.isfinite(measured) or measured <= 0:
             print(f"Skipping background with unusable duration: {candidate_id}.")
             continue
+        # Trust measured media duration, not catalog estimates. Loop only that
+        # clip if it is shorter than the remaining reel, then transition onward.
+        prepared.append((candidate_id, raw_path, measured))
+        total_coverage += measured
 
-        # Repeat this same source clip; never splice different backgrounds together.
-        run([
-            "ffmpeg", "-hide_banner", "-y", "-stream_loop", "-1",
-            "-i", str(raw_path), "-t", f"{duration:.6f}",
-            "-vf", "scale=1080:1920:force_original_aspect_ratio=increase,"
-                   "crop=1080:1920,setsar=1,fps=30,format=yuv420p",
-            "-an", "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
-            "-pix_fmt", "yuv420p", "-r", "30", str(destination)
-        ])
-        actual_duration = probe_media_duration(destination)
-        if actual_duration + 0.10 < duration:
-            raise SystemExit(
-                f"Looped background {candidate_id} is too short after normalization "
-                f"({actual_duration:.3f}s for {duration:.3f}s audio)."
-            )
-        print(
-            f"Using one background loop: {candidate_id} "
-            f"(source {clip_duration:.2f}s, output {actual_duration:.2f}s)."
+    if not prepared:
+        raise SystemExit("No approved background has a usable positive duration.")
+
+    # Keep enough source time to cover the final duration after crossfade overlap.
+    while total_coverage - transition * (len(prepared) - 1) < duration:
+        if len(prepared) >= len(candidates):
+            break
+        candidate = candidates[len(prepared)]
+        index = len(prepared)
+        raw_path = work / f"background_source_{index}.mp4"
+        try:
+            download(candidate["direct_video_url"], raw_path)
+            measured = probe_media_duration(raw_path)
+        except Exception as exc:
+            print(f"Skipping unusable background {candidate['id']}: {exc}")
+            break
+        if measured <= 0 or not math.isfinite(measured):
+            break
+        prepared.append((candidate["id"], raw_path, measured))
+        total_coverage += measured
+
+    if total_coverage - transition * (len(prepared) - 1) < duration:
+        raise SystemExit("Approved moving backgrounds do not cover the full video duration.")
+
+    inputs, filters = [], []
+    for index, (_, path, clip_duration) in enumerate(prepared):
+        inputs += ["-stream_loop", "-1", "-i", str(path)]
+        filters.append(
+            f"[{index}:v]trim=duration={clip_duration:.6f},setpts=PTS-STARTPTS,"
+            "scale=1080:1920:force_original_aspect_ratio=increase,"
+            "crop=1080:1920,setsar=1,fps=30,format=yuv420p,settb=AVTB"
+            f"[bg{index}]"
         )
-        return candidate_id
 
-    raise SystemExit("No approved background has a usable positive duration.")
+    current = "bg0"
+    elapsed = prepared[0][2]
+    for index in range(1, len(prepared)):
+        label = f"bgx{index}"
+        offset = max(0.0, elapsed - transition * index)
+        filters.append(
+            f"[{current}][bg{index}]xfade=transition=fade:duration={transition:.3f}:"
+            f"offset={offset:.6f}[{label}]"
+        )
+        current = label
+        elapsed += prepared[index][2]
+
+    filters.append(
+        f"[{current}]trim=duration={duration:.6f},setpts=PTS-STARTPTS,"
+        "format=yuv420p[outv]"
+    )
+    run([
+        "ffmpeg", "-hide_banner", "-y", *inputs, "-filter_complex", ";".join(filters),
+        "-map", "[outv]", "-an", "-t", f"{duration:.6f}", "-c:v", "libx264",
+        "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", "-r", "30",
+        str(destination)
+    ])
+    actual_duration = probe_media_duration(destination)
+    if actual_duration + 0.10 < duration:
+        raise SystemExit(
+            f"Moving background reel is too short ({actual_duration:.3f}s for {duration:.3f}s)."
+        )
+    ids = [item[0] for item in prepared]
+    print("Moving video background sequence with crossfades:", ", ".join(ids))
+    return ids
 
 
 
@@ -505,11 +560,29 @@ def main() -> None:
         inputs += ["-i", str(arabic_overlay), "-i", str(english_overlay)]
         start = 0.0 if index == 0 else scene_boundaries[index - 1]
         end = duration if index == len(scene_overlays) - 1 else scene_boundaries[index]
+        fade_in = 0.28 if index > 0 else 0.45
+        fade_out = 0.28 if index < len(scene_overlays) - 1 else 0.0
+        arabic_fade = (
+            f"[{input_index}:v]format=rgba,"
+            f"fade=t=in:st={start:.6f}:d={fade_in:.3f}:alpha=1"
+        )
+        if fade_out:
+            arabic_fade += f",fade=t=out:st={max(start, end-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
+        arabic_fade += f"[ar{index}]"
+        filters.append(arabic_fade)
+        english_fade = (
+            f"[{input_index + 1}:v]format=rgba,"
+            f"fade=t=in:st={start:.6f}:d={fade_in:.3f}:alpha=1"
+        )
+        if fade_out:
+            english_fade += f",fade=t=out:st={max(start, end-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
+        english_fade += f"[en{index}]"
+        filters.append(english_fade)
         filters.append(
-            f"[{current}][{input_index}:v]overlay=0:0:enable='between(t,{start:.6f},{end:.6f})'[v{index}a]"
+            f"[{current}][ar{index}]overlay=0:0:enable='between(t,{start:.6f},{end:.6f})'[v{index}a]"
         )
         filters.append(
-            f"[v{index}a][{input_index + 1}:v]overlay=0:0:enable='between(t,{start:.6f},{end:.6f})'[v{index}]"
+            f"[v{index}a][en{index}]overlay=0:0:enable='between(t,{start:.6f},{end:.6f})'[v{index}]"
         )
         current = f"v{index}"
         input_index += 2

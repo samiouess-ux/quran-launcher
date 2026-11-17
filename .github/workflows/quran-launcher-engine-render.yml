@@ -85,12 +85,23 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          from remotezip import RemoteZip
           from zipfile import ZipFile
+          from build_official_audio_inventory import create_archive_session, download_verified_archive
           import json, subprocess
           inventory = json.loads(Path('output/official_verse_audio_inventory.json').read_text(encoding='utf-8'))
           archive_path = inventory.get('archive_path')
-          archive = ZipFile(archive_path) if archive_path else RemoteZip(inventory['source_url'])
+          if not archive_path:
+              # Some CDN responses pass the small range preflight but reject
+              # RemoteZip's later requests. Fall back to the source builder's
+              # bounded full download and mandatory published SHA-256 check.
+              session = create_archive_session()
+              try:
+                  archive_path = download_verified_archive(
+                      session, inventory['source_url'], Path('output/kfgqpc_maher_verified.zip')
+                  )
+              finally:
+                  session.close()
+          archive = ZipFile(archive_path)
           work = Path('build/audio')
           work.mkdir(parents=True, exist_ok=True)
           durations = {}

@@ -1,18 +1,36 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10251f"><title>محرك فيديوهات القرآن الكريم V2</title><link rel="stylesheet" href="styles.css?v=757411d"></head>
-<body><main class="app">
-<header class="top"><div class="mark">ق</div><div><p class="eyebrow">الإصدار الثاني المستقل</p><h1>صانع فيديوهات القرآن الكريم</h1><p class="sub">اختَر السورة والآيات من القوائم، ثم أنشئ الفيديو</p></div><span class="status"><i></i> تجريبي</span></header>
-<div class="layout">
-<section class="panel controls"><h2>1 — اختيار السورة والآيات</h2>
-<label for="surahSelect">السورة</label><select id="surahSelect"><option value="">جارٍ تجهيز قائمة السور...</option></select>
-<div class="ayah-range"><div><label for="ayahFrom">من الآية</label><input id="ayahFrom" type="number" min="1" value="1"></div><div><label for="ayahTo">إلى الآية</label><input id="ayahTo" type="number" min="1" value="1"></div></div>
-<p id="surahInfo" class="hint">اختر السورة لتحميل آياتها تلقائيًا.</p>
-<label for="ayah">نص الآيات المختارة (يُملأ آليًا)</label><textarea id="ayah" rows="5" readonly>اختر سورة...</textarea>
-<label for="reciter">القارئ</label><select id="reciter"><option value="">اختر القارئ</option><option value="Alafasy_128kbps">مشاري العفاسي</option><option value="MaherAlMuaiqly128kbps">ماهر المعيقلي</option><option value="Husary_128kbps">محمود خليل الحصري</option><option value="Abdurrahmaan_As-Sudais_128kbps">عبدالرحمن السديس</option><option value="Abu_Bakr_Ash-Shaatree_128kbps">أبو بكر الشاطري</option><option value="Minshawy_Murattal_128kbps">محمد صديق المنشاوي</option><option value="Ghamadi_40kbps">سعد الغامدي</option><option value="Hani_Rifai_64kbps">هاني الرفاعي</option></select><p class="hint">اختر القارئ وسيُستخدم صوته تلقائيًا للآيات المحددة.</p>
-<h2>2 — الصوت والخلفية</h2>
-<label class="filepick" for="audio"><span>اختيار ملف التلاوة الصوتية</span><small id="audioName">لم يتم اختيار ملف صوتي</small></label><input class="hidden" id="audio" type="file" accept="audio/*">
-<label class="filepick" for="background"><span>اختيار صورة خلفية (اختياري)</span><small id="imageName">سيتم استعمال خلفية افتراضية</small></label><input class="hidden" id="background" type="file" accept="image/*">
-<div class="actions"><button id="preview" type="button" class="secondary">تحديث المعاينة</button><button id="render" type="button">إنشاء الفيديو</button></div><p id="status" class="statusline" role="status">اختر السورة والآيات، ثم ملف التلاوة.</p></section>
-<section class="panel preview-panel"><h2>3 — معاينة الفيديو</h2><div class="screen"><canvas id="stage" width="1280" height="720"></canvas></div><div class="actions"><a id="download" class="download disabled" aria-disabled="true">تحميل الفيديو</a></div><p class="note">يتم إنشاء الفيديو داخل المتصفح بصيغة WebM مع صوت التلاوة. لا يتم رفع ملفاتك إلى خادم.</p></section>
-</div><footer>المحرك الثاني مستقل — المحرك القديم لم يتم تعديله</footer></main><script src="src/app.js?v=757411d"></script></body></html>
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10251f"><title>محرك القرآن السينمائي</title>
+<link rel="stylesheet" href="styles.css?v=engine-link-1">
+</head>
+<body>
+<main class="app">
+<header class="top"><div class="mark">ق</div><div><p class="eyebrow">المحرك السينمائي الأصلي</p><h1>إنشاء فيديو قرآني</h1><p class="sub">واجهة تشغيل مرتبطة بمحرّك FFmpeg الحقيقي</p></div></header>
+<section class="panel">
+<div class="engine-state"><span class="dot"></span> المحرك: جاهز للاختبار عبر GitHub Actions</div>
+<h2>المقطع المعتمد حاليًا</h2>
+<div class="spec"><span>السورة</span><strong>الشرح</strong></div>
+<div class="spec"><span>الآيات</span><strong>5 – 6</strong></div>
+<div class="spec"><span>القارئ</span><strong>ماهر المعيقلي — حفص</strong></div>
+<div class="spec"><span>الخلفية</span><strong>فيديو متحرك — اختيار تلقائي من المكتبة</strong></div>
+<div class="spec"><span>الفيديو</span><strong>MP4 عمودي 1080 × 1920 — 30 إطار/ث</strong></div>
+<div class="spec"><span>الترجمة</span><strong>Saheeh International — English</strong></div>
+<p class="notice">هذه هي الإعدادات الوحيدة التي اجتازت التحقق والموافقة الصوتية حتى الآن. لن أُظهر سورًا أو قرّاءً أو خلفيات كأنها مدعومة قبل ربط ملفاتها والتحقق منها.</p>
+<a class="primary-action" href="https://github.com/samiouess-ux/quran-launcher/actions/workflows/quran-launcher-engine-render.yml" target="_blank" rel="noopener">فتح المحرك وتشغيل إنشاء الفيديو</a>
+<p class="hint">بعد فتح GitHub: اضغط Run workflow ثم Run workflow. عند اكتمال التشغيل ستجد MP4 في Artifacts باسم quran-launcher-original-engine-review.</p>
+</section>
+<section class="panel secondary-panel">
+<h2>ما الذي يحدث عند التشغيل؟</h2>
+<ul>
+<li>تشغيل محرك Python وFFmpeg الأصلي، وليس مسجل Canvas القديم.</li>
+<li>اختيار خلفية فيديو متحركة من المكتبة المعتمدة مع تدوير الاختيار.</li>
+<li>إظهار الآيات بالعربية والترجمة الإنجليزية مع التلاوة.</li>
+<li>فحص ملف MP4 ثم حفظه كملف مراجعة قابل للتنزيل.</li>
+</ul>
+<p class="notice">الحماية: لا يوجد نشر تلقائي على TikTok، ولا اتصال ببوت Telegram، ولا نطلب منك أي GitHub token داخل الصفحة.</p>
+</section>
+<footer>نسخة مستقلة — المستودع والمحرك الأصليان لم يتم تعديلهما</footer>
+</main>
+</body></html>

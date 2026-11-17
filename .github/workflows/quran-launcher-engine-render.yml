@@ -86,6 +86,14 @@ jobs:
           python -m unittest discover -s tests -p 'test_quran_visual_templates.py' -v
           python -m unittest discover -s tests -p 'test_quran_social_caption.py' -v
           python -m unittest discover -s tests -p 'test_build_quran_tunisian_day_status.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_translation_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_uthmani_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_video_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_quran_audio_parts.py' -v
+          python -m unittest discover -s tests -p 'test_prepare_quran_review_batch_audio.py' -v
+          python -m unittest discover -s tests -p 'test_content_rotation_repository_safety.py' -v
+          python -m unittest discover -s tests -p 'test_background_reel.py' -v
+          python -m unittest discover -s tests -p 'test_background_additions_review.py' -v
 
       - name: Validate approved Quran text and manifest
         env:

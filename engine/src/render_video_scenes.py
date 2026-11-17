@@ -237,7 +237,9 @@ def build_background_reel(
     transition = 0.55
     prepared = []
     total_coverage = 0.0
+    next_candidate_index = 0
     for index, candidate in enumerate(candidates):
+        next_candidate_index = index + 1
         if total_coverage >= duration + transition * max(0, len(prepared) - 1):
             break
         candidate_id = candidate["id"]
@@ -261,19 +263,19 @@ def build_background_reel(
 
     # Keep enough source time to cover the final duration after crossfade overlap.
     while total_coverage - transition * (len(prepared) - 1) < duration:
-        if len(prepared) >= len(candidates):
+        if next_candidate_index >= len(candidates):
             break
-        candidate = candidates[len(prepared)]
-        index = len(prepared)
-        raw_path = work / f"background_source_{index}.mp4"
+        candidate = candidates[next_candidate_index]
+        raw_path = work / f"background_source_{next_candidate_index}.mp4"
+        next_candidate_index += 1
         try:
             download(candidate["direct_video_url"], raw_path)
             measured = probe_media_duration(raw_path)
         except Exception as exc:
             print(f"Skipping unusable background {candidate['id']}: {exc}")
-            break
+            continue
         if measured <= 0 or not math.isfinite(measured):
-            break
+            continue
         prepared.append((candidate["id"], raw_path, measured))
         total_coverage += measured
 

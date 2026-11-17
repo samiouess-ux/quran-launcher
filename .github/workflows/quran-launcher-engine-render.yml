@@ -104,7 +104,7 @@ jobs:
                   ], text=True).strip())
           concat = work / 'concat.txt'
           concat.write_text(
-              ''.join(f"file '{(work / f'verse_{n:02d}.mp3').resolve()}'\\n" for n in (5, 6)),
+              ''.join(f"file '{(work / f'verse_{n:02d}.mp3').resolve()}'\n" for n in (5, 6)),
               encoding='utf-8'
           )
           output = Path('output/ash_sharh_94_5_6_approved_audio.mp3')

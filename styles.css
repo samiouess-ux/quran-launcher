@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap');
+:root{color-scheme:dark;--bg:#0b1714;--panel:#14251f;--line:#294238;--gold:#d8b66a;--text:#f3f0e7;--muted:#a8b8af}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#1b3a2e 0,var(--bg) 58%);color:var(--text);font-family:Cairo,Arial,sans-serif;min-height:100vh;padding:28px 16px}
+.app{max-width:850px;margin:auto}
+.top{display:flex;align-items:center;gap:16px;margin:12px 0 28px}
+.mark{width:54px;height:54px;border:1px solid var(--gold);border-radius:16px;display:grid;place-items:center;color:var(--gold);font-size:30px;font-weight:800}
+.eyebrow{margin:0;color:var(--gold);font-size:12px}
+h1{font-size:clamp(20px,4vw,30px);margin:2px 0}
+.status{margin-right:auto;border:1px solid var(--line);border-radius:30px;padding:6px 12px;color:var(--muted);font-size:12px;white-space:nowrap}
+.status i{display:inline-block;width:7px;height:7px;background:#d8b66a;border-radius:50%;margin-left:6px}
+.panel{background:linear-gradient(145deg,#172b24,#102019);border:1px solid var(--line);border-radius:20px;padding:22px;margin:16px 0;box-shadow:0 16px 40px #0003}
+h2{font-size:18px;margin:0 0 18px;color:var(--gold)}
+label{display:block;margin:13px 0 6px;color:var(--muted);font-size:13px}
+input,textarea{width:100%;border:1px solid var(--line);border-radius:11px;background:#0c1914;color:var(--text);padding:12px 14px;font:inherit;outline:none}
+input:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;line-height:1.9}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+button{border:0;border-radius:11px;background:var(--gold);color:#17251d;padding:10px 20px;font:700 14px Cairo;cursor:pointer}
+button.secondary{background:transparent;border:1px solid var(--line);color:var(--text)}
+.preview-area{min-height:110px;padding:18px;border-radius:13px;background:#0b1913;border:1px dashed #426151;line-height:2;white-space:pre-wrap}
+.placeholder,.note,footer{color:var(--muted);font-size:13px}
+.note{margin:12px 0 0}
+.preview-title{color:var(--gold);font-weight:700;margin:0 0 8px}
+footer{text-align:center;padding:20px}
+@media(max-width:560px){body{padding:18px 12px}.top{align-items:flex-start;flex-wrap:wrap}.status{margin-right:0}.panel{padding:17px}}

@@ -126,3 +126,10 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Latest tree comparison: source has 196 tracked files; destination has 78. 71 source files now have destination counterparts. Remaining 125 source paths include six Telegram-specific modules, their associated tests, additional reference/catalog tests, 36 photo/ZIP binary assets, and other files not yet ported.
 - Deliberately not copied or activated: Telegram bot/request/delivery modules and deployment workflows. No bot token, webhook, or external scheduler was touched. Binary photo/ZIP assets cannot be safely recreated through the available text-file GitHub write operation; they need a verified binary transfer path rather than corrupt text encoding.
 - This is a partial, dependency-aware port, not yet a complete port. No claim is made that the app now exposes all original engine features. The launcher UI, `main`, GitHub Pages configuration, original source repository, and production delivery/scheduling behavior remain unchanged.
+
+
+## Additional original catalog and reference test port — 2026-11-17
+- Added original regression suites for translation catalog generation, Uthmani catalog generation, Quran video catalog generation, Quran audio part handling, audio batch preparation, repository-rotation safety, background reel construction, background additions review, Al-Ikhlas reference validation, and Quran text validation.
+- Added all of these suites to the feature-branch Actions test step. Latest workflow update commit: `fb5aed40ea3ab529a2777ea5706a84f325cceb9e`.
+- GitHub Actions run `44190756265` was observed in progress on an earlier test-file commit; it is not the final validation for the expanded test list. The workflow run for commit `fb5aed40ea3ab529a2777ea5706a84f325cceb9e` remains the required validation target.
+- The original source's non-Telegram `src/` modules now all have destination counterparts. Six Telegram-only modules remain deliberately excluded pending a separate safe integration.

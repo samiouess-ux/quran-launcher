@@ -139,7 +139,7 @@ def create_arabic_overlay(title: str, verses: list[dict], destination: Path,
         draw.line((120,600,960,600),fill=accent,width=2)
         title_y=475
     draw.text((540,title_y),title,font=title_font,fill=accent,anchor="mm",
-              direction="rtl",language="ar")
+              direction="rtl",language="ar",stroke_width=2,stroke_fill=(0,0,0,220))
     verse=verses[0]
     exact_text=verse.get("arabic")
     if not isinstance(exact_text,str) or not exact_text.strip():
@@ -165,7 +165,8 @@ def create_arabic_overlay(title: str, verses: list[dict], destination: Path,
     first_y=850-(len(lines)-1)*line_height/2
     for i,line in enumerate(lines):
         draw.text((540,first_y+i*line_height),line,font=font,fill=text_color,
-                  anchor="mm",direction="rtl",language="ar")
+                  anchor="mm",direction="rtl",language="ar",
+                  stroke_width=2,stroke_fill=(0,0,0,220))
     number=str(verse["number"]).translate(str.maketrans("0123456789","٠١٢٣٤٥٦٧٨٩"))
     number_font=ImageFont.truetype(bold_path,34)
     if template == "ornate_gold_classic":
@@ -175,15 +176,18 @@ def create_arabic_overlay(title: str, verses: list[dict], destination: Path,
             r=radius if (angle//15)%2==0 else radius-6
             rad=math.radians(angle); pts.append((cx+math.cos(rad)*r,cy+math.sin(rad)*r))
         draw.line(pts+[pts[0]],fill=accent,width=3,joint="curve")
-        draw.text((cx,cy),number,font=number_font,fill=accent,anchor="mm",direction="rtl",language="ar")
+        draw.text((cx,cy),number,font=number_font,fill=accent,anchor="mm",direction="rtl",language="ar",
+                  stroke_width=1,stroke_fill=(0,0,0,210))
     elif template == "nature_clean":
         draw.rounded_rectangle((485,1080,595,1140),radius=28,outline=accent,width=3)
-        draw.text((540,1110),number,font=number_font,fill=accent,anchor="mm",direction="rtl",language="ar")
+        draw.text((540,1110),number,font=number_font,fill=accent,anchor="mm",direction="rtl",language="ar",
+                  stroke_width=1,stroke_fill=(0,0,0,210))
     elif template == "minimal_mushaf":
         draw.text((540,1110),f"۞ {number} ۞",font=number_font,fill=accent,anchor="mm",direction="rtl",language="ar")
     else:
         draw.line((390,1110,690,1110),fill=accent,width=2)
-        draw.text((540,1160),number,font=number_font,fill=accent,anchor="mm",direction="rtl",language="ar")
+        draw.text((540,1160),number,font=number_font,fill=accent,anchor="mm",direction="rtl",language="ar",
+                  stroke_width=1,stroke_fill=(0,0,0,210))
     image.save(destination)
 
 def create_english_overlay(verses: list[dict], destination: Path) -> None:
@@ -208,7 +212,8 @@ def create_english_overlay(verses: list[dict], destination: Path) -> None:
     line_h=58
     y=1300-(len(lines)-1)*line_h/2
     for line in lines:
-        draw.text((540,y),line,font=font,fill=(255,255,255,255),anchor="mm")
+        draw.text((540,y),line,font=font,fill=(255,255,255,255),anchor="mm",
+                  stroke_width=2,stroke_fill=(0,0,0,230))
         y+=line_h
     image.save(destination)
 

@@ -25,7 +25,9 @@ class PassageDurationTests(unittest.TestCase):
     def test_never_adds_an_ayah_that_would_exceed_40_seconds(self):
         durations = {10: 24.0, 11: 18.0, 12: 8.0}
         selected = choose_contiguous_passage(durations, 10)
-        self.assertEqual(selected, [10, 11])
+        # The next complete ayah would take the passage from 24s to 42s;
+        # preserve the 40s hard cap rather than satisfying the 35s target by overflow.
+        self.assertEqual(selected, [10])
         self.assertLessEqual(sum(durations[n] for n in selected), 40.0)
 
     def test_allows_a_single_long_ayah_without_trimming_it(self):

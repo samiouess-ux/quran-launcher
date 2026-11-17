@@ -44,3 +44,12 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - The approved moving-background catalog contains multiple user-approved candidates, but this does not solve the missing approved Quran passage pool or scheduler trigger.
 - Safe decision: do not add a fake schedule, do not repeat the same clip, do not place a GitHub token in the public launcher, and do not modify `main` or the original `IslamicTikTokAutomation` repository.
 - Remaining prerequisites for hands-off daily operation: an approved pool of distinct Quran passage manifests with verified Arabic + Saheeh International English + exact official audio, and an authorized scheduling trigger that does not violate the branch protection boundary. Telegram delivery remains separate and must be connected without changing the original bot/webhook.
+
+
+## Renderer visual improvements — 2026-11-17
+- Replaced the single-background loop in `build_background_reel` with a multi-clip moving-video reel. It downloads only enough eligible approved portrait clips to cover the audio duration, verifies actual media duration with ffprobe, and uses 0.55-second FFmpeg crossfades between clips.
+- The reel fails closed if the approved video library cannot cover the complete output duration after transition overlap; it does not silently stretch a single clip.
+- Added timed alpha fade-in/fade-out for Arabic and Saheeh International English verse overlays at scene boundaries. Overlay images are looped at 30 fps for their exact scene interval so the alpha fades are frame-based rather than a single still frame.
+- These are code changes only; the GitHub Actions render/test result for commits `5870d8e` and `167f4af` must be checked before calling the effects verified.
+- Existing limitations remain: only Ash-Sharh 94:5–6 has exact user-reviewed audio; its current sample is 9.51 seconds. Do not fabricate 30–40 second content or mark other visual templates approved without review.
+- No scheduler/cron, Telegram, original engine repository, default branch, or GitHub Pages changes were made.

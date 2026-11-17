@@ -2,15 +2,17 @@
 <html lang="ar" dir="rtl">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10251f"><title>محرك فيديوهات القرآن الكريم V2</title><link rel="stylesheet" href="styles.css"></head>
 <body><main class="app">
-<header class="top"><div class="mark">ق</div><div><p class="eyebrow">الإصدار الثاني المستقل</p><h1>صانع فيديوهات القرآن الكريم</h1><p class="sub">حضّر المقطع وصدّره مباشرة من هاتفك</p></div><span class="status"><i></i> تجريبي</span></header>
+<header class="top"><div class="mark">ق</div><div><p class="eyebrow">الإصدار الثاني المستقل</p><h1>صانع فيديوهات القرآن الكريم</h1><p class="sub">اختَر السورة والآيات من القوائم، ثم أنشئ الفيديو</p></div><span class="status"><i></i> تجريبي</span></header>
 <div class="layout">
-<section class="panel controls"><h2>1 — محتوى الفيديو</h2>
-<label for="surah">عنوان السورة / المقطع</label><input id="surah" value="سورة الرحمن" maxlength="70">
-<label for="ayah">نص الآيات</label><textarea id="ayah" rows="5" placeholder="أدخل الآيات التي تريد ظهورها في الفيديو...">فَبِأَيِّ آلَاءِ رَبِّكُمَا تُكَذِّبَانِ</textarea>
+<section class="panel controls"><h2>1 — اختيار السورة والآيات</h2>
+<label for="surahSelect">السورة</label><select id="surahSelect"><option value="">جارٍ تجهيز قائمة السور...</option></select>
+<div class="ayah-range"><div><label for="ayahFrom">من الآية</label><input id="ayahFrom" type="number" min="1" value="1"></div><div><label for="ayahTo">إلى الآية</label><input id="ayahTo" type="number" min="1" value="1"></div></div>
+<p id="surahInfo" class="hint">اختر السورة لتحميل آياتها تلقائيًا.</p>
+<label for="ayah">نص الآيات المختارة (يُملأ آليًا)</label><textarea id="ayah" rows="5" readonly>اختر سورة...</textarea>
 <label for="reciter">اسم القارئ (اختياري)</label><input id="reciter" placeholder="اسم القارئ">
 <h2>2 — الصوت والخلفية</h2>
-<label class="filepick" for="audio"><span>اختيار تلاوة صوتية</span><small id="audioName">لم يتم اختيار ملف صوتي</small></label><input class="hidden" id="audio" type="file" accept="audio/*">
+<label class="filepick" for="audio"><span>اختيار ملف التلاوة الصوتية</span><small id="audioName">لم يتم اختيار ملف صوتي</small></label><input class="hidden" id="audio" type="file" accept="audio/*">
 <label class="filepick" for="background"><span>اختيار صورة خلفية (اختياري)</span><small id="imageName">سيتم استعمال خلفية افتراضية</small></label><input class="hidden" id="background" type="file" accept="image/*">
-<div class="actions"><button id="preview" type="button" class="secondary">تحديث المعاينة</button><button id="render" type="button">إنشاء الفيديو</button></div><p id="status" class="statusline" role="status">اختر ملف التلاوة لبدء إنشاء فيديو.</p></section>
+<div class="actions"><button id="preview" type="button" class="secondary">تحديث المعاينة</button><button id="render" type="button">إنشاء الفيديو</button></div><p id="status" class="statusline" role="status">اختر السورة والآيات، ثم ملف التلاوة.</p></section>
 <section class="panel preview-panel"><h2>3 — معاينة الفيديو</h2><div class="screen"><canvas id="stage" width="1280" height="720"></canvas></div><div class="actions"><a id="download" class="download disabled" aria-disabled="true">تحميل الفيديو</a></div><p class="note">يتم إنشاء الفيديو داخل المتصفح بصيغة WebM مع صوت التلاوة. لا يتم رفع ملفاتك إلى خادم.</p></section>
 </div><footer>المحرك الثاني مستقل — المحرك القديم لم يتم تعديله</footer></main><script src="src/app.js"></script></body></html>

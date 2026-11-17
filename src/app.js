@@ -17,7 +17,7 @@ function draw(){
  ctx.fillStyle="#d8b66a";ctx.font="600 22px Cairo, sans-serif";ctx.fillText($("reciter").selectedOptions[0]?.textContent||"",W/2,H-105);ctx.fillStyle="rgba(255,255,255,.65)";ctx.font="18px Cairo, sans-serif";ctx.fillText("صدقة جارية",W/2,H-65);
 }
 ["reciter"].forEach(id=>$(id).addEventListener("input",draw));$("preview").addEventListener("click",draw);
-$("backgroundPreset").addEventListener("change",draw);
+$("backgroundPreset")?.addEventListener("change",draw);
 $("background").addEventListener("change",e=>{const file=e.target.files[0];if(!file)return;if(imageUrl)URL.revokeObjectURL(imageUrl);imageUrl=URL.createObjectURL(file);backgroundImage=new Image();backgroundImage.onload=draw;backgroundImage.onerror=()=>$("status").textContent="تعذّر فتح الصورة المختارة.";backgroundImage.src=imageUrl;$("imageName").textContent=file.name;});
 $("audio").addEventListener("change",e=>{const file=e.target.files[0];if(!file)return;$("reciter").value="";if(audioUrl)URL.revokeObjectURL(audioUrl);audioUrl=URL.createObjectURL(file);$("audioName").textContent=file.name;$("status").textContent="تم اختيار ملف التلاوة. سيُستخدم بدل القارئ من القائمة.";});
 $("render").addEventListener("click",async()=>{

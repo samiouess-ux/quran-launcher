@@ -27,7 +27,7 @@ $("render").addEventListener("click",async()=>{
  let canvasStream=null,destination=null,recorder=null;
  try{
   if(audioElement){audioElement.pause();audioElement.removeAttribute("src");}
-  audioPlaylist=file?[audioUrl]:currentAyahs.slice(Number($("ayahFrom").value)-1,Number($("ayahTo").value)).map(a=>"https://everyayah.com/data/"+reciterFolder+"/"+String(Number($("surahSelect").value)).padStart(3,"0")+String(a.numberInSurah).padStart(3,"0")+".mp3");playlistIndex=0;audioElement=new Audio(audioPlaylist[0]);audioElement.crossOrigin="anonymous";audioElement.preload="auto";const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)throw new Error("المتصفح لا يدعم تشغيل الصوت داخل التسجيل.");
+  audioPlaylist=file?[audioUrl]:currentAyahs.slice(Number($("ayahFrom").value)-1,Number($("ayahTo").value)).map(a=>"https://everyayah.com/data/"+reciterFolder+"/"+String(Number($("surahSelect").value)).padStart(3,"0")+String(a.numberInSurah).padStart(3,"0")+".mp3");playlistIndex=0;if(!audioElement){audioElement=new Audio();audioElement.crossOrigin="anonymous";}audioElement.src=audioPlaylist[0];audioElement.preload="auto";const AudioCtx=window.AudioContext||window.webkitAudioContext;if(!AudioCtx)throw new Error("المتصفح لا يدعم تشغيل الصوت داخل التسجيل.");
   if(!audioContext){audioContext=new AudioCtx();audioSource=audioContext.createMediaElementSource(audioElement);}
   destination=audioContext.createMediaStreamDestination();audioSource.connect(destination);await audioContext.resume();
 draw();canvasStream=canvas.captureStream(30);

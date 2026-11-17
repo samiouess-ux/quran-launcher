@@ -67,3 +67,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Added the new test file to the isolated feature-branch Actions workflow.
 - Commits: 2c562cf6ddf9373ced62b2f6203d1cd52aa749df (duration defaults), 9a150c75121848d7fc97bf20bc51dfeca011e64f (tests), bf83f151b4e82a7dc631ed7edc0ad220b45927f9 (workflow).
 - Runtime validation is pending the Actions run triggered by the feature-branch push. The currently approved launcher sample remains 9.51s; this change does not invent extra approved verses or claim the current sample is 35s.
+
+## Background rotation runtime verification — 2026-11-17
+- Inspected the active root workflow `.github/workflows/quran-launcher-engine-render.yml`: its render command explicitly passes `--background-rotation` and a per-run key (`launcher-run-${GITHUB_RUN_ID}` when no manual key is supplied). Background rotation is therefore active in the current launcher render workflow, not merely present as unused code.
+- Inspected successful run 44164005349, job 134325065874. The job completed all steps successfully, including safety tests, Quran validation, official audio preparation, render, MP4 checks and artifact upload.
+- The runtime log confirms the selected moving-video background was `pexels-historic-mosque-stained-glass-30733250`; output was 9.51s. This proves the active workflow selected a catalog background, but this short sample needed only one clip; it does not yet demonstrate a multi-clip crossfade sequence.
+- The catalog currently has 11 candidates passing the strict portrait 9:16 + user approval + download verification filter. Some other approved candidates are excluded because their stored aspect ratio/dimensions are landscape or incomplete; do not silently treat them as eligible portrait backgrounds.
+- Confirmed limitation: the active root workflow still hardcodes `content/first_video.json` and the exact approved Ash-Sharh 94:5–6 audio. It does not yet use `content_rotation.py` or `select_review_manifest.py`. The separate workflow under `engine/.github/workflows/` is nested and is not a GitHub Actions workflow entry point; it must not be assumed active.
+- No code behavior, launcher UI, default branch, Telegram integration, cron, or source repository was changed in this verification update.

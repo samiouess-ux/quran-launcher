@@ -56,3 +56,6 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 
 - Follow-up robustness fix: skipped/unavailable background candidates now advance the candidate cursor rather than risking a duplicate download when filling the crossfade reel.
 - Latest renderer commit: `375216afd7a20aee342ea4357f0110e8a4571a02`. Runtime FFmpeg validation is still pending; no success is claimed until the Actions render completes and its output is inspected.
+
+- Readability improvement: Arabic surah title, Arabic ayah text, ayah-number ornament, and Saheeh International English overlay now use a restrained dark stroke for legibility over bright moving footage. Original Quran strings and colors are unchanged.
+- Renderer commit: `350fda0c9aaf9ce7e26974243828007bb9c9c9bc`.

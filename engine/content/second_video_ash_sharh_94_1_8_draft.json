@@ -1,0 +1,198 @@
+{
+  "id": "review_surah_ash_sharh_94_1_8",
+  "status": "draft_review_only_production_audio_rebuild_required",
+  "source": {
+    "surah_number": 94,
+    "surah_name_ar": "الشرح",
+    "surah_name_en": "Ash-Sharh",
+    "verses": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "arabic_reference_file": "data/reference/surah_ash_sharh_94_1_8_approved.json",
+    "arabic_source": "Tanzil Quran Text Uthmani v1.1",
+    "english_translation": "Sahih International",
+    "translation_verified": true,
+    "note": "English wording checked against Sahih International at the cited source. Arabic must remain byte-for-byte identical to the approved Tanzil reference.",
+    "translation_source_url": "https://legacy.quran.com/94/1-8"
+  },
+  "basmala": "بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ",
+  "verses": [
+    {
+      "number": 1,
+      "arabic": "أَلَمْ نَشْرَحْ لَكَ صَدْرَكَ",
+      "english": "Did We not expand for you, [O Muhammad], your breast?"
+    },
+    {
+      "number": 2,
+      "arabic": "وَوَضَعْنَا عَنكَ وِزْرَكَ",
+      "english": "And We removed from you your burden"
+    },
+    {
+      "number": 3,
+      "arabic": "ٱلَّذِىٓ أَنقَضَ ظَهْرَكَ",
+      "english": "Which had weighed upon your back"
+    },
+    {
+      "number": 4,
+      "arabic": "وَرَفَعْنَا لَكَ ذِكْرَكَ",
+      "english": "And raised high for you your repute."
+    },
+    {
+      "number": 5,
+      "arabic": "فَإِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+      "english": "For indeed, with hardship [will be] ease."
+    },
+    {
+      "number": 6,
+      "arabic": "إِنَّ مَعَ ٱلْعُسْرِ يُسْرًا",
+      "english": "Indeed, with hardship [will be] ease."
+    },
+    {
+      "number": 7,
+      "arabic": "فَإِذَا فَرَغْتَ فَٱنصَبْ",
+      "english": "So when you have finished [your duties], then stand up [for worship]."
+    },
+    {
+      "number": 8,
+      "arabic": "وَإِلَىٰ رَبِّكَ فَٱرْغَب",
+      "english": "And to your Lord direct [your] longing."
+    }
+  ],
+  "audio": {
+    "required": true,
+    "music_allowed": false,
+    "official_verse_archive_url": "https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip",
+    "source_audio_artifact": "ash-sharh-94-1-8-audio-review",
+    "exact_recording_user_reviewed": false,
+    "pauses_treatment": "user_approved_preview_v4; trim trailing low-level silence using silenceremove stop_duration=0.08 stop_threshold=-42dB; insert only 0.02 seconds between verses; no time-stretching or speed change",
+    "production_audio_file": "output/ash_sharh_94_1_8_approved_audio.mp3",
+    "approved": false,
+    "preview_only": true,
+    "candidate_preview_duration_seconds": 43.284898,
+    "note": "Review-only candidate. User has explicitly reconfirmed audio approval only for Ash-Sharh 94:5-6; this 94:1-8 recording has not been separately listened to or approved. It may be rendered only as a private review preview, never treated as production-approved.",
+    "kind": "quran_recitation",
+    "rights_verified": true
+  },
+  "visual": {
+    "format": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "template": "ornate_gold_classic",
+    "background_style": "calm_nature_scenery",
+    "background_candidate": {
+      "provider": "Mixkit",
+      "title": "Waterfall Between Green Hills",
+      "source_url": "https://mixkit.co/free-stock-video/waterfall-between-green-hills-100174/",
+      "direct_video_url": "https://assets.mixkit.co/active_storage/video_items/100174/1721166924/100174-video-720.mp4",
+      "user_approved": true,
+      "approved": true
+    },
+    "layout": "eight separate timed screens; exactly one verse per screen; never squeeze multiple verses into one frame",
+    "translation_layout": "show the matching English translation beneath its single Arabic verse on the same screen",
+    "scenes": [
+      {
+        "scene": 1,
+        "verses": [
+          1
+        ],
+        "transition": "soft fade",
+        "timing": "derive from processed verse audio segment lengths; keep all audio continuous"
+      },
+      {
+        "scene": 2,
+        "verses": [
+          2
+        ],
+        "transition": "soft fade",
+        "timing": "derive from processed verse audio segment lengths; keep all audio continuous"
+      },
+      {
+        "scene": 3,
+        "verses": [
+          3
+        ],
+        "transition": "soft fade",
+        "timing": "derive from processed verse audio segment lengths; keep all audio continuous"
+      },
+      {
+        "scene": 4,
+        "verses": [
+          4
+        ],
+        "transition": "soft fade",
+        "timing": "derive from processed verse audio segment lengths; keep all audio continuous"
+      },
+      {
+        "scene": 5,
+        "verses": [
+          5
+        ],
+        "transition": "soft fade",
+        "timing": "derive from processed verse audio segment lengths; keep all audio continuous"
+      },
+      {
+        "scene": 6,
+        "verses": [
+          6
+        ],
+        "transition": "soft fade",
+        "timing": "derive from processed verse audio segment lengths; keep all audio continuous"
+      },
+      {
+        "scene": 7,
+        "verses": [
+          7
+        ],
+        "transition": "soft fade",
+        "timing": "derive from processed verse audio segment lengths; keep all audio continuous"
+      },
+      {
+        "scene": 8,
+        "verses": [
+          8
+        ],
+        "transition": "soft fade",
+        "timing": "derive from processed verse audio segment lengths; keep all audio continuous"
+      }
+    ],
+    "readability_constraints": {
+      "arabic": "One large centered Arabic verse per screen; wrap by whole words if needed; preserve exact Unicode text byte-for-byte; no clipping or overlap; keep the separate ornamental verse-number medallion.",
+      "english": "Show only the matching English translation beneath its verse; wrap by measured font width; no clipping.",
+      "collision_checks": "Measure all text bounds; fail rendering if any text crosses panel boundaries, overlaps another verse, or collides with title/ornament.",
+      "basmala": "Display separately from verse text; never append it to verse 1."
+    }
+  },
+  "publishing": {
+    "approval_required": true,
+    "auto_publish": false
+  },
+  "caption": {
+    "languages": [
+      "ar",
+      "en"
+    ],
+    "mention_reciter": false,
+    "status": "draft_for_review",
+    "arabic": "سورة الشرح | الآيات 1–8\nتلاوة لسورة الشرح كاملة، تذكيرٌ باليسر بعد العسر وبالتوجّه إلى الله.",
+    "english": "Surah Ash-Sharh | Verses 1–8\nA complete recitation of Surah Ash-Sharh, a reminder of ease after hardship and turning to Allah.",
+    "hashtags_ar": [
+      "#القرآن_الكريم",
+      "#سورة_الشرح"
+    ],
+    "hashtags_en": [
+      "#Quran",
+      "#AshSharh"
+    ],
+    "hashtag_topics": [
+      "ease_after_hardship"
+    ]
+  }
+}

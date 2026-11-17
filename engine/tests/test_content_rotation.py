@@ -67,11 +67,28 @@ class ContentRotationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Unsupported"):
             choose_manifest(self.directory, "hadith", rotation_key="key")
 
-    def test_malformed_manifest_is_ignored(self):
+    def test_malformed_json_and_root_types_are_ignored(self):
         (self.directory / "broken.json").write_text("{", encoding="utf-8")
+        (self.directory / "array.json").write_text("[]", encoding="utf-8")
         self.write_manifest("valid.json", "valid")
         chosen = choose_manifest(self.directory, "quran", rotation_key="key")
         self.assertEqual(chosen.name, "valid.json")
+
+    def test_malformed_approval_metadata_is_ignored(self):
+        self.write_manifest("string-publishing.json", "bad-string",
+                            publishing="approved")
+        self.write_manifest("list-publishing.json", "bad-list",
+                            publishing=["approval_required", True])
+        self.write_manifest("missing-publishing.json", "missing",
+                            publishing=None)
+        self.write_manifest("valid.json", "valid")
+        chosen = choose_manifest(self.directory, "quran", rotation_key="key")
+        self.assertEqual(chosen.name, "valid.json")
+
+    def test_boolean_batch_size_is_rejected(self):
+        self.write_manifest("valid.json", "valid")
+        with self.assertRaisesRegex(ValueError, "positive integer"):
+            choose_manifests(self.directory, "quran", True)
 
 
 if __name__ == "__main__":

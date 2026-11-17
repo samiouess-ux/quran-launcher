@@ -9,3 +9,5 @@ select:focus{border-color:var(--gold)}
 .ayah-range{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .hint{font-size:12px;color:var(--gold);margin:8px 0}
 textarea[readonly]{opacity:.95}
+
+#reciter,#backgroundPreset{margin-bottom:8px}.hint{line-height:1.8}

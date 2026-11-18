@@ -1,0 +1,44 @@
+name: Quran Background Photo Review
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quran-background-photo-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-photo-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout selected branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install image preview dependency
+        run: python -m pip install --disable-pip-version-check Pillow
+
+      - name: Build review-only gallery
+        run: |
+          python engine/src/build_photo_review_gallery.py \
+            --catalog engine/data/background_photos_manifest.json \
+            --repo-root . \
+            --output-dir output/background-photo-review
+
+      - name: Upload phone-friendly review package
+        uses: actions/upload-artifact@v4
+        with:
+          name: quran-background-photo-review
+          path: output/background-photo-review/
+          if-no-files-found: error
+          retention-days: 14

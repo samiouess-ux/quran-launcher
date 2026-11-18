@@ -96,6 +96,24 @@ class ContentManifestTests(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "Background must be approved"):
             validate_content_manifest(data)
 
+    def test_missing_content_type_is_rejected(self):
+        data = self.dua_manifest()
+        del data["content_type"]
+        with self.assertRaisesRegex(SystemExit, "content_type must be explicitly"):
+            validate_content_manifest(data)
+
+    def test_missing_auto_publish_setting_is_rejected(self):
+        data = self.dua_manifest()
+        del data["publishing"]["auto_publish"]
+        with self.assertRaisesRegex(SystemExit, "Auto-publishing"):
+            validate_content_manifest(data)
+
+    def test_missing_audio_kind_is_rejected(self):
+        data = self.dua_manifest()
+        del data["audio"]["kind"]
+        with self.assertRaisesRegex(SystemExit, "audio.kind must explicitly"):
+            validate_content_manifest(data)
+
     def test_auto_publish_is_always_rejected(self):
         data = self.dua_manifest()
         data["publishing"]["auto_publish"] = True

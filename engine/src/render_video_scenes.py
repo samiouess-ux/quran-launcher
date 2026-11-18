@@ -562,14 +562,16 @@ def main() -> None:
         # Shift each still overlay onto its absolute scene timeline before fading.
         # Without this, later overlays have already completed their fade-out by
         # the time the global overlay enable window begins.
-        arabic_fade = (
-            f"[{input_index}:v]format=rgba,setpts=PTS+{start:.6f}/TB,"
-            f"fade=t=in:st={start:.6f}:d={fade_in:.3f}:alpha=1"
+        # The Arabic PNG contains the shared decorative frame as well as
+        # the changing ayah. Keep this layer fully opaque at every scene
+        # boundary: fading it in/out makes the identical frame visibly
+        # flicker. The frame is pixel-identical between scenes; only the
+        # verse glyphs change. English translation keeps its soft fade below.
+        arabic_layer = (
+            f"[{input_index}:v]format=rgba,setpts=PTS+{start:.6f}/TB"
+            f"[ar{index}]"
         )
-        if fade_out:
-            arabic_fade += f",fade=t=out:st={max(start, end-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
-        arabic_fade += f"[ar{index}]"
-        filters.append(arabic_fade)
+        filters.append(arabic_layer)
         english_fade = (
             f"[{input_index + 1}:v]format=rgba,setpts=PTS+{start:.6f}/TB,"
             f"fade=t=in:st={start:.6f}:d={fade_in:.3f}:alpha=1"

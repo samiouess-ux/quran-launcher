@@ -324,3 +324,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 
 - Follow-up visual inspection of the downloaded review MP4: extracted representative frames at 2-second through 51-second checkpoints. The decorative ayah panel/frame stayed in the same screen position and no obvious fade-out/fade-in flicker was visible in these sampled frames across ayah changes. Moving backgrounds changed through the sequence, and Arabic/English overlays remained visible in the sampled timeline. This is a sampled visual check, not a frame-by-frame proof.
 - The inspected MP4 metadata reports H.264 video, AAC audio, 1080x1920, 30 fps, and 51.946 seconds duration. The complete Al-Fatihah output is therefore longer than 40 seconds; this matches the explicit full-surah/no-splitting decision for this review test and must not be treated as a global duration cap.
+
+## Detailed ayah-boundary visual review — 2026-11-18
+- Downloaded and inspected the exact MP4 from artifact 14424505862 (run 44296263880); no video or generated media was added to Git.
+- Used the processed per-ayah audio durations in the workflow log to locate the six ayah boundaries at approximately 6.45s, 13.27s, 18.29s, 23.75s, 30.51s, and 36.89s.
+- Extracted five frames around each boundary (approximately -0.10s, -0.033s, boundary, +0.033s, +0.10s) and reviewed the resulting contact sheet. The decorative panel/frame remains in the same layout and position; no obvious frame fade, jump, shake, or flicker is visible at the six sampled transitions. The Arabic ayah changes at the expected boundary; the English translation retains its intended soft transition. Background clips continue to change independently.
+- This is a focused visual sample around all six ayah boundaries, not a pixel-by-pixel or full 30-fps audit. Record the result as “no obvious flicker in sampled boundary frames,” not as a mathematical guarantee of zero flicker.
+- No renderer code change was needed based on this review. Keep the Arabic overlay fully opaque at scene boundaries; do not add fade-out/fade-in to the shared frame layer. Background and English translation fades remain separate.
+- Review-only. No production activation, UI/Pages, Telegram, scheduler, TikTok publishing, main, or original source repository was changed.

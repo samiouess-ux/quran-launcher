@@ -1,5 +1,4 @@
 import io
-import json
 import sys
 import tempfile
 import unittest
@@ -58,10 +57,10 @@ class AlIkhlasAudioReviewTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "audio"
-            with patch.object(module, "open_verified_archive", fake_open), \\
-                 patch.object(module, "probe_duration", side_effect=lambda _p: next(durations)), \\
-                 patch.object(module.subprocess, "run", side_effect=fake_run):
-                report = module.prepare_audio_review(inventory(), output)
+            with patch.object(module, "open_verified_archive", fake_open):
+                with patch.object(module, "probe_duration", side_effect=lambda _p: next(durations)):
+                    with patch.object(module.subprocess, "run", side_effect=fake_run):
+                        report = module.prepare_audio_review(inventory(), output)
 
             self.assertEqual(report["verses"], [1, 2, 3, 4])
             self.assertEqual(report["reciter"], "Maher Al-Muaiqly")

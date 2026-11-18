@@ -32,7 +32,7 @@
 <li>إظهار الآيات بالعربية والترجمة الإنجليزية مع التلاوة، مع إبقاء إطار الآيات ثابتًا عند الانتقال.</li>
 <li>فحص ملف MP4 ثم حفظه كملف مراجعة قابل للتنزيل.</li>
 </ul>
-<p class="notice">الحماية: لا يوجد نشر تلقائي على TikTok، ولا إرسال إلى Telegram، ولا نطلب منك أي GitHub token داخل الصفحة.</p>
+<p class="notice">الحماية: لا يوجد نشر تلقائي على TikTok ولا إرسال إلى Telegram. يلزم رمز GitHub محدود الصلاحية لتشغيل المحرك، ويُستخدم مؤقتًا في هذه الجلسة فقط.</p>
 </section>
 <footer>نسخة مستقلة — المستودع الأصلي وفرع main لم يتم تعديلهما</footer>
 </main>
@@ -47,6 +47,7 @@
   const status = document.getElementById('run-status');
   const result = document.getElementById('run-result');
   let pollHandle = null;
+  let dispatchStartedAt = 0;
   const api = 'https://api.github.com/repos/' + owner + '/' + repo;
   function say(message) { status.textContent = message; }
   function showRun(run) {
@@ -78,7 +79,7 @@
       });
       if (!response.ok) throw new Error('تعذّر قراءة حالة التشغيل من GitHub (' + response.status + ').');
       const data = await response.json();
-      const run = data.workflow_runs && data.workflow_runs.find(x => x.event === 'workflow_dispatch');
+      const run = data.workflow_runs && data.workflow_runs.find(x => x.event === 'workflow_dispatch' && Date.parse(x.created_at) >= dispatchStartedAt);
       if (!run) { say('طلب التشغيل أُرسل. ننتظر ظهور التشغيل في GitHub…'); return; }
       showRun(run);
       if (run.status === 'completed' && pollHandle) { clearInterval(pollHandle); pollHandle = null; }
@@ -88,6 +89,7 @@
     const token = tokenInput.value.trim();
     if (!token) { say('ألصق رمز GitHub المحدود أولًا.'); tokenInput.focus(); return; }
     runButton.disabled = true;
+    dispatchStartedAt = Date.now() - 5000;
     say('جارٍ إرسال طلب التشغيل إلى GitHub…');
     result.hidden = true;
     try {

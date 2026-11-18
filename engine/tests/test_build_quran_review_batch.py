@@ -197,7 +197,7 @@ class BatchTests(unittest.TestCase):
             self.assertEqual(nums, list(range(nums[0], nums[0] + 2)))
 
 
-    def test_rotation_excludes_every_previously_delivered_surah(self):
+    def test_rotation_continues_partially_delivered_surahs_before_fresh_surahs(self):
         verses = {}
         for surah in range(1, 7):
             for ayah in range(1, 5):
@@ -218,10 +218,12 @@ class BatchTests(unittest.TestCase):
             used_ayah_references=["1:1", "1:2", "2:1", "2:2"],
             used_surahs=[1, 2],
         )
-        selected = [item["surah_number"] for item in result["passages"]]
+        selected = {item["surah_number"]: item["verse_numbers"] for item in result["passages"]}
+        self.assertEqual(selected, {1: [3, 4], 2: [3, 4]})
         self.assertEqual(len(selected), 2)
-        self.assertTrue(set(selected).isdisjoint({1, 2}))
-        self.assertEqual(len(set(selected)), 2)
+        self.assertFalse(result["rendering_allowed"])
+        self.assertFalse(result["telegram_delivery"])
+        self.assertFalse(result["auto_publish"])
 
     def test_rotation_continues_partially_delivered_surah_before_fresh_surahs(self):
         verses = {}

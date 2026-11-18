@@ -251,5 +251,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: quran-launcher-original-engine-review
-          path: |\n            engine/output/review_part_1.mp4\n            engine/output/review_part_2.mp4
+          path: |
+            engine/output/review_part_1.mp4
+            engine/output/review_part_2.mp4
           retention-days: 7

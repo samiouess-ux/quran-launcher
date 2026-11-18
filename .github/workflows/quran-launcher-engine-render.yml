@@ -237,7 +237,7 @@ jobs:
                   '-of', 'default=nw=1:nk=1', f'build/audio/processed/verse_{n:02d}.mp3'
               ], text=True).strip()) for n in range(1, 8)
           }
-          manifest['audio']['production_audio_file'] = 'output/al_fatiha_1_7_review_audio.mp3'
+          manifest['audio']['production_audio_file'] = 'output/al_fatiha_1_7_review_audio.wav'
           manifest['audio']['processed_verse_durations_seconds'] = processed_durations
           manifest['audio']['inter_verse_silence_seconds'] = 0.0
           Path('build/launcher_manifest_full_fatiha.json').write_text(

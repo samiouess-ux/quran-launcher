@@ -7,18 +7,13 @@
     "surah_number": 112,
     "surah_name_ar": "الإخلاص",
     "surah_name_en": "Al-Ikhlas",
-    "verses": [
-      1,
-      2,
-      3,
-      4
-    ],
+    "verses": [1, 2, 3, 4],
     "arabic_source": "Quran.com Uthmani text",
     "arabic_source_url": "https://quran.com/al-ikhlas",
     "english_translation": "Sahih International",
     "translation_source_url": "https://legacy.quran.com/112/1-4",
     "translation_verified": true,
-    "note": "Candidate only. Arabic and Sahih International wording were cross-checked against the cited Quran.com and legacy Quran.com pages. The reference snapshot, audio rights, exact recording, and visual asset are not yet approved."
+    "note": "Candidate only. Arabic and Saheeh International wording were cross-checked against the cited Quran.com and legacy Quran.com pages. The exact Maher Al-Muaiqly Hafs audio still requires extraction and listening review. This candidate is not approved for rotation or production."
   },
   "verses": [
     {
@@ -47,17 +42,17 @@
     "kind": "quran_recitation",
     "approved": false,
     "exact_recording_user_reviewed": false,
-    "rights_verified": false,
-    "note": "Candidate only. Islam Sobhi / Hafs recitation source and Surah 112 download link identified. The exact file has not yet been independently downloaded and inspected; usage rights and exact-recording review remain pending.",
-    "rights_source_url": null,
-    "rights_note": "Usage rights for this exact Islam Sobhi recording have not been verified. Do not render or approve for production until the applicable MP3Quran terms and recording-specific reuse permissions are documented.",
-    "reciter_name": "إسلام صبحي",
+    "rights_verified": true,
+    "note": "Maher Al-Muaiqly — Hafs. A separate review workflow extracts the complete 112:1–4 files from the checksum-pinned official KFGQPC Hafs ayah archive. The exact files have not yet been listened to or approved.",
+    "rights_source_url": "https://qurancomplex.gov.sa/quran-audios/",
+    "rights_note": "Official KFGQPC collection reuse permission is documented in the source manifest. This does not approve the exact passage for production; the exact recording must still be listened to and approved.",
+    "reciter_name": "ماهر المعيقلي",
     "riwaya": "حفص عن عاصم",
-    "recording_source": "MP3Quran",
-    "recording_page_url": "https://mp3quran.net/ar/",
-    "recording_file_url": "https://cdn.mp3quran.net/download/audio/islam-sobhi/r1/112.mp3",
-    "recording_path": "audio/islam-sobhi/r1/112.mp3",
-    "user_audio_feedback": "User said the audio sounds good; exact-file listening review is still pending."
+    "recording_source": "King Fahd Complex — official Maher Al-Muaiqly Hafs ayah archive",
+    "recording_page_url": "https://qurancomplex.gov.sa/quran-audio-hafs-muaiqly/",
+    "recording_file_url": "https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip",
+    "recording_path": "official_inventory:112:1-4",
+    "user_audio_feedback": "Exact 112:1–4 recording review is pending; do not infer approval."
   },
   "visual": {
     "format": "9:16",
@@ -67,28 +62,19 @@
     "template": "ornate_gold_classic",
     "background_style": "calm_nature_scenery",
     "background_candidate": null,
-    "note": "Choose an independently approved background asset before rendering."
+    "note": "Use the already reviewed and approved moving-background rotation for the eventual preview render; do not add or re-review background candidates here."
   },
   "publishing": {
     "approval_required": true,
     "auto_publish": false
   },
   "caption": {
-    "languages": [
-      "ar",
-      "en"
-    ],
+    "languages": ["ar", "en"],
     "mention_reciter": false,
     "status": "draft_for_review",
     "arabic": "سورة الإخلاص | الآيات 1–4",
     "english": "Surah Al-Ikhlas | Verses 1–4",
-    "hashtags_ar": [
-      "#القرآن_الكريم",
-      "#سورة_الإخلاص"
-    ],
-    "hashtags_en": [
-      "#Quran",
-      "#AlIkhlas"
-    ]
+    "hashtags_ar": ["#القرآن_الكريم", "#سورة_الإخلاص"],
+    "hashtags_en": ["#Quran", "#AlIkhlas"]
   }
 }

@@ -500,8 +500,8 @@ def probe(path: Path) -> dict:
         raise RuntimeError(f"Original MP3 audio stream was not preserved: {path}")
     if duration <= 0:
         raise RuntimeError(f"Preview has invalid duration: {duration}")
-    if duration > 45.0:
-        raise RuntimeError(f"Preview exceeds the 45-second maximum: {duration:.3f}s")
+    if duration > 40.0:
+        raise RuntimeError(f"Preview exceeds the 40-second maximum: {duration:.3f}s")
     return {"duration_seconds": round(duration, 3), "width": 1080, "height": 1920,
             "video_codec": video["codec_name"], "audio_codec": audio["codec_name"]}
 
@@ -646,7 +646,7 @@ def render(batch_path: Path, report_path: Path, output_dir: Path, minimum_previe
     if report.get("telegram_delivery") is not False or report.get("auto_publish") is not False:
         raise ValueError("Delivery and publishing must remain disabled.")
     # Validate all selected ayahs before rendering. Every prepared passage must
-    # contain the complete requested sequence; final previews are capped at 45 seconds.
+    # contain the complete requested sequence; final previews are capped at 40 seconds.
     candidates = {x["candidate_id"]: x for x in batch.get("passages", [])}
     report_items = report.get("items", [])
     for item in report_items:

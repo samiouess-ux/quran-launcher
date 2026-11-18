@@ -8,12 +8,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
-import sys
 from datetime import date
 from pathlib import Path
 
 from content_rotation import choose_manifests
+from render_quran_review_batch import render_batch
 from validate_content_manifest import validate_content_manifest
 
 DAILY_CONTENT_TYPE = "quran"
@@ -74,18 +73,24 @@ def build_plan(
 
 
 def render_plan(plan: list[dict], output_dir: Path) -> list[dict]:
-    """Render only after a complete preflight; Quran uses its dedicated renderer."""
-    output_dir.mkdir(parents=True, exist_ok=True)
-    rendered: list[dict] = []
-    for item in plan:
-        output = output_dir / f"quran-{item['content_id']}.mp4"
-        subprocess.run(
-            [sys.executable, "src/render_video_scenes.py",
-             "--manifest", item["manifest"], "--output", str(output)],
-            check=True,
+    """Render the whole selected batch through the original diversity-checking batch renderer."""
+    if len(plan) != DEFAULT_DAILY_VIDEO_COUNT:
+        raise ValueError(
+            f"Daily Quran rendering requires exactly {DEFAULT_DAILY_VIDEO_COUNT} distinct manifests; "
+            f"received {len(plan)}."
         )
+    manifest_paths = [Path(item["manifest"]) for item in plan]
+    result = render_batch(manifest_paths, output_dir)
+    videos = result.get("videos", [])
+    if result.get("status") != "multi_video_batch_rendered_for_manual_review":
+        raise RuntimeError("Batch renderer did not confirm a complete manual-review batch.")
+    if len(videos) != len(plan):
+        raise RuntimeError("Batch renderer returned an incomplete video list.")
+    rendered = []
+    for item, video in zip(plan, videos):
+        output = Path(video["video"])
         if not output.is_file() or output.stat().st_size == 0:
-            raise SystemExit(f"Renderer did not produce a non-empty MP4: {output}")
+            raise RuntimeError(f"Renderer did not produce a non-empty MP4: {output}")
         rendered.append({**item, "output": str(output)})
     return rendered
 

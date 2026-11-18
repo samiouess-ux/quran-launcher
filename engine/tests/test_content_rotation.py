@@ -85,6 +85,20 @@ class ContentRotationTests(unittest.TestCase):
         chosen = choose_manifest(self.directory, "quran", rotation_key="key")
         self.assertEqual(chosen.name, "valid.json")
 
+    def test_missing_content_type_is_not_assumed_to_be_quran(self):
+        self.write_manifest("missing-type.json", "missing-type",
+                            content_type=None)
+        self.write_manifest("valid.json", "valid")
+        # Explicit null is not a valid type; the valid manifest remains eligible.
+        chosen = choose_manifest(self.directory, "quran", rotation_key="key")
+        self.assertEqual(chosen.name, "valid.json")
+
+    def test_missing_auto_publish_flag_is_not_assumed_safe(self):
+        self.write_manifest("missing-auto.json", "missing-auto",
+                            publishing={"approval_required": True})
+        with self.assertRaisesRegex(FileNotFoundError, "No eligible"):
+            choose_manifest(self.directory, "quran", rotation_key="key")
+
     def test_boolean_batch_size_is_rejected(self):
         self.write_manifest("valid.json", "valid")
         with self.assertRaisesRegex(ValueError, "positive integer"):

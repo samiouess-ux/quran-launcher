@@ -218,3 +218,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Updated the out-of-range-surah error to consistently identify the input as an invalid Quran verse key. Validation behavior is unchanged.
 - The canonical surah verse-count table was independently checked: 114 entries totaling exactly 6,236 ayahs.
 - Re-run the complete feature-branch workflow before treating this correction as verified.
+
+
+## Canonical Quran catalog validation verified — 2026-11-18
+- Feature-branch Actions run 44260400866 (run 121) completed successfully on exact commit eaa3e4d5741dd819381b2fcc9b00217c17cc17d0.
+- The full renderer safety regression suite passed, including canonical Quran reference validation; approved Ash-Sharh manifest validation; checksum-pinned official Hafs inventory; exact approved Maher Al-Muaiqly audio preparation; moving-background MP4 render; technical MP4 checks; and review-only artifact upload.
+- Review artifact: `quran-launcher-original-engine-review`, artifact ID 14408270322. This is a review artifact from the unchanged Ash-Sharh 94:5–6 sample, not a new approved passage.
+- The joined 6,236-ayah catalog and review-batch candidate pipeline are still preparation-only; human text, translation-rights, exact-recording, and background approval gates remain closed. The active launcher workflow still renders only the approved Ash-Sharh sample.
+- No UI, `main`, source repository, Telegram bot/webhook, scheduler, Pages settings, or TikTok publishing was changed.

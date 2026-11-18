@@ -278,3 +278,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Pending GitHub Actions validation on the latest branch head. Rendering, audio approval, Telegram delivery, and auto-publishing remain disabled for candidate batches.
 - Workflow dependency-install step was also bounded: it checks runner-provided FFmpeg/Amiri first and uses capped apt retries/timeouts only when installation is needed. Workflow commit: `97c132b`.
 - No launcher UI, `main`, original source repository, Telegram bot/webhook, scheduler, Pages settings, or TikTok publishing was changed.
+
+
+## Explicit-surah partial continuation and CI queue fix — 2026-11-18
+- Follow-up review caught that the previous hard-boundary fix excluded an already-used surah from the partial continuation pool when `only_surahs` was supplied. The selection now validates `used_surahs` in both modes, excludes fully used surahs from fresh selection, and still allows the requested surah's unused contiguous suffix.
+- Regression test now requests only surah 2 while marking surah 2 as partially delivered, and expects continuation at ayah 3. This is the strict case needed for a Friday Al-Kahf-only batch.
+- Commits: `3987ddd` (selection), `f39da25` (regression test).
+- CI concurrency now cancels an older in-progress run when a newer commit needs validation. This addresses the stale run that remained marked in progress at the FFmpeg/font installation step and blocked newer queued runs. Workflow commit: `112ab23`.
+- Latest validation remains pending; do not treat any of these new tests as passed until the latest-head run completes successfully.

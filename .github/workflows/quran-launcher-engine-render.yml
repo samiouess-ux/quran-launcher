@@ -109,171 +109,136 @@ jobs:
           python -m unittest discover -s tests -p 'test_validate_quran_text.py' -v
           python -m unittest discover -s tests -p 'test_parse_telegram_quran_request.py' -v
 
-      - name: Validate approved Quran text and manifest
+      - name: Build complete Uthmani Arabic and Saheeh International corpora
         env:
           PYTHONPATH: src
         run: |
-          python src/validate_quran_text.py --manifest content/first_video.json --reference data/reference/quran_text_uthmani.json
+          python src/build_quran_uthmani_catalog.py --output output/quran_uthmani_candidate.json
+          python src/build_quran_translation_catalog.py --output output/saheeh_international_translation.json
+          python src/build_official_audio_inventory.py output/official_verse_audio_inventory.json
+          python src/build_quran_video_catalog.py \
+            --arabic output/quran_uthmani_candidate.json \
+            --translation output/saheeh_international_translation.json \
+            --audio output/official_verse_audio_inventory.json \
+            --output output/quran_joined_candidate.json
           python - <<'PY'
           import json
           from pathlib import Path
-          manifest = json.loads(Path('content/first_video.json').read_text(encoding='utf-8'))
-          if manifest['source']['surah_number'] != 1 or manifest['source']['verses'] != [1, 2, 3, 4, 5, 6, 7]:
-              raise SystemExit('Expected the complete Al-Fatihah 1:1–7 review passage.')
-          if manifest.get('audio', {}).get('preview_only') is not True or manifest.get('audio', {}).get('approved_for_first_test_video') is not False:
-              raise SystemExit('Al-Fatihah audio must remain review-only until exact recording approval.')
-          if manifest.get('publishing', {}).get('auto_publish') is not False:
-              raise SystemExit('Automatic publishing must remain disabled.')
-          print('Al-Fatihah 1:1–7 text and review-only manifest validated.')
+          joined = json.loads(Path('output/quran_joined_candidate.json').read_text(encoding='utf-8'))
+          if joined.get('joined_verse_count') != 6236 or len(joined.get('verses', {})) != 6236:
+              raise SystemExit('The joined Arabic + Saheeh + official audio corpus must contain all 6,236 ayahs.')
+          if joined.get('rendering_allowed') is not False:
+              raise SystemExit('Unreviewed source corpus must remain blocked from production rendering.')
+          print('PASS: complete 6,236-ayah Arabic/English/audio joined corpus; review gates preserved.')
           PY
 
-      - name: Build checksum-pinned official Hafs archive inventory
-        run: python src/build_official_audio_inventory.py output/official_verse_audio_inventory.json
-
-      - name: Prepare and inspect the complete review-only Al-Fatihah recitation
+      - name: Select three distinct Quran surah candidates from the complete corpus
         env:
           PYTHONPATH: src
         run: |
+          python src/build_quran_review_batch.py \
+            --catalog output/quran_joined_candidate.json \
+            --output output/quran_review_batch.json \
+            --count 3 \
+            --seed "launcher-${GITHUB_RUN_ID}"
           python - <<'PY'
+          import json
           from pathlib import Path
-          from zipfile import ZipFile
-          from build_official_audio_inventory import create_archive_session, download_verified_archive
-          import json, re, subprocess
-          from prepare_quran_review_batch_audio import trim_edge_silence
-          inventory = json.loads(Path('output/official_verse_audio_inventory.json').read_text(encoding='utf-8'))
-          archive_path = inventory.get('archive_path')
-          if not archive_path:
-              session = create_archive_session()
-              try:
-                  archive_path = download_verified_archive(
-                      session, inventory['source_url'], Path('output/kfgqpc_maher_verified.zip')
-                  )
-              finally:
-                  session.close()
-          work = Path('build/audio')
-          work.mkdir(parents=True, exist_ok=True)
-          durations = {}
-          processed_durations = {}
-          silence_report = {}
-          with ZipFile(archive_path) as archive:
-              names = archive.namelist()
-              processed_audio_files = []
-              for verse in range(1, 8):
-                  suffix = f'10-001{verse:03d}-A08.mp3'
-                  matches = [name for name in names if name.endswith(suffix)]
-                  if len(matches) != 1:
-                      raise RuntimeError(f'Expected exactly one official Hafs audio member for verse {verse}; found {matches}')
-                  source = work / f'verse_{verse:02d}.mp3'
-                  with archive.open(matches[0]) as src, source.open('wb') as dst:
-                      while chunk := src.read(1024 * 1024):
-                          dst.write(chunk)
-                  # Reuse the original engine's tested edge-silence treatment.
-                  # Keep 0.12s at both edges; never trim inside the recitation.
-                  probe = subprocess.run([
-                      'ffmpeg', '-hide_banner', '-i', str(source),
-                      '-af', 'silencedetect=noise=-50dB:d=0.25', '-f', 'null', '-'
-                  ], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
-                  intervals = []
-                  starts = re.findall(r'silence_start: ([0-9.]+)', probe.stderr)
-                  ends = re.findall(r'silence_end: ([0-9.]+)', probe.stderr)
-                  for index, start_time in enumerate(starts):
-                      finish = float(ends[index]) if index < len(ends) else None
-                      intervals.append({'start': float(start_time), 'end': finish})
-                  source_duration = float(subprocess.check_output([
-                      'ffprobe', '-v', 'error', '-show_entries', 'format=duration',
-                      '-of', 'default=nw=1:nk=1', str(source)
-                  ], text=True).strip())
-                  processed = work / 'processed' / f'verse_{verse:02d}.mp3'
-                  processed_duration = trim_edge_silence(source, processed, source_duration)
-                  durations[str(verse)] = source_duration
-                  processed_durations[str(verse)] = processed_duration
-                  silence_report[str(verse)] = {
-                      'detected_intervals': intervals,
-                      'original_duration_seconds': source_duration,
-                      'processed_duration_seconds': processed_duration,
-                      'edge_silence_removed_seconds': round(source_duration - processed_duration, 3),
-                      'retained_edge_margin_seconds': 0.12
-                  }
-                  processed_audio_files.append(processed)
-          combined = Path('output/al_fatiha_1_7_review_audio.wav')
-          concat_inputs = ['ffmpeg', '-hide_banner', '-y']
-          for processed in processed_audio_files:
-              concat_inputs += ['-i', str(processed)]
-          concat_labels = ''.join(f'[{index}:a]' for index in range(len(processed_audio_files)))
-          concat_filter = f'{concat_labels}concat=n={len(processed_audio_files)}:v=0:a=1[outa]'
-          subprocess.run([
-              *concat_inputs, '-filter_complex', concat_filter, '-map', '[outa]',
-              '-c:a', 'pcm_s16le', str(combined)
-          ], check=True)
-          Path('output/al_fatiha_silence_report.json').write_text(
-              json.dumps({'verse_durations_seconds': durations, 'silence_intervals': silence_report},
-                         ensure_ascii=False, indent=2), encoding='utf-8'
-          )
-          print('Original per-ayah audio durations (seconds):', json.dumps(durations))
-          print('Processed per-ayah audio durations (seconds):', json.dumps(processed_durations))
-          print('Detected and safely removed edge silence per ayah:', json.dumps(silence_report))
-          print('Complete Al-Fatihah audio created with original engine edge-silence handling; no splitting:', combined)
+          batch = json.loads(Path('output/quran_review_batch.json').read_text(encoding='utf-8'))
+          passages = batch.get('passages', [])
+          surahs = [int(item['surah_number']) for item in passages]
+          if len(passages) != 3 or len(set(surahs)) != 3:
+              raise SystemExit(f'Expected three distinct-surah candidates, got {surahs}')
+          if batch.get('batch_status') != 'review_candidates_only':
+              raise SystemExit('Passage selection must remain review-only.')
+          print('Selected three distinct Quran surahs:', surahs)
           PY
 
-      - name: Render one complete cinematic Al-Fatihah review video
+      - name: Prepare original Maher Al-Muaiqly Hafs audio for all three candidates
         env:
-          BACKGROUND_ROTATION_KEY: ${{ inputs.background_rotation_key }}
           PYTHONPATH: src
         run: |
-          key="${BACKGROUND_ROTATION_KEY:-launcher-run-${GITHUB_RUN_ID}}"
+          python src/prepare_quran_review_batch_audio.py \
+            --batch output/quran_review_batch.json \
+            --inventory output/official_verse_audio_inventory.json \
+            --output-dir output/quran_batch_audio \
+            --report output/quran_batch_audio_report.json \
+            --target-count 3
           python - <<'PY'
-          import json, subprocess
+          import json
           from pathlib import Path
-          manifest = json.loads(Path('content/first_video.json').read_text(encoding='utf-8'))
-          durations = {
-              str(n): float(subprocess.check_output([
-                  'ffprobe', '-v', 'error', '-show_entries', 'format=duration',
-                  '-of', 'default=nw=1:nk=1', f'build/audio/verse_{n:02d}.mp3'
-              ], text=True).strip()) for n in range(1, 8)
-          }
-          processed_durations = {
-              str(n): float(subprocess.check_output([
-                  'ffprobe', '-v', 'error', '-show_entries', 'format=duration',
-                  '-of', 'default=nw=1:nk=1', f'build/audio/processed/verse_{n:02d}.mp3'
-              ], text=True).strip()) for n in range(1, 8)
-          }
-          manifest['audio']['production_audio_file'] = 'output/al_fatiha_1_7_review_audio.wav'
-          manifest['audio']['processed_verse_durations_seconds'] = processed_durations
-          manifest['audio']['inter_verse_silence_seconds'] = 0.0
-          Path('build/launcher_manifest_full_fatiha.json').write_text(
-              json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8'
-          )
-          if manifest['source']['verses'] != list(range(1, 8)):
-              raise SystemExit('The review render must contain all seven Al-Fatihah ayahs.')
+          report = json.loads(Path('output/quran_batch_audio_report.json').read_text(encoding='utf-8'))
+          ready = [item for item in report.get('items', []) if item.get('status', '').startswith('audio_prepared')]
+          if len(ready) != 3 or len({int(item['surah_number']) for item in ready}) != 3:
+              raise SystemExit('Expected three prepared, distinct-surah whole-ayah audio candidates.')
+          if report.get('inter_verse_silence_seconds', 0) != 0:
+              raise SystemExit('Artificial inter-ayah silence must remain zero.')
+          if report.get('rendering_allowed') is not False or report.get('auto_publish') is not False:
+              raise SystemExit('Audio preparation must remain review-only.')
+          print('PASS: three distinct audio candidates, original edge-silence processing, zero added inter-ayah silence.')
           PY
-          python src/render_video_scenes.py --manifest build/launcher_manifest_full_fatiha.json --output output/review.mp4 --background-rotation --background-rotation-key "$key"
 
-      - name: Verify complete MP4 technical requirements
+      - name: Render three cinematic review-only Quran videos
+        env:
+          PYTHONPATH: src
         run: |
+          python src/render_quran_review_previews.py \
+            --batch output/quran_review_batch.json \
+            --audio-report output/quran_batch_audio_report.json \
+            --output-dir output/quran_review_previews \
+            --minimum-previews 3
           python - <<'PY'
-          import json, subprocess
-          path = 'output/review.mp4'
-          info = json.loads(subprocess.check_output([
-              'ffprobe', '-v', 'error', '-show_streams', '-show_format',
-              '-of', 'json', path
-          ], text=True))
-          video = next((s for s in info['streams'] if s.get('codec_type') == 'video'), None)
-          audio = next((s for s in info['streams'] if s.get('codec_type') == 'audio'), None)
-          duration = float(info['format']['duration'])
-          if not video or not audio:
-              raise SystemExit('Complete Al-Fatihah video must contain video and Quran audio.')
-          if (video.get('width'), video.get('height')) != (1080, 1920):
-              raise SystemExit('Expected vertical 1080x1920 output.')
-          if video.get('r_frame_rate') != '30/1':
-              raise SystemExit('Expected 30 FPS.')
-          if duration <= 0:
-              raise SystemExit(f'Invalid video duration: {duration:.2f}s.')
-          print(f'PASS: complete Al-Fatihah 1:1–7, 1080x1920, 30 FPS, Quran audio, {duration:.2f}s.')
+          import json
+          from pathlib import Path
+          report = json.loads(Path('output/quran_review_previews/preview_report.json').read_text(encoding='utf-8'))
+          items = report.get('items', [])
+          if len(items) != 3 or len({int(item['surah_number']) for item in items}) != 3:
+              raise SystemExit('Expected exactly three distinct-surah review videos.')
+          for item in items:
+              path = Path(item['file'])
+              if not path.is_file() or path.stat().st_size == 0:
+                  raise SystemExit(f'Missing review MP4: {path}')
+              if item.get('audio_approved') is not False or item.get('rendering_approved') is not False:
+                  raise SystemExit('Preview approval flags must remain false.')
+          print('PASS: three non-empty cinematic MP4 review previews; no approval or publishing.')
           PY
 
-      - name: Upload review-only MP4
+      - name: Generate matching non-approved draft manifests
+        env:
+          PYTHONPATH: src
+        run: |
+          python src/build_quran_draft_manifests.py \
+            --batch output/quran_review_batch.json \
+            --audio-report output/quran_batch_audio_report.json \
+            --output-dir output/quran_draft_manifests \
+            --report output/quran_draft_manifest_report.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('output/quran_draft_manifest_report.json').read_text(encoding='utf-8'))
+          items = report.get('items', [])
+          if len(items) != 3 or len({int(item['surah_number']) for item in items}) != 3:
+              raise SystemExit('Expected three distinct-surah draft manifests.')
+          for item in items:
+              data = json.loads(Path(item['manifest']).read_text(encoding='utf-8'))
+              if data.get('rotation_approved') is not False or data.get('audio', {}).get('approved') is not False:
+                  raise SystemExit('Draft manifests must never be promoted to approved content automatically.')
+          print('PASS: three review drafts generated with all human approval gates closed.')
+          PY
+
+      - name: Upload complete Quran review package
         uses: actions/upload-artifact@v4
         with:
-          name: quran-launcher-original-engine-review
-          path: engine/output/review.mp4
+          name: quran-launcher-three-surah-review
+          path: |
+            engine/output/quran_uthmani_candidate.json
+            engine/output/saheeh_international_translation.json
+            engine/output/official_verse_audio_inventory.json
+            engine/output/quran_joined_candidate.json
+            engine/output/quran_review_batch.json
+            engine/output/quran_batch_audio/
+            engine/output/quran_batch_audio_report.json
+            engine/output/quran_review_previews/
+            engine/output/quran_draft_manifests/
+            engine/output/quran_draft_manifest_report.json
           retention-days: 3

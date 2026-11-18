@@ -49,4 +49,4 @@ jobs:
           name: quran-background-photo-review
           path: output/background-photo-review/
           if-no-files-found: error
-          retention-days: 14
+          retention-days: 3

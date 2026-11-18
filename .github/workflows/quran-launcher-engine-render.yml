@@ -118,17 +118,19 @@ jobs:
           import json
           from pathlib import Path
           manifest = json.loads(Path('content/first_video.json').read_text(encoding='utf-8'))
-          if manifest['source']['surah_number'] != 94 or manifest['source']['verses'] != [5, 6]:
-              raise SystemExit('Only the explicitly approved first test passage is enabled in this initial launcher render.')
+          if manifest['source']['surah_number'] != 1 or manifest['source']['verses'] != [1, 2, 3, 4, 5, 6, 7]:
+              raise SystemExit('Expected the complete Al-Fatihah 1:1–7 review passage.')
+          if manifest.get('audio', {}).get('preview_only') is not True or manifest.get('audio', {}).get('approved_for_first_test_video') is not False:
+              raise SystemExit('Al-Fatihah audio must remain review-only until exact recording approval.')
           if manifest.get('publishing', {}).get('auto_publish') is not False:
               raise SystemExit('Automatic publishing must remain disabled.')
-          print('Approved Surah Ash-Sharh 94:5–6 manifest validated.')
+          print('Al-Fatihah 1:1–7 text and review-only manifest validated.')
           PY
 
       - name: Build checksum-pinned official Hafs archive inventory
         run: python src/build_official_audio_inventory.py output/official_verse_audio_inventory.json
 
-      - name: Prepare exact approved Maher Al-Muaiqly Hafs audio
+      - name: Prepare review-only Maher Al-Muaiqly Hafs Al-Fatihah audio
         env:
           PYTHONPATH: src
         run: |
@@ -156,8 +158,8 @@ jobs:
           durations = {}
           with archive:
               names = archive.namelist()
-              for verse in (5, 6):
-                  suffix = f'10-094{verse:03d}-A08.mp3'
+              for verse in range(1, 8):
+                  suffix = f'10-001{verse:03d}-A08.mp3'
                   matches = [name for name in names if name.endswith(suffix)]
                   if len(matches) != 1:
                       raise RuntimeError(f'Expected exactly one official Hafs audio member for verse {verse}; found {matches}')
@@ -177,17 +179,17 @@ jobs:
                   ], text=True).strip())
           concat = work / 'concat.txt'
           concat.write_text(
-              ''.join(f"file '{(work / f'verse_{n:02d}.mp3').resolve()}'\n" for n in (5, 6)),
+              ''.join(f"file '{(work / f'verse_{n:02d}.mp3').resolve()}'\n" for n in range(1, 8)),
               encoding='utf-8'
           )
-          output = Path('output/ash_sharh_94_5_6_approved_audio.mp3')
+          output = Path('output/al_fatiha_1_1_7_review_audio.mp3')
           output.parent.mkdir(parents=True, exist_ok=True)
           subprocess.run([
               'ffmpeg', '-hide_banner', '-y', '-f', 'concat', '-safe', '0',
               '-i', str(concat), '-c:a', 'libmp3lame', '-q:a', '2', str(output)
           ], check=True)
-          print('Verified processed verse durations:', durations)
-          print('Combined recitation:', output)
+          print('Processed review-only Al-Fatihah verse durations:', durations)
+          print('Combined review-only recitation:', output)
           PY
 
       - name: Render original cinematic 9:16 MP4 with rotated moving background
@@ -204,14 +206,10 @@ jobs:
           audio = Path('output/ash_sharh_94_5_6_approved_audio.mp3')
           manifest['audio']['production_audio_file'] = str(audio)
           manifest['audio']['processed_verse_durations_seconds'] = {
-              '5': float(__import__('subprocess').check_output([
+              str(n): float(__import__('subprocess').check_output([
                   'ffprobe','-v','error','-show_entries','format=duration',
-                  '-of','default=nw=1:nk=1','build/audio/verse_05.mp3'
-              ], text=True).strip()),
-              '6': float(__import__('subprocess').check_output([
-                  'ffprobe','-v','error','-show_entries','format=duration',
-                  '-of','default=nw=1:nk=1','build/audio/verse_06.mp3'
-              ], text=True).strip())
+                  '-of','default=nw=1:nk=1',f'build/audio/verse_{n:02d}.mp3'
+              ], text=True).strip()) for n in range(1, 8)
           }
           manifest['audio']['inter_verse_silence_seconds'] = 0.02
           Path('build/launcher_manifest.json').write_text(

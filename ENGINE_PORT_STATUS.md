@@ -286,3 +286,13 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Commits: `3987ddd` (selection), `f39da25` (regression test).
 - CI concurrency now cancels an older in-progress run when a newer commit needs validation. This addresses the stale run that remained marked in progress at the FFmpeg/font installation step and blocked newer queued runs. Workflow commit: `112ab23`.
 - Latest validation remains pending; do not treat any of these new tests as passed until the latest-head run completes successfully.
+
+
+## Al-Fatihah complete render and moving-background rotation validation — 2026-11-18
+- Feature-branch workflow run `44292617353` completed successfully on commit `ac0d3617e1ad02dfe96e319f37adaa8c86240e25`.
+- Complete Al-Fatihah 1:1–7 was rendered as one review-only video; no splitting, speed changes, or removal of recitation. Output: 51.95 seconds, 1080x1920, 30 FPS, with Quran audio.
+- The workflow reused the original engine's `trim_edge_silence` helper for each ayah. It removed only detected leading/trailing silence, retained 0.12 seconds at each edge, and did not trim inside the recitation. Added inter-ayah silence is 0.0 seconds. The seven per-ayah reports recorded approximately 1.899–2.526 seconds of edge silence removed per file.
+- The moving-background renderer selected four distinct approved video clips and joined them with 0.55-second crossfades: `pexels-mountain-lake-37675265`, `pexels-waterfall-forest-12110531`, `pexels-mosque-river-mostar-27529804`, and `pexels-mosque-waterfront-12536108`. It no longer repeats the first short clip across the entire narration when other approved clips are available.
+- Visual inspection of extracted frames across the complete video confirmed the four backgrounds and the Arabic/English verse overlays remain present in sequence. The fourth background naturally occupies the final longer section; no missing overlay interval was observed in the sampled timeline.
+- Review artifact: `quran-launcher-original-engine-review`, artifact ID `14422146662`, expires 2026-11-25. URL: https://github.com/samiouess-ux/quran-launcher/actions/runs/44292617353/artifacts/14422146662
+- This remains a review-only test. Al-Fatihah is not approved for production, and no photos were activated. The 33-image photo gallery still requires the user's individual approval. No UI, Pages settings, Telegram, scheduler, TikTok publishing, `main`, or original source repository was changed.

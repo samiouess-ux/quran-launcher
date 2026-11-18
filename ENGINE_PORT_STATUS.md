@@ -387,3 +387,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Follow-up regression alignment: `engine/tests/test_prepare_quran_review_batch_audio.py` now asserts the 60s ceiling and the generic over-limit status; commit `76805b5aa6f9d38278e7a994a035dc2bac520c18`. The batch selection source/test descriptions were aligned in `6c3abcf73a4471fe85943958dee7fcfcd383a65d` and `f76a53bdb3fb08c64e7dab1f93323cb5f7c3a569`.
 - Final read-back confirms the active workflow no longer references `content/first_video.json` or a hardcoded Al-Fatihah-only render. It contains the full Arabic/English catalog, join, three-surah selection, original audio preparation, review-preview render, and draft-manifest stages.
 - GitHub combined status for the latest code/test commit returned an empty checks list. The connected workflow's run and generated artifact have not yet been independently fetched, so execution remains unverified.
+
+
+## Launcher UI correction — 2026-11-18
+- Corrected the stale launcher page that still presented Al-Fatihah as the only available passage.
+- The launcher now identifies the source library as the complete Quran corpus (114 surahs / 6,236 ayahs) and explains that one workflow run prepares three review videos selected from that full corpus; these are not the only three surahs supported.
+- Kept the existing authenticated GitHub Actions handoff. The static launcher does not contain a GitHub token and does not claim to dispatch a workflow directly from the page.
+- No tests were run, no workflow was dispatched, and no changes were made to `main`, the original engine repository, Telegram, cron, or TikTok.
+- UI commit: `2a10fef33461f722f61b6fa89d4017c5efbcb467`.

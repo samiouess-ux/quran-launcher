@@ -65,6 +65,10 @@ def build_review_batch(
             raise ValueError(f"Joined catalog contains an out-of-range surah reference: {reference}.")
         if ayah_number < 1:
             raise ValueError(f"Joined catalog contains an invalid ayah reference: {reference}.")
+    already_used = {int(number) for number in (used_surahs or ())}
+    if any(not 1 <= number <= 114 for number in already_used):
+        raise ValueError("Used surah numbers must be between 1 and 114.")
+    requested_surahs = None
     if only_surahs is not None:
         requested_surahs = list(dict.fromkeys(int(number) for number in only_surahs))
         if not requested_surahs or any(not 1 <= number <= 114 for number in requested_surahs):
@@ -72,12 +76,15 @@ def build_review_batch(
         missing = [number for number in requested_surahs if number not in catalog_surahs]
         if missing:
             raise ValueError(f"Requested surahs are missing from the joined catalog: {missing}")
-        surahs = [number for number in requested_surahs if number not in excluded]
+        surahs = [
+            number for number in requested_surahs
+            if number not in excluded and number not in already_used
+        ]
     else:
-        already_used = {int(number) for number in (used_surahs or ())}
-        if any(not 1 <= number <= 114 for number in already_used):
-            raise ValueError("Used surah numbers must be between 1 and 114.")
-        surahs = [number for number in catalog_surahs if number not in excluded and number not in already_used]
+        surahs = [
+            number for number in catalog_surahs
+            if number not in excluded and number not in already_used
+        ]
     passages = []
     used_refs = set()
     for reference in used_ayah_references:
@@ -94,7 +101,8 @@ def build_review_batch(
     # partially delivered surah must remain eligible for its unused suffix.
     # An explicit only_surahs request remains a hard boundary (e.g. Friday Al-Kahf).
     partial_candidate_surahs = (
-        surahs if only_surahs is not None
+        [number for number in requested_surahs if number not in excluded]
+        if requested_surahs is not None
         else [number for number in catalog_surahs if number not in excluded]
     )
     for surah in partial_candidate_surahs:

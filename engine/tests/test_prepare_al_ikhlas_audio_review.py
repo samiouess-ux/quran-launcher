@@ -55,17 +55,25 @@ class AlIkhlasAudioReviewTests(unittest.TestCase):
             Path(command[-1]).write_bytes(b"combined-mp3")
             return None
 
+        def fake_trim(source, destination, source_duration, keep_seconds=0.12):
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_bytes(source.read_bytes())
+            return round(source_duration - 0.4, 3)
+
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "audio"
             with patch.object(module, "open_verified_archive", fake_open):
                 with patch.object(module, "probe_duration", side_effect=lambda _p: next(durations)):
-                    with patch.object(module.subprocess, "run", side_effect=fake_run):
-                        report = module.prepare_audio_review(inventory(), output)
+                    with patch.object(module, "trim_edge_silence", side_effect=fake_trim) as trim:
+                        with patch.object(module.subprocess, "run", side_effect=fake_run):
+                            report = module.prepare_audio_review(inventory(), output)
+                        self.assertEqual(trim.call_count, 4)
+                        self.assertTrue(all(call.kwargs.get("keep_seconds", 0.12) == 0.12 for call in trim.call_args_list))
 
             self.assertEqual(report["verses"], [1, 2, 3, 4])
             self.assertEqual(report["reciter"], "Maher Al-Muaiqly")
             self.assertEqual(report["riwaya"], "Hafs")
-            self.assertEqual(report["combined_audio_duration_seconds"], 12.2)
+            self.assertEqual(report["combined_audio_duration_seconds"], 12.2)\n            self.assertEqual(report["inter_verse_silence_seconds"], 0.0)\n            self.assertEqual(report["processed_verse_durations_seconds"], {"1": 2.7, "2": 2.4, "3": 3.0, "4": 2.5})\n            self.assertEqual(report["edge_silence_removed_seconds"], {"1": 0.4, "2": 0.4, "3": 0.4, "4": 0.4})
             self.assertEqual(set(report["archive_members"]), {"1", "2", "3", "4"})
             self.assertTrue(all((output / f"al_ikhlas_112_{n:02d}.mp3").is_file() for n in range(1, 5)))
             self.assertTrue((output / "al_ikhlas_112_1_4_maher_hafs_review.mp3").is_file())
@@ -74,7 +82,7 @@ class AlIkhlasAudioReviewTests(unittest.TestCase):
             self.assertFalse(report["rendering_allowed"])
             self.assertFalse(report["telegram_sent"])
             self.assertFalse(report["tiktok_published"])
-            concat_text = (output / "concat.txt").read_text(encoding="utf-8")
+            concat_text = (output / "concat.txt").read_text(encoding="utf-8")\n            self.assertIn("processed/al_ikhlas_112_01.mp3", concat_text)
             self.assertLess(concat_text.index("112_01.mp3"), concat_text.index("112_04.mp3"))
 
     def test_rejects_wrong_reciter_or_riwaya(self):

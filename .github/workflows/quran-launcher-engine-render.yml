@@ -20,7 +20,8 @@ permissions:
 
 concurrency:
   group: quran-launcher-engine-render
-  cancel-in-progress: false
+  # A stale runner must not block validation of the latest branch head.
+  cancel-in-progress: true
 
 jobs:
   render:

@@ -267,3 +267,14 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - This is test coverage only; no selection behavior or content approval changed. GitHub Actions validation is pending.
 - Current Actions run 44271812150 is still in progress at the FFmpeg/Arabic-font installation step; the latest branch run that included the continuation fix was cancelled before tests. Do not treat the new test or continuation fix as validated until a run on the current branch head passes.
 - Scope remains unchanged: no UI changes, no `main`, no source-repository writes, no Telegram delivery, no scheduler, and no TikTok publishing.
+
+
+## Partial-pool selection hardening — 2026-11-18
+- Found two additional edge cases while reviewing production-mode continuation: the builder rejected a batch before considering a remaining partial surah when no fresh surahs remained, and an explicit `only_surahs` request could be bypassed by a partial surah outside that requested set.
+- Selection now counts eligible partial continuations together with fresh surahs before validating batch size. It selects only the required number of fresh surahs after prioritizing partial continuations.
+- An explicit `only_surahs` restriction is now also applied to partial-continuation candidates, preserving Friday-only Al-Kahf behavior.
+- Added regression tests for a single remaining partial surah after the fresh pool is exhausted, and for enforcing an explicit surah-only request.
+- Source commit: `97ca0c1`; tests commit: `4fb69c6`.
+- Pending GitHub Actions validation on the latest branch head. Rendering, audio approval, Telegram delivery, and auto-publishing remain disabled for candidate batches.
+- Workflow dependency-install step was also bounded: it checks runner-provided FFmpeg/Amiri first and uses capped apt retries/timeouts only when installation is needed. Workflow commit: `97c132b`.
+- No launcher UI, `main`, original source repository, Telegram bot/webhook, scheduler, Pages settings, or TikTok publishing was changed.

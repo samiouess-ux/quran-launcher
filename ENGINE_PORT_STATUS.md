@@ -258,3 +258,12 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Changed candidate selection to prioritize a valid unused suffix from a partially delivered surah before choosing fresh surahs. Fully delivered surahs remain excluded; used ayahs and gaps are still skipped.
 - Added production-mode regression coverage for continuation priority and fully completed surah exclusion. The workflow remains review-only; no rendering, delivery, approval, or publishing is enabled by this change.
 - This fix is not considered validated until the feature-branch GitHub Actions run passes.
+
+
+## Production continuation gap regression — 2026-11-18
+- Added a production-argument regression test for a partially delivered surah whose delivery history contains a later used ayah after an earlier gap.
+- The expected selection begins after the latest delivered ayah, preserving all previously delivered references and choosing only the remaining contiguous suffix.
+- Test commit: `a0ae6d837eb57a42ea4bc26526360305ea65bc5e`.
+- This is test coverage only; no selection behavior or content approval changed. GitHub Actions validation is pending.
+- Current Actions run 44271812150 is still in progress at the FFmpeg/Arabic-font installation step; the latest branch run that included the continuation fix was cancelled before tests. Do not treat the new test or continuation fix as validated until a run on the current branch head passes.
+- Scope remains unchanged: no UI changes, no `main`, no source-repository writes, no Telegram delivery, no scheduler, and no TikTok publishing.

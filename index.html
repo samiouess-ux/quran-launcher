@@ -16,34 +16,84 @@
 <div class="spec"><span>القارئ</span><strong>ماهر المعيقلي — حفص</strong></div>
 <div class="spec"><span>المدة</span><strong>حتى 40 ثانية — آيات كاملة</strong></div>
 <div class="spec"><span>الترجمة</span><strong>Saheeh International — English</strong></div>
-<p class="notice">من غير ربط OAuth أو خدمات خارجية: افتح صفحة GitHub الرسمية، ثم اضغط Run workflow لتشغيل المحرك.</p>
-<button id="run" class="primary-action" type="button" disabled>شغّل 3 فيديوهات</button>
-<p id="status" class="hint" role="status" aria-live="polite">اضغط الزر لفتح صفحة تشغيل المحرك على GitHub.</p>
+<p class="notice">للتشغيل المباشر، يلزم GitHub Fine-grained token بصلاحية Actions: Read and write لهذا المستودع فقط. التوكن يبقى في ذاكرة الصفحة أثناء الطلب ولا يتم حفظه.</p>
+<label for="github-token">GitHub token</label>
+<input id="github-token" type="password" autocomplete="off" spellcheck="false" placeholder="الصق Fine-grained token هنا">
+<p class="hint"><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">إنشاء token محدود الصلاحيات من GitHub</a></p>
+<button id="run" class="primary-action" type="button">شغّل 3 فيديوهات</button>
+<p id="status" class="hint" role="status" aria-live="polite">أدخل token ثم اضغط تشغيل. لا ترسله في المحادثة.</p>
 <div id="result" class="run-result" hidden></div>
 </section>
 <section class="panel secondary-panel">
 <h2>كيفاش يخدم؟</h2>
 <ol>
-<li>اضغط زر فتح التشغيل.</li>
-<li>في GitHub اضغط Run workflow واختر الفرع feature/islamic-tiktok-engine-port.</li>
-<li>اضغط Run workflow للتأكيد وانتظر انتهاء العملية.</li>
-<li>حمّل الفيديوهات من Artifacts عند ظهور Success.</li>
+<li>أنشئ Fine-grained token محدودًا لهذا المستودع فقط مع Actions: Read and write.</li>
+<li>الصق token في الخانة واضغط تشغيل.</li>
+<li>الصفحة تطلب تشغيل Workflow مباشرة على الفرع feature/islamic-tiktok-engine-port.</li>
+<li>تابع النتيجة وحمّل الفيديوهات من Artifacts عند ظهور Success.</li>
 </ol>
-<p class="notice">ملاحظة أمنية: التشغيل يتم داخل GitHub نفسه، دون تخزين أي Token في المتصفح أو طلب أي Secret منك. الفيديوهات تبقى للمراجعة فقط؛ لا نشر تلقائي على TikTok ولا إرسال إلى Telegram.</p>
+<p class="notice">أمان: لا تضع token في رابط أو ترسله لأي شخص. يُستخدم في الطلب الحالي فقط، ثم تُفرغ الخانة. لا يُحفظ في localStorage أو ملفات المشروع. الفيديوهات للمراجعة فقط؛ لا نشر تلقائي على TikTok ولا Telegram.</p>
 </section>
 <footer>العمل على الفرع المعزول فقط — المستودع الأصلي وفرع main لم يتم تعديلهما</footer>
 </main>
 <script>
 (() => {
   'use strict';
-  const actionsUrl = 'https://github.com/samiouess-ux/quran-launcher/actions/workflows/quran-launcher-engine-render.yml?query=branch%3Afeature%2Fislamic-tiktok-engine-port';
+  const owner = 'samiouess-ux';
+  const repo = 'quran-launcher';
+  const workflow = 'quran-launcher-engine-render.yml';
+  const branch = 'feature/islamic-tiktok-engine-port';
   const runButton = document.getElementById('run');
+  const tokenInput = document.getElementById('github-token');
   const status = document.getElementById('status');
-  runButton.disabled = false;
-  runButton.textContent = 'افتح تشغيل 3 فيديوهات';
-  runButton.addEventListener('click', () => {
-    status.textContent = 'فتحت صفحة GitHub الرسمية. اضغط Run workflow ثم أكّد الفرع feature/islamic-tiktok-engine-port.';
-    window.open(actionsUrl, '_blank', 'noopener');
+  const result = document.getElementById('result');
+
+  runButton.addEventListener('click', async () => {
+    const token = tokenInput.value.trim();
+    if (!token) {
+      status.textContent = 'ألصق GitHub token أولاً.';
+      tokenInput.focus();
+      return;
+    }
+    runButton.disabled = true;
+    status.textContent = 'جاري إرسال طلب التشغيل مباشرة إلى GitHub…';
+    result.hidden = true;
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/actions/workflows/${workflow}/dispatches`,
+        {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/vnd.github+json',
+            'Authorization': `Bearer ${token}`,
+            'X-GitHub-Api-Version': '2022-11-28',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ ref: branch })
+        }
+      );
+      tokenInput.value = '';
+      if (response.status === 204) {
+        status.textContent = 'تم إرسال طلب التشغيل بنجاح إلى GitHub. افتح سجل التشغيل لمتابعة الحالة.';
+        result.hidden = false;
+        result.innerHTML = '<a href="https://github.com/samiouess-ux/quran-launcher/actions/workflows/quran-launcher-engine-render.yml" target="_blank" rel="noopener">عرض تشغيلات المحرك</a>';
+      } else {
+        let detail = '';
+        try { const data = await response.json(); detail = data.message || ''; } catch (_) {}
+        if (response.status === 401 || response.status === 403) {
+          status.textContent = 'GitHub رفض الصلاحية. تأكد أن token صالح ومحدد لهذا المستودع وبصلاحية Actions: Read and write.';
+        } else if (response.status === 404) {
+          status.textContent = 'GitHub لم يجد Workflow أو المستودع. تحقق من الفرع واسم الملف.';
+        } else {
+          status.textContent = `فشل طلب التشغيل (HTTP ${response.status}). ${detail}`;
+        }
+      }
+    } catch (error) {
+      tokenInput.value = '';
+      status.textContent = 'تعذر الاتصال بـ GitHub API من المتصفح. لم يتم تشغيل Workflow. ' + (error && error.message ? error.message : '');
+    } finally {
+      runButton.disabled = false;
+    }
   });
 })();
 </script>

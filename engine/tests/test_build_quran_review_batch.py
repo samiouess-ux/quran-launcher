@@ -139,10 +139,12 @@ class BatchTests(unittest.TestCase):
             build_review_batch(source, count=1, used_ayah_references=["1:2"])
 
     def test_rejects_malformed_joined_catalog_reference(self):
-        verses = {"1:0": {"arabic_uthmani": "AR", "english_saheeh_international": "EN", "audio_archive_member": "1.mp3"}}
-        source = {"status": "complete_join_candidate_requires_human_review_and_recording_approval", "rendering_allowed": False, "expected_verse_count": 1, "verses": verses}
-        with self.assertRaisesRegex(ValueError, "invalid Quran verse reference"):
-            build_review_batch(source, count=1)
+        for invalid_reference in ("1:0", "1:x", "115:1", 1):
+            with self.subTest(reference=invalid_reference):
+                verses = {invalid_reference: {"arabic_uthmani": "AR", "english_saheeh_international": "EN", "audio_archive_member": "1.mp3"}}
+                source = {"status": "complete_join_candidate_requires_human_review_and_recording_approval", "rendering_allowed": False, "expected_verse_count": 1, "verses": verses}
+                with self.assertRaisesRegex(ValueError, "invalid Quran verse reference"):
+                    build_review_batch(source, count=1)
 
     def test_builds_distinct_surahs(self):
         verses = {}

@@ -233,3 +233,9 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - This prevents corrupt/stale history entries from being silently ignored and causing a previously delivered ayah to be selected again.
 - Added regression tests for malformed history references, references missing from the joined catalog, and malformed catalog keys. Existing review-only, no-render, no-Telegram, and no-auto-publish boundaries are unchanged.
 - Pending feature-branch Actions validation; no content was approved and the active renderer remains pinned to Ash-Sharh 94:5–6.
+
+
+## Review-batch catalog key validation ordering — 2026-11-18
+- Corrected validation order in the review-batch builder: it now validates each catalog key before parsing or sorting surah numbers. Previously a non-string or malformed key could raise an incidental Python parsing error before the intended fail-closed validation message.
+- Expanded regression coverage for malformed strings, out-of-range surah numbers, zero ayah numbers, and non-string keys.
+- This is defensive input validation only; review-only status and all approval gates remain unchanged. Feature-branch Actions validation is pending.

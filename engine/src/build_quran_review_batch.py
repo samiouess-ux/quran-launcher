@@ -20,10 +20,17 @@ def _ordered_surahs(joined: dict[str, Any]) -> list[int]:
     keys = joined.get("verses")
     if not isinstance(keys, dict):
         raise ValueError("Joined catalog must contain a verses object.")
-    surahs = sorted({int(key.split(":")[0]) for key in keys}, key=int)
-    if not surahs or any(not 1 <= number <= 114 for number in surahs):
+    surahs = set()
+    for key in keys:
+        if not isinstance(key, str) or not VERSE_REFERENCE.fullmatch(key):
+            raise ValueError(f"Joined catalog contains an invalid Quran verse reference: {key!r}.")
+        surah, ayah = map(int, key.split(":"))
+        if not 1 <= surah <= 114 or ayah < 1:
+            raise ValueError(f"Joined catalog contains an invalid Quran verse reference: {key!r}.")
+        surahs.add(surah)
+    if not surahs:
         raise ValueError("Joined catalog has no valid Quran surah keys.")
-    return surahs
+    return sorted(surahs)
 
 
 def build_review_batch(

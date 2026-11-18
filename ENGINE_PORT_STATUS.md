@@ -143,3 +143,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - The first expanded test run exposed the short-clip regression; a follow-up run then showed the initial selection loop still fetched a second clip. That was corrected in commit `59e7e90e6e59690a024c210cc0fe1679ed7cf111`.
 - Latest observed Actions run: `44250015150` on commit `59e7e90e6e59690a024c210cc0fe1679ed7cf111`, in progress at the time of this update. Do not consider the renderer regression or overall port validated until this run completes successfully.
 - No UI, `main`, source repository, Telegram integration, scheduler, TikTok publishing, Pages settings, or approved Ash-Sharh sample was changed.
+
+
+## Background short-clip loop regression fix — 2026-11-18
+- Inspected failed Actions run `44250015150` and its complete job log. All preceding regression suites passed; `test_loops_one_short_clip_to_cover_full_audio` failed because the builder fetched a second candidate even though the intended behavior was to loop the first short approved clip, exhausting the test's duration-probe mock before final-output verification.
+- Fixed `engine/src/render_video_scenes.py` so the coverage-fill loop is skipped when exactly one prepared clip is shorter than the target and is therefore intended to loop. The final ffprobe duration check remains active; multi-clip reels still use the existing crossfade coverage logic.
+- Fix commit: `7396a178dcc84410d21cd8146f7bc3168f62ba08` on `feature/islamic-tiktok-engine-port`.
+- The existing regression test already asserts that only `clip-a` is selected, output duration is the full 10 seconds, FFmpeg loops the source, and only one render is performed. GitHub Actions validation for the fix is pending; do not call this fix verified until the new run completes.
+- No launcher UI, `main`, source `IslamicTikTokAutomation` repository, Telegram integration, scheduler, Pages settings, or TikTok publishing was changed.

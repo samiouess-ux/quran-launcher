@@ -585,18 +585,23 @@ def main() -> None:
         ]
         fade_in = 0.28 if index > 0 else 0.45
         fade_out = 0.28 if index < len(scene_overlays) - 1 else 0.0
+        # Shift each still overlay onto its absolute scene timeline before fading.
+        # Without this, later overlays have already completed their fade-out by
+        # the time the global overlay enable window begins.
         arabic_fade = (
-            f"[{input_index}:v]format=rgba,fade=t=in:st=0:d={fade_in:.3f}:alpha=1"
+            f"[{input_index}:v]format=rgba,setpts=PTS+{start:.6f}/TB,"
+            f"fade=t=in:st={start:.6f}:d={fade_in:.3f}:alpha=1"
         )
         if fade_out:
-            arabic_fade += f",fade=t=out:st={max(0.0, scene_length-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
+            arabic_fade += f",fade=t=out:st={max(start, end-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
         arabic_fade += f"[ar{index}]"
         filters.append(arabic_fade)
         english_fade = (
-            f"[{input_index + 1}:v]format=rgba,fade=t=in:st=0:d={fade_in:.3f}:alpha=1"
+            f"[{input_index + 1}:v]format=rgba,setpts=PTS+{start:.6f}/TB,"
+            f"fade=t=in:st={start:.6f}:d={fade_in:.3f}:alpha=1"
         )
         if fade_out:
-            english_fade += f",fade=t=out:st={max(0.0, scene_length-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
+            english_fade += f",fade=t=out:st={max(start, end-fade_out):.6f}:d={fade_out:.3f}:alpha=1"
         english_fade += f"[en{index}]"
         filters.append(english_fade)
         filters.append(

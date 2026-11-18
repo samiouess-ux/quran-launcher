@@ -9,8 +9,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Any, Iterable
+
+VERSE_REFERENCE = re.compile(r"^([1-9][0-9]*):([1-9][0-9]*)$")
 
 
 def _ordered_surahs(joined: dict[str, Any]) -> list[int]:
@@ -47,6 +50,14 @@ def build_review_batch(
     if any(not 1 <= number <= 114 for number in excluded):
         raise ValueError("Excluded surah numbers must be between 1 and 114.")
     catalog_surahs = _ordered_surahs(joined)
+    for reference in corpus:
+        if not isinstance(reference, str) or not VERSE_REFERENCE.fullmatch(reference):
+            raise ValueError(f"Joined catalog contains an invalid Quran verse reference: {reference!r}.")
+        surah_number, ayah_number = map(int, reference.split(":"))
+        if not 1 <= surah_number <= 114:
+            raise ValueError(f"Joined catalog contains an out-of-range surah reference: {reference}.")
+        if ayah_number < 1:
+            raise ValueError(f"Joined catalog contains an invalid ayah reference: {reference}.")
     if only_surahs is not None:
         requested_surahs = list(dict.fromkeys(int(number) for number in only_surahs))
         if not requested_surahs or any(not 1 <= number <= 114 for number in requested_surahs):
@@ -72,7 +83,13 @@ def build_review_batch(
     ordered = surahs[offset:] + surahs[:offset]
     slots = sorted({min(len(ordered)-1, (i * len(ordered)) // count) for i in range(count)})
     passages = []
-    used_refs = {str(reference) for reference in used_ayah_references}
+    used_refs = set()
+    for reference in used_ayah_references:
+        if not isinstance(reference, str) or not VERSE_REFERENCE.fullmatch(reference):
+            raise ValueError(f"Delivery history contains an invalid Quran verse reference: {reference!r}.")
+        if reference not in corpus:
+            raise ValueError(f"Delivery history references a verse missing from the joined catalog: {reference}.")
+        used_refs.add(reference)
 
     # Legacy callers may continue a partially delivered surah. Production passes
     # used_surahs, enforcing one delivered video per surah per rotation.

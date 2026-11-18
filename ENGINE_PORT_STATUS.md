@@ -226,3 +226,10 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Review artifact: `quran-launcher-original-engine-review`, artifact ID 14408270322. This is a review artifact from the unchanged Ash-Sharh 94:5–6 sample, not a new approved passage.
 - The joined 6,236-ayah catalog and review-batch candidate pipeline are still preparation-only; human text, translation-rights, exact-recording, and background approval gates remain closed. The active launcher workflow still renders only the approved Ash-Sharh sample.
 - No UI, `main`, source repository, Telegram bot/webhook, scheduler, Pages settings, or TikTok publishing was changed.
+
+
+## Review-batch delivery-history reference validation — 2026-11-18
+- Hardened the review-candidate builder to reject malformed Quran verse keys in its joined-catalog input and malformed or unknown verse references in delivery history.
+- This prevents corrupt/stale history entries from being silently ignored and causing a previously delivered ayah to be selected again.
+- Added regression tests for malformed history references, references missing from the joined catalog, and malformed catalog keys. Existing review-only, no-render, no-Telegram, and no-auto-publish boundaries are unchanged.
+- Pending feature-branch Actions validation; no content was approved and the active renderer remains pinned to Ash-Sharh 94:5–6.

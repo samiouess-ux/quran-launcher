@@ -73,7 +73,10 @@ class AlIkhlasAudioReviewTests(unittest.TestCase):
             self.assertEqual(report["verses"], [1, 2, 3, 4])
             self.assertEqual(report["reciter"], "Maher Al-Muaiqly")
             self.assertEqual(report["riwaya"], "Hafs")
-            self.assertEqual(report["combined_audio_duration_seconds"], 12.2)\n            self.assertEqual(report["inter_verse_silence_seconds"], 0.0)\n            self.assertEqual(report["processed_verse_durations_seconds"], {"1": 2.7, "2": 2.4, "3": 3.0, "4": 2.5})\n            self.assertEqual(report["edge_silence_removed_seconds"], {"1": 0.4, "2": 0.4, "3": 0.4, "4": 0.4})
+            self.assertEqual(report["combined_audio_duration_seconds"], 12.2)
+            self.assertEqual(report["inter_verse_silence_seconds"], 0.0)
+            self.assertEqual(report["processed_verse_durations_seconds"], {"1": 2.7, "2": 2.4, "3": 3.0, "4": 2.5})
+            self.assertEqual(report["edge_silence_removed_seconds"], {"1": 0.4, "2": 0.4, "3": 0.4, "4": 0.4})
             self.assertEqual(set(report["archive_members"]), {"1", "2", "3", "4"})
             self.assertTrue(all((output / f"al_ikhlas_112_{n:02d}.mp3").is_file() for n in range(1, 5)))
             self.assertTrue((output / "al_ikhlas_112_1_4_maher_hafs_review.mp3").is_file())
@@ -82,7 +85,8 @@ class AlIkhlasAudioReviewTests(unittest.TestCase):
             self.assertFalse(report["rendering_allowed"])
             self.assertFalse(report["telegram_sent"])
             self.assertFalse(report["tiktok_published"])
-            concat_text = (output / "concat.txt").read_text(encoding="utf-8")\n            self.assertIn("processed/al_ikhlas_112_01.mp3", concat_text)
+            concat_text = (output / "concat.txt").read_text(encoding="utf-8")
+            self.assertIn("processed/al_ikhlas_112_01.mp3", concat_text)
             self.assertLess(concat_text.index("112_01.mp3"), concat_text.index("112_04.mp3"))
 
     def test_rejects_wrong_reciter_or_riwaya(self):

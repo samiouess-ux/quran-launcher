@@ -278,7 +278,7 @@ class QuranBatchAudioTests(unittest.TestCase):
             self.assertEqual(item["remaining_verses"], [1])
             self.assertFalse(item["passage_complete"])
             self.assertEqual(report["audio_prepared_count"], 0)
-            self.assertEqual(report["maximum_seconds"], 60.0)
+            self.assertEqual(report["maximum_seconds"], 40.0)
 
     def test_trim_edge_silence_keeps_mp3_and_preserves_the_recitation_body(self):
         with tempfile.TemporaryDirectory() as tmp:

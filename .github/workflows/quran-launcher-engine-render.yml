@@ -276,4 +276,4 @@ jobs:
         with:
           name: quran-launcher-original-engine-review
           path: engine/output/review.mp4
-          retention-days: 7
+          retention-days: 3

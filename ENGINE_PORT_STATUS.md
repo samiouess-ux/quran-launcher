@@ -251,3 +251,10 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Follow-up defensive correction: the overlong-single-ayah status now uses the measured duration of the first inspected ayah rather than comparing inspected and full candidate list lengths, which differ after bounded inspection.
 
 - Regression-test expectation corrected to match the report contract: the overflow ayah is downloaded/probed only to establish the boundary, but only selected ayahs are exposed in the prepared-audio report. The test now checks the overflow source exists, no later source is fetched, and overflow audio is not included in the output mapping.
+
+
+## Partial-surah continuation selection fix — 2026-11-18
+- Found a production-mode selection gap: the review-batch builder received `used_surahs` and therefore skipped all partially delivered surahs, even when delivery history showed an undelivered contiguous suffix. Existing continuation tests did not exercise the production argument combination.
+- Changed candidate selection to prioritize a valid unused suffix from a partially delivered surah before choosing fresh surahs. Fully delivered surahs remain excluded; used ayahs and gaps are still skipped.
+- Added production-mode regression coverage for continuation priority and fully completed surah exclusion. The workflow remains review-only; no rendering, delivery, approval, or publishing is enabled by this change.
+- This fix is not considered validated until the feature-branch GitHub Actions run passes.

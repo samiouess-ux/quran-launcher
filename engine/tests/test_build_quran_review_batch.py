@@ -86,6 +86,30 @@ class BatchTests(unittest.TestCase):
         self.assertFalse(result["telegram_delivery"])
         self.assertFalse(result["auto_publish"])
 
+    def test_prioritizes_partial_surah_continuation_in_production_mode(self):
+        verses = {}
+        for surah in range(1, 7):
+            for ayah in range(1, 7):
+                key = f"{surah}:{ayah}"
+                verses[key] = {"arabic_uthmani": f"AR {key}", "english_saheeh_international": f"EN {key}", "audio_archive_member": f"{key}.mp3"}
+        source = {"status": "complete_join_candidate_requires_human_review_and_recording_approval", "rendering_allowed": False, "expected_verse_count": len(verses), "verses": verses}
+        result = build_review_batch(source, count=2, seed="production-continuation", used_ayah_references=["5:1", "5:2", "5:3", "5:4"], used_surahs={5})
+        self.assertEqual(result["passages"][0]["surah_number"], 5)
+        self.assertEqual(result["passages"][0]["verse_numbers"], [5, 6])
+        self.assertNotIn(5, [item["surah_number"] for item in result["passages"][1:]])
+        self.assertFalse(result["rendering_allowed"])
+        self.assertFalse(result["telegram_delivery"])
+        self.assertFalse(result["auto_publish"])
+
+    def test_fully_delivered_surah_is_not_reselected_as_continuation(self):
+        verses = {}
+        for surah in range(1, 7):
+            for ayah in range(1, 7):
+                key = f"{surah}:{ayah}"
+                verses[key] = {"arabic_uthmani": f"AR {key}", "english_saheeh_international": f"EN {key}", "audio_archive_member": f"{key}.mp3"}
+        source = {"status": "complete_join_candidate_requires_human_review_and_recording_approval", "rendering_allowed": False, "expected_verse_count": len(verses), "verses": verses}
+        result = build_review_batch(source, count=2, seed="completed-surah", used_ayah_references=[f"5:{n}" for n in range(1, 7)], used_surahs={5})
+        self.assertNotIn(5, [item["surah_number"] for item in result["passages"]])
     def test_continuation_skips_gaps_and_later_delivered_ayahs(self):
         verses = {}
         for ayah in range(1, 7):

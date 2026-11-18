@@ -101,7 +101,10 @@ def build_review_batch(
     # Legacy callers may continue a partially delivered surah. Production passes
     # used_surahs, enforcing one delivered video per surah per rotation.
     partial_surahs = []
-    for surah in (surahs if used_surahs is None else []):
+    # Production excludes already-used surahs from fresh selection, but a
+    # partially delivered surah must remain eligible for its unused suffix.
+    partial_candidate_surahs = [number for number in catalog_surahs if number not in excluded]
+    for surah in partial_candidate_surahs:
         available_for_surah = sorted(
             int(key.split(":")[1]) for key in corpus
             if int(key.split(":")[0]) == surah

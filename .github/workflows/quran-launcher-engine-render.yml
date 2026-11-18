@@ -177,22 +177,24 @@ jobs:
                       'ffprobe', '-v', 'error', '-show_entries', 'format=duration',
                       '-of', 'default=nw=1:nk=1', str(processed)
                   ], text=True).strip())
-          concat = work / 'concat.txt'
-          concat.write_text(
-              ''.join(f"file '{(work / f'verse_{n:02d}.mp3').resolve()}'\n" for n in range(1, 8)),
-              encoding='utf-8'
-          )
-          output = Path('output/al_fatiha_1_1_7_review_audio.mp3')
-          output.parent.mkdir(parents=True, exist_ok=True)
-          subprocess.run([
-              'ffmpeg', '-hide_banner', '-y', '-f', 'concat', '-safe', '0',
-              '-i', str(concat), '-c:a', 'libmp3lame', '-q:a', '2', str(output)
-          ], check=True)
+          output_dir = Path('output')
+          output_dir.mkdir(parents=True, exist_ok=True)
+          for label, first, last in (('part1', 1, 5), ('part2', 6, 7)):
+              concat = work / f'concat_{label}.txt'
+              concat.write_text(
+                  ''.join(f"file '{(work / f'verse_{n:02d}.mp3').resolve()}'\\n" for n in range(first, last + 1)),
+                  encoding='utf-8'
+              )
+              output = output_dir / f'al_fatiha_{first}_{last}_review_audio.mp3'
+              subprocess.run([
+                  'ffmpeg', '-hide_banner', '-y', '-f', 'concat', '-safe', '0',
+                  '-i', str(concat), '-c:a', 'libmp3lame', '-q:a', '2', str(output)
+              ], check=True)
+              print(f'Created review-only Al-Fatihah {first}–{last}: {output}')
           print('Processed review-only Al-Fatihah verse durations:', durations)
-          print('Combined review-only recitation:', output)
           PY
 
-      - name: Render original cinematic 9:16 MP4 with rotated moving background
+      - name: Render Al-Fatihah as two cinematic 9:16 review videos
         env:
           BACKGROUND_ROTATION_KEY: ${{ inputs.background_rotation_key }}
           PYTHONPATH: src
@@ -201,48 +203,53 @@ jobs:
           python - <<'PY'
           import json
           from pathlib import Path
-          manifest_path = Path('content/first_video.json')
-          manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
-          audio = Path('output/al_fatiha_1_1_7_review_audio.mp3')
-          manifest['audio']['production_audio_file'] = str(audio)
-          manifest['audio']['processed_verse_durations_seconds'] = {
-              str(n): float(__import__('subprocess').check_output([
-                  'ffprobe','-v','error','-show_entries','format=duration',
-                  '-of','default=nw=1:nk=1',f'build/audio/verse_{n:02d}.mp3'
-              ], text=True).strip()) for n in range(1, 8)
-          }
-          manifest['audio']['inter_verse_silence_seconds'] = 0.02
-          Path('build/launcher_manifest.json').write_text(
-              json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8'
-          )
+          import subprocess
+          base = json.loads(Path('content/first_video.json').read_text(encoding='utf-8'))
+          for label, first, last in (('part1', 1, 5), ('part2', 6, 7)):
+              manifest = json.loads(json.dumps(base))
+              manifest['source']['verses'] = list(range(first, last + 1))
+              manifest['verses'] = base['verses'][first - 1:last]
+              manifest['audio']['production_audio_file'] = str(Path(f'output/al_fatiha_{first}_{last}_review_audio.mp3'))
+              manifest['audio']['processed_verse_durations_seconds'] = {
+                  str(n): float(subprocess.check_output([
+                      'ffprobe','-v','error','-show_entries','format=duration',
+                      '-of','default=nw=1:nk=1',f'build/audio/verse_{n:02d}.mp3'
+                  ], text=True).strip()) for n in range(first, last + 1)
+              }
+              manifest['audio']['inter_verse_silence_seconds'] = 0.02
+              Path(f'build/launcher_manifest_{label}.json').write_text(
+                  json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8'
+              )
           PY
-          python src/render_video_scenes.py --manifest build/launcher_manifest.json --output output/review.mp4 --background-rotation --background-rotation-key "$key"
+          python src/render_video_scenes.py --manifest build/launcher_manifest_part1.json --output output/review_part_1.mp4 --background-rotation --background-rotation-key "$key"
+          python src/render_video_scenes.py --manifest build/launcher_manifest_part2.json --output output/review_part_2.mp4 --background-rotation --background-rotation-key "$key-part2"
 
       - name: Verify MP4 technical requirements
         run: |
           python - <<'PY'
           import json, subprocess
-          info = json.loads(subprocess.check_output([
-              'ffprobe', '-v', 'error', '-show_streams', '-show_format',
-              '-of', 'json', 'output/review.mp4'
-          ], text=True))
-          video = next((s for s in info['streams'] if s.get('codec_type') == 'video'), None)
-          audio = next((s for s in info['streams'] if s.get('codec_type') == 'audio'), None)
-          duration = float(info['format']['duration'])
-          if not video or not audio:
-              raise SystemExit('MP4 must contain video and Quran audio.')
-          if (video.get('width'), video.get('height')) != (1080, 1920):
-              raise SystemExit('Expected vertical 1080x1920 output.')
-          if video.get('r_frame_rate') != '30/1':
-              raise SystemExit('Expected 30 FPS.')
-          if not 0 < duration <= 40:
-              raise SystemExit(f'Expected duration in (0, 40] seconds; got {duration:.2f}.')
-          print(f'PASS: MP4 1080x1920, 30 FPS, Quran audio present, {duration:.2f}s.')
+          for path in ('output/review_part_1.mp4', 'output/review_part_2.mp4'):
+              info = json.loads(subprocess.check_output([
+                  'ffprobe', '-v', 'error', '-show_streams', '-show_format',
+                  '-of', 'json', path
+              ], text=True))
+              video = next((s for s in info['streams'] if s.get('codec_type') == 'video'), None)
+              audio = next((s for s in info['streams'] if s.get('codec_type') == 'audio'), None)
+              duration = float(info['format']['duration'])
+              if not video or not audio:
+                  raise SystemExit(f'{path} must contain video and Quran audio.')
+              if (video.get('width'), video.get('height')) != (1080, 1920):
+                  raise SystemExit(f'{path}: expected vertical 1080x1920 output.')
+              if video.get('r_frame_rate') != '30/1':
+                  raise SystemExit(f'{path}: expected 30 FPS.')
+              if not 0 < duration <= 40:
+                  raise SystemExit(f'{path}: expected duration in (0, 40] seconds; got {duration:.2f}.')
+              print(f'PASS: {path}, 1080x1920, 30 FPS, Quran audio, {duration:.2f}s.')
           PY
 
       - name: Upload review-only MP4
         uses: actions/upload-artifact@v4
         with:
           name: quran-launcher-original-engine-review
-          path: engine/output/review.mp4
+          path: |\n            engine/output/review_part_1.mp4\n            engine/output/review_part_2.mp4
           retention-days: 7

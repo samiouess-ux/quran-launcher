@@ -3,123 +3,47 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#10251f"><title>محرك القرآن السينمائي</title>
-<link rel="stylesheet" href="styles.css?v=launcher-run-control-2">
+<link rel="stylesheet" href="styles.css?v=launcher-safe-github-handoff-1">
 </head>
 <body>
 <main class="app">
-<header class="top"><div class="mark">ق</div><div><p class="eyebrow">المحرك السينمائي الأصلي</p><h1>إنشاء فيديو قرآني</h1><p class="sub">واجهة تشغيل مرتبطة بمحرّك القرآن الأصلي وFFmpeg</p></div></header>
+<header class="top"><div class="mark">ق</div><div><p class="eyebrow">المحرك السينمائي الأصلي</p><h1>إنشاء فيديوهات قرآنية</h1><p class="sub">Launcher مربوط بمحرك Python + FFmpeg الحقيقي</p></div></header>
 <section class="panel">
-<div class="engine-state"><span class="dot"></span> المحرك: Python + FFmpeg — تشغيل فعلي عبر GitHub Actions</div>
-<h2>تشغيل محرك القرآن الكامل</h2>
+<div class="engine-state"><span class="dot"></span> المحرك: GitHub Actions — إنتاج MP4 فعلي</div>
+<h2>إنتاج 3 فيديوهات للمراجعة</h2>
 <div class="spec"><span>مكتبة القرآن</span><strong>114 سورة — 6,236 آية</strong></div>
-<div class="spec"><span>مخرجات كل تشغيل</span><strong>3 فيديوهات MP4 للمراجعة</strong></div>
+<div class="spec"><span>مخرجات التشغيل</span><strong>3 فيديوهات MP4 مختلفة</strong></div>
 <div class="spec"><span>القارئ</span><strong>ماهر المعيقلي — حفص</strong></div>
 <div class="spec"><span>المدة</span><strong>حتى 40 ثانية — آيات كاملة</strong></div>
 <div class="spec"><span>الترجمة</span><strong>Saheeh International — English</strong></div>
-<p class="notice">لأمان حسابك، يلزم رمز GitHub محدود الصلاحية لتشغيل المحرك. الرمز يُستخدم في هذه الجلسة فقط، ولا يُحفظ في الصفحة أو يُرسل إلى أي خادم غير GitHub.</p>
-<p class="hint">إن لم يكن عندك رمز: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">إنشاء Fine-grained token من GitHub</a>، اختر هذا المستودع فقط، ثم امنح Actions صلاحية Read and write.</p><label class="token-label" for="github-token">رمز GitHub (Fine-grained token — صلاحية Actions: Read and write لهذا المستودع فقط)</label>
-<input id="github-token" type="password" autocomplete="off" placeholder="ألصق الرمز هنا">
-<button id="run-engine" class="primary-action" type="button">تشغيل 3 فيديوهات الآن</button>
-<p id="run-status" class="hint" role="status" aria-live="polite">بعد التشغيل، ستظهر هنا حالة الإنتاج وروابط ملفات الفيديو.</p>
-<div id="run-result" class="run-result" hidden></div>
-<p class="hint">الرمز لا يُخزّن في الهاتف ولا في المتصفح. بعد إرسال طلب التشغيل يُمسح من الحقل مباشرة.</p>
+<p class="notice">لأمان حسابك، لن نطلب منك Token أو كلمة سر داخل هذه الصفحة. التشغيل يتم من GitHub مباشرة بعد تسجيل الدخول.</p>
+<button id="open-workflow" class="primary-action" type="button">فتح تشغيل المحرك</button>
+<p id="run-status" class="hint" role="status" aria-live="polite">بعد فتح GitHub: اختر الفرع feature/islamic-tiktok-engine-port من قائمة Branch، ثم اضغط Run workflow.</p>
+<div id="run-result" class="run-result">
+<a href="https://github.com/samiouess-ux/quran-launcher/actions/workflows/quran-launcher-engine-render.yml" target="_blank" rel="noopener">فتح صفحة تشغيل المحرك على GitHub</a>
+</div>
 </section>
 <section class="panel secondary-panel">
-<h2>ما الذي يحدث عند التشغيل؟</h2>
-<ul>
-<li>تشغيل محرك Python وFFmpeg الحقيقي، وليس مسجل Canvas القديم.</li>
-<li>اختيار عدة خلفيات فيديو متحركة من المكتبة المعتمدة ودمجها بانتقالات ناعمة.</li>
-<li>إظهار الآيات بالعربية والترجمة الإنجليزية مع التلاوة، مع إبقاء إطار الآيات ثابتًا عند الانتقال.</li>
-<li>فحص ملف MP4 ثم حفظه كملف مراجعة قابل للتنزيل.</li>
-</ul>
-<p class="notice">الحماية: لا يوجد نشر تلقائي على TikTok ولا إرسال إلى Telegram. يلزم رمز GitHub محدود الصلاحية لتشغيل المحرك، ويُستخدم مؤقتًا في هذه الجلسة فقط.</p>
+<h2>خطوات التشغيل من الهاتف</h2>
+<ol>
+<li>اضغط «فتح تشغيل المحرك» وسجّل الدخول إلى GitHub إذا طلب ذلك.</li>
+<li>في صفحة Actions، اختر الفرع <strong>feature/islamic-tiktok-engine-port</strong>.</li>
+<li>اضغط <strong>Run workflow</strong> وانتظر حتى تصبح الحالة Success.</li>
+<li>افتح التشغيل الناجح، ثم قسم Artifacts، ونزّل <strong>quran-launcher-full-quran-review</strong>.</li>
+<li>داخل الحزمة تلقى الفيديوهات الثلاثة MP4. تنجم تشاهدهم وتحفظهم في الهاتف.</li>
+</ol>
+<p class="notice">الفيديوهات الثلاثة مخرجات مراجعة: يلزمك تراجع النص والتلاوة قبل النشر. لا يوجد نشر تلقائي على TikTok ولا إرسال إلى Telegram.</p>
 </section>
-<footer>نسخة مستقلة — المستودع الأصلي وفرع main لم يتم تعديلهما</footer>
+<footer>العمل على الفرع المعزول فقط — المستودع الأصلي وفرع main لم يتم تعديلهما</footer>
 </main>
 <script>
 (() => {
-  const owner = 'samiouess-ux';
-  const repo = 'quran-launcher';
-  const workflow = 'quran-launcher-engine-render.yml';
-  const branch = 'feature/islamic-tiktok-engine-port';
-  const tokenInput = document.getElementById('github-token');
-  const runButton = document.getElementById('run-engine');
+  const url = 'https://github.com/samiouess-ux/quran-launcher/actions/workflows/quran-launcher-engine-render.yml';
+  const button = document.getElementById('open-workflow');
   const status = document.getElementById('run-status');
-  const result = document.getElementById('run-result');
-  let pollHandle = null;
-  let dispatchStartedAt = 0;
-  const api = 'https://api.github.com/repos/' + owner + '/' + repo;
-  function say(message) { status.textContent = message; }
-  function showRun(run) {
-    const state = run.status === 'completed'
-      ? (run.conclusion === 'success' ? 'اكتمل الإنتاج بنجاح.' : 'انتهى التشغيل دون نجاح: ' + run.conclusion)
-      : 'حالة الإنتاج: ' + (run.status === 'in_progress' ? 'الفيديوهات قيد الإنشاء' : 'في الانتظار');
-    say(state);
-    result.hidden = false;
-    result.replaceChildren();
-    const a = document.createElement('a');
-    a.href = run.html_url;
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.textContent = 'عرض تفاصيل التشغيل على GitHub';
-    result.appendChild(a);
-    if (run.status === 'completed' && run.conclusion === 'success') {
-      const b = document.createElement('a');
-      b.href = run.html_url + '#artifacts';
-      b.target = '_blank';
-      b.rel = 'noopener';
-      b.textContent = 'فتح حزمة الفيديوهات الثلاثة (Artifacts)';
-      result.appendChild(b);
-    }
-  }
-  async function pollRun() {
-    try {
-      const response = await fetch(api + '/actions/workflows/' + workflow + '/runs?branch=' + encodeURIComponent(branch) + '&per_page=5', {
-        headers: { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
-      });
-      if (!response.ok) throw new Error('تعذّر قراءة حالة التشغيل من GitHub (' + response.status + ').');
-      const data = await response.json();
-      const run = data.workflow_runs && data.workflow_runs.find(x => x.event === 'workflow_dispatch' && Date.parse(x.created_at) >= dispatchStartedAt);
-      if (!run) { say('طلب التشغيل أُرسل. ننتظر ظهور التشغيل في GitHub…'); return; }
-      showRun(run);
-      if (run.status === 'completed' && pollHandle) { clearInterval(pollHandle); pollHandle = null; }
-    } catch (error) { say(error.message); }
-  }
-  runButton.addEventListener('click', async () => {
-    const token = tokenInput.value.trim();
-    if (!token) { say('ألصق رمز GitHub المحدود أولًا.'); tokenInput.focus(); return; }
-    runButton.disabled = true;
-    dispatchStartedAt = Date.now() - 5000;
-    say('جارٍ إرسال طلب التشغيل إلى GitHub…');
-    result.hidden = true;
-    try {
-      const response = await fetch(api + '/actions/workflows/' + workflow + '/dispatches', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/vnd.github+json',
-          'Authorization': 'Bearer ' + token,
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ ref: branch })
-      });
-      tokenInput.value = '';
-      if (response.status !== 204) {
-        let detail = '';
-        try { detail = (await response.json()).message || ''; } catch (_) {}
-        throw new Error('GitHub رفض طلب التشغيل (' + response.status + '). ' + detail + ' تأكد من صلاحية Actions: Read and write وأن الرمز مخصص لهذا المستودع.');
-      }
-      say('تم قبول طلب التشغيل. نتابع الآن إنشاء الفيديوهات الثلاثة…');
-      await new Promise(resolve => setTimeout(resolve, 2500));
-      await pollRun();
-      if (pollHandle) clearInterval(pollHandle);
-      pollHandle = setInterval(pollRun, 12000);
-    } catch (error) {
-      tokenInput.value = '';
-      say(error.message);
-    } finally {
-      runButton.disabled = false;
-    }
+  button.addEventListener('click', () => {
+    status.textContent = 'تفتح صفحة GitHub. اختَر الفرع feature/islamic-tiktok-engine-port ثم اضغط Run workflow.';
+    window.open(url, '_blank', 'noopener');
   });
 })();
 </script>

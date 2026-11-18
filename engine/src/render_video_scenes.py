@@ -262,6 +262,10 @@ def build_background_reel(
         # clip if it is shorter than the remaining reel, then transition onward.
         prepared.append((candidate_id, raw_path, measured))
         total_coverage += measured
+        if measured < duration:
+            # Loop this approved clip rather than fetching a second clip just
+            # to fill the remaining seconds of the same narration.
+            break
 
     if not prepared:
         raise SystemExit("No approved background has a usable positive duration.")

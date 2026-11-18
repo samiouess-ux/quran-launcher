@@ -7,7 +7,12 @@
     "surah_number": 112,
     "surah_name_ar": "الإخلاص",
     "surah_name_en": "Al-Ikhlas",
-    "verses": [1, 2, 3, 4],
+    "verses": [
+      1,
+      2,
+      3,
+      4
+    ],
     "arabic_source": "Quran.com Uthmani text",
     "arabic_source_url": "https://quran.com/al-ikhlas",
     "english_translation": "Sahih International",
@@ -42,14 +47,14 @@
     "kind": "quran_recitation",
     "approved": false,
     "exact_recording_user_reviewed": false,
-    "rights_verified": true,
+    "rights_verified": false,
     "note": "Maher Al-Muaiqly — Hafs. A separate review workflow extracts the complete 112:1–4 files from the checksum-pinned official KFGQPC Hafs ayah archive. The exact files have not yet been listened to or approved.",
-    "rights_source_url": "https://qurancomplex.gov.sa/quran-audios/",
-    "rights_note": "Official KFGQPC collection reuse permission is documented in the source manifest. This does not approve the exact passage for production; the exact recording must still be listened to and approved.",
+    "rights_source_url": null,
+    "rights_note": "The archive source and checksum are pinned, but recording-specific redistribution rights have not yet been independently verified. Keep this candidate review-only until the applicable official terms are checked.",
     "reciter_name": "ماهر المعيقلي",
     "riwaya": "حفص عن عاصم",
     "recording_source": "King Fahd Complex — official Maher Al-Muaiqly Hafs ayah archive",
-    "recording_page_url": "https://qurancomplex.gov.sa/quran-audio-hafs-muaiqly/",
+    "recording_page_url": "https://qurancomplex.gov.sa/quran-audios/",
     "recording_file_url": "https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip",
     "recording_path": "official_inventory:112:1-4",
     "user_audio_feedback": "Exact 112:1–4 recording review is pending; do not infer approval."
@@ -69,12 +74,21 @@
     "auto_publish": false
   },
   "caption": {
-    "languages": ["ar", "en"],
+    "languages": [
+      "ar",
+      "en"
+    ],
     "mention_reciter": false,
     "status": "draft_for_review",
     "arabic": "سورة الإخلاص | الآيات 1–4",
     "english": "Surah Al-Ikhlas | Verses 1–4",
-    "hashtags_ar": ["#القرآن_الكريم", "#سورة_الإخلاص"],
-    "hashtags_en": ["#Quran", "#AlIkhlas"]
+    "hashtags_ar": [
+      "#القرآن_الكريم",
+      "#سورة_الإخلاص"
+    ],
+    "hashtags_en": [
+      "#Quran",
+      "#AlIkhlas"
+    ]
   }
 }

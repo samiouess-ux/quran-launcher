@@ -284,6 +284,11 @@ def build_background_reel(
         prepared.append((candidate["id"], raw_path, measured))
         total_coverage += measured
 
+    if len(prepared) == 1 and prepared[0][2] < duration:
+        # A single approved clip may loop to cover the narration; keep its
+        # measured source duration for validation, but render the full target.
+        prepared[0] = (prepared[0][0], prepared[0][1], duration)
+        total_coverage = duration
     if total_coverage - transition * (len(prepared) - 1) < duration:
         raise SystemExit("Approved moving backgrounds do not cover the full video duration.")
 
@@ -322,7 +327,7 @@ def build_background_reel(
     actual_duration = probe_media_duration(destination)
     if actual_duration + 0.10 < duration:
         raise SystemExit(
-            f"Moving background reel is too short ({actual_duration:.3f}s for {duration:.3f}s)."
+            f"Looped background reel is too short ({actual_duration:.3f}s for {duration:.3f}s)."
         )
     ids = [item[0] for item in prepared]
     print("Moving video background sequence with crossfades:", ", ".join(ids))

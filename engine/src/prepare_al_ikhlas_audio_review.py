@@ -124,7 +124,7 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
     report = {
         "status": "audio_extracted_for_user_review_only",
         "surah_number": SURAH,
-        "surah_name_ar": "الإخلاص",
+        "surah_name_ar": "سورة الإخلاص",
         "surah_name_en": "Al-Ikhlas",
         "verses": list(AYAHS),
         "reciter": "Maher Al-Muaiqly",

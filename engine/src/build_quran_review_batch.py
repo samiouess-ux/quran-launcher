@@ -78,17 +78,6 @@ def build_review_batch(
         if any(not 1 <= number <= 114 for number in already_used):
             raise ValueError("Used surah numbers must be between 1 and 114.")
         surahs = [number for number in catalog_surahs if number not in excluded and number not in already_used]
-    if not surahs:
-        raise ValueError("No eligible surahs remain after the requested inclusion/exclusion rules.")
-    if count > len(surahs):
-        raise ValueError(f"Cannot select {count} distinct surahs from {len(surahs)} available.")
-
-    # Spread choices across the Quran instead of repeatedly selecting one short
-    # opening passage. A stable hash makes the same seed reproducible.
-    digest = hashlib.sha256(seed.encode("utf-8")).digest()
-    offset = int.from_bytes(digest[:8], "big") % len(surahs)
-    ordered = surahs[offset:] + surahs[:offset]
-    slots = sorted({min(len(ordered)-1, (i * len(ordered)) // count) for i in range(count)})
     passages = []
     used_refs = set()
     for reference in used_ayah_references:
@@ -103,7 +92,11 @@ def build_review_batch(
     partial_surahs = []
     # Production excludes already-used surahs from fresh selection, but a
     # partially delivered surah must remain eligible for its unused suffix.
-    partial_candidate_surahs = [number for number in catalog_surahs if number not in excluded]
+    # An explicit only_surahs request remains a hard boundary (e.g. Friday Al-Kahf).
+    partial_candidate_surahs = (
+        surahs if only_surahs is not None
+        else [number for number in catalog_surahs if number not in excluded]
+    )
     for surah in partial_candidate_surahs:
         available_for_surah = sorted(
             int(key.split(":")[1]) for key in corpus
@@ -130,9 +123,25 @@ def build_review_batch(
         reverse=True,
     )
     selected_surahs = partial_surahs[:count]
-    for number in [ordered[i] for i in slots]:
-        if number not in selected_surahs and len(selected_surahs) < count:
-            selected_surahs.append(number)
+    fresh_surahs = [number for number in surahs if number not in selected_surahs]
+    available_count = len(selected_surahs) + len(fresh_surahs)
+    if count > available_count:
+        raise ValueError(f"Cannot select {count} distinct surahs from {available_count} eligible partial/fresh surahs.")
+
+    # Spread only the remaining fresh selections across the Quran. Partial
+    # continuations already occupy their slots and must not be counted twice.
+    fresh_needed = count - len(selected_surahs)
+    if fresh_needed:
+        digest = hashlib.sha256(seed.encode("utf-8")).digest()
+        offset = int.from_bytes(digest[:8], "big") % len(fresh_surahs)
+        ordered_fresh = fresh_surahs[offset:] + fresh_surahs[:offset]
+        slots = sorted({
+            min(len(ordered_fresh) - 1, (i * len(ordered_fresh)) // fresh_needed)
+            for i in range(fresh_needed)
+        })
+        selected_surahs.extend(ordered_fresh[i] for i in slots)
+    if len(selected_surahs) != count:
+        raise ValueError("Unable to construct the requested number of distinct surah candidates.")
 
     for index, surah in enumerate(selected_surahs, start=1):
         available = sorted(

@@ -86,10 +86,12 @@ class ContentRotationTests(unittest.TestCase):
         self.assertEqual(chosen.name, "valid.json")
 
     def test_missing_content_type_is_not_assumed_to_be_quran(self):
-        self.write_manifest("missing-type.json", "missing-type",
-                            content_type=None)
+        (self.directory / "missing-type.json").write_text(json.dumps({
+            "id": "missing-type", "rotation_approved": True,
+            "publishing": {"approval_required": True, "auto_publish": False},
+        }), encoding="utf-8")
         self.write_manifest("valid.json", "valid")
-        # Explicit null is not a valid type; the valid manifest remains eligible.
+        # Missing type metadata is not silently treated as Quran.
         chosen = choose_manifest(self.directory, "quran", rotation_key="key")
         self.assertEqual(chosen.name, "valid.json")
 

@@ -197,3 +197,10 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Commit: `c2ad5b109db41dba64272e8ce6b22722dbde8cac`.
 - Current content pool audit: one approved first-test passage, one unapproved candidate (Al-Ikhlas), and one unapproved Ash-Sharh draft. There is not yet a pool of three distinct production-approved passages for the daily batch.
 - Scope unchanged: no edits to `main`, source IslamicTikTokAutomation, Telegram, scheduler, Pages settings, or TikTok publishing.
+
+
+## Quran review-preview duration cap aligned — 2026-11-18
+- Found a mismatch: the review-batch audio preparation stage allowed up to 45 seconds, while the renderer and the user's approved limit are 40 seconds maximum.
+- Aligned the audio preparation cap, deferred-status labels, report metadata, and regression-test expectations to a strict 40-second maximum. Complete ayahs remain intact; no ayah is truncated and short passages are not padded to an artificial minimum.
+- No production content was approved or enabled by this change. The single approved sample workflow remains separate.
+- Validation will be reported only after the queued GitHub Actions run completes.

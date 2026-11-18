@@ -114,7 +114,7 @@ def build_review_batch(
             if int(key.split(":")[0]) == surah
         )
         # Production mode supplies the entire remaining contiguous suffix;
-        # audio preparation chooses the longest contiguous whole-ayah prefix up to 45 seconds.
+        # audio preparation chooses the longest contiguous whole-ayah prefix up to 40 seconds.
         # The optional fixed-size argument is retained only for legacy unit tests.
         window_size = verses_per_passage
         if window_size is None:

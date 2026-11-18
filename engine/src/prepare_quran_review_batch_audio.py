@@ -24,7 +24,7 @@ from quran_audio_parts import partition_contiguous_ayahs
 
 DEFAULT_ARCHIVE = "https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip"
 MIN_SECONDS = 0.0
-MAX_SECONDS = 45.0  # User-approved maximum; keep every preview at or below 45 seconds.
+MAX_SECONDS = 40.0  # User-approved maximum; keep every preview at or below 40 seconds.
 
 
 def probe(path: Path) -> float:
@@ -250,7 +250,7 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
                     "candidate_id": candidate["candidate_id"],
                     "source_candidate_id": candidate["candidate_id"],
                     "surah_number": surah,
-                    "status": "deferred_single_ayah_exceeds_45_seconds" if remaining and len(remaining) == len(requested_verses) else "deferred_no_next_complete_ayah_fits_45_seconds",
+                    "status": "deferred_single_ayah_exceeds_40_seconds" if remaining and len(remaining) == len(requested_verses) else "deferred_no_next_complete_ayah_fits_40_seconds",
                     "requested_verses": requested_verses,
                     "selected_verses": [],
                     "remaining_verses": requested_verses,
@@ -328,7 +328,7 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
         "preview_part_count": len(ready),
         "minimum_seconds": MIN_SECONDS,
         "maximum_seconds": MAX_SECONDS,
-        "audio_processing": "complete_ordered_whole_ayah_parts_max_45_seconds_with_edge_only_silence_detection_and_mp3_stream_copy",
+        "audio_processing": "complete_ordered_whole_ayah_parts_max_40_seconds_with_edge_only_silence_detection_and_mp3_stream_copy",
         "continuation_policy": "Unselected ayahs remain explicitly listed and are not marked used. The next batch starts again at the first ayah absent from confirmed delivery history; only confirmed delivery advances the sequence.",
         "edge_silence_policy": "silencedetect at -50dB for 0.25s; retain 0.12s guard at each detected file edge; never remove internal silence or trim recitation",
         "items": results,

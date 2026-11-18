@@ -180,3 +180,12 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Commits: `6e93a0e0d51394096ac6461999b5cf5d0ac13ede`, `83b5d044a5af398a0152467d89081e3466e398da`, `ad5280bbfb137fe0e8aa942a0957db4325ab6acc`.
 - GitHub Actions verification is pending. The fixed Ash-Sharh sample workflow remains unchanged; this hardening does not enable unreviewed Quran content or change the UI.
 - Scope unchanged: no edits to `main`, source IslamicTikTokAutomation, Telegram, scheduler, Pages settings, or TikTok publishing.
+
+
+## Shared content-manifest validator hardening — 2026-11-18
+- Tightened `engine/src/validate_content_manifest.py` so `content_type`, `audio.kind`, and `publishing.auto_publish=false` must be explicitly declared. Missing metadata is no longer silently inferred as Quran, recitation, or safe no-auto-publish.
+- Updated the existing approved Ash-Sharh sample to explicitly declare `content_type=quran` and `audio.kind=quran_recitation`; its reviewed passage and rendering settings were not changed.
+- Added regression tests for missing content type, audio kind, and auto-publish setting.
+- Commits: `7faa39702dd20ccaabd0ae2d90437086afcecb1b`, `cb08e90f8c9e29bb0f861788b389cb5b72b01bac`, `658f449941e9d87105e37eae6b30ce8b3aaaa33e`.
+- GitHub Actions validation is pending. No new surah or reciter was enabled, and the launcher UI remains unchanged.
+- Scope unchanged: no edits to `main`, source IslamicTikTokAutomation, Telegram, scheduler, Pages settings, or TikTok publishing.

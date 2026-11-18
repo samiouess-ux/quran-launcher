@@ -1,30 +1,60 @@
 {
-  "id": "test_surah_ash_sharh_94_5_6",
+  "id": "test_surah_al_fatiha_1_1_7",
   "content_type": "quran",
   "source": {
-    "surah_number": 94,
-    "surah_name_ar": "الشرح",
-    "surah_name_en": "Ash-Sharh",
+    "surah_number": 1,
+    "surah_name_ar": "الفاتحة",
+    "surah_name_en": "Al-Fatihah",
     "verses": [
+      1,
+      2,
+      3,
+      4,
       5,
-      6
+      6,
+      7
     ],
-    "arabic_source": "Tanzil text as displayed by QuranEnc",
-    "english_translation": "Sahih International",
-    "translation_source_url": "https://legacy.quran.com/94/5-6",
-    "note": "The English translation conveys the meaning of the Arabic; only the Arabic text is the Quran. Verify the exact displayed wording against the cited source before rendering.",
+    "arabic_source": "Quran.com Uthmani text",
+    "english_translation": "Saheeh International",
+    "translation_source_url": "https://quran.com/al-fatihah/translation/en-sahih-international",
+    "note": "Full Surah Al-Fatihah. Arabic Uthmani and English Saheeh International checked against the cited Quran.com source.",
     "translation_verified": true
   },
   "verses": [
     {
+      "number": 1,
+      "arabic": "بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ",
+      "english": "In the name of Allah, the Entirely Merciful, the Especially Merciful."
+    },
+    {
+      "number": 2,
+      "arabic": "ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ",
+      "english": "[All] praise is [due] to Allah, Lord of the worlds -"
+    },
+    {
+      "number": 3,
+      "arabic": "ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ",
+      "english": "The Entirely Merciful, the Especially Merciful,"
+    },
+    {
+      "number": 4,
+      "arabic": "مَـٰلِكِ يَوْمِ ٱلدِّينِ",
+      "english": "Sovereign of the Day of Recompense."
+    },
+    {
       "number": 5,
-      "arabic": "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا",
-      "english": "For indeed, with hardship [will be] ease."
+      "arabic": "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+      "english": "It is You we worship and You we ask for help."
     },
     {
       "number": 6,
-      "arabic": "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
-      "english": "Indeed, with hardship [will be] ease."
+      "arabic": "ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ",
+      "english": "Guide us to the straight path -"
+    },
+    {
+      "number": 7,
+      "arabic": "صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ",
+      "english": "The path of those upon whom You have bestowed favor, not of those who have evoked [Your] anger or of those who are astray."
     }
   ],
   "audio": {
@@ -36,41 +66,54 @@
     "recitation": "Hafs",
     "rights_verified_for_official_complex_recordings": true,
     "rights_source_url": "https://qurancomplex.gov.sa/quran-audios/",
-    "exact_audio_file_downloaded": true,
-    "exact_audio_file_listened_and_checked": true,
-    "production_blocked_until_exact_audio_checked": false,
+    "exact_audio_file_downloaded": false,
+    "exact_audio_file_listened_and_checked": false,
+    "production_blocked_until_exact_audio_checked": true,
     "license_research_candidates": [
       {
         "reciter": "Maher Al-Muaiqly",
         "source": "King Fahd Complex for the Printing of the Holy Quran",
         "source_url": "https://qurancomplex.gov.sa/quran-audio-hafs-muaiqly/",
         "license_url": "https://qurancomplex.gov.sa/quran-audios/",
-        "permission_summary": "Official page states the listed digital recitations are made available free for public use in apps, websites, broadcast channels, and private/institutional works, inside and outside Saudi Arabia.",
-        "surah_ash_sharh_listed_on_separate_reciter_page": "https://maheralmuaiqly.com/ar/quran/107",
-        "status": "approved_official_collection_and_exact_audio_user_reviewed",
-        "exact_recording_user_reviewed": true
+        "permission_summary": "Official collection reuse permission documented; the exact Al-Fatihah recording remains pending user listening/review.",
+        "status": "official_collection_reuse_permission_documented_exact_fatiha_recording_pending_user_review",
+        "exact_recording_user_reviewed": false
       }
     ],
     "extracted_verses": [
+      1,
+      2,
+      3,
+      4,
       5,
-      6
+      6,
+      7
     ],
-    "combined_audio_file": "maher_almuaiqly_ash_sharh_verses_5_6.mp3",
-    "combined_audio_duration_seconds": 15.882449,
-    "combined_audio_sha256": "3e2a91674ce2ee604885e06fba0ee67c425e5dbece54cc3256803e3b5f02c5a0",
-    "github_actions_run_id": "41164756151",
-    "github_actions_artifact_id": "13028735937",
-    "github_actions_artifact_name": "maher-ash-sharh-verses-5-6-review",
-    "note": "Internal provenance and rights records are retained for compliance. Do not mention the reciter in the public video or caption.",
-    "user_review": "User confirmed exact verses 94:5–6 sequence is correct; do not include reciter name in public-facing output.",
-    "approved_for_first_test_video": true,
+    "combined_audio_file": "maher_almuaiqly_al_fatiha_verses_1_7_review.mp3",
+    "combined_audio_duration_seconds": null,
+    "combined_audio_sha256": null,
+    "github_actions_run_id": null,
+    "github_actions_artifact_id": null,
+    "github_actions_artifact_name": null,
+    "note": "Review-only Al-Fatihah recording. Do not treat as approved or publish until the exact recording is listened to and approved.",
+    "user_review": null,
+    "approved_for_first_test_video": false,
     "public_reciter_attribution": false,
     "official_verse_archive_url": "https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip",
     "archive_entries": {
-      "5": "ayat-12-1-2020/094 Ash-Sharh ƒΘ¼⌐Ñ/10-094005-A08.mp3",
-      "6": "ayat-12-1-2020/094 Ash-Sharh ƒΘ¼⌐Ñ/10-094006-A08.mp3"
+      "1": "10-001001-A08.mp3",
+      "2": "10-001002-A08.mp3",
+      "3": "10-001003-A08.mp3",
+      "4": "10-001004-A08.mp3",
+      "5": "10-001005-A08.mp3",
+      "6": "10-001006-A08.mp3",
+      "7": "10-001007-A08.mp3"
     },
-    "production_audio_file": "build/audio/ash_sharh_94_5_6.mp3"
+    "production_audio_file": "build/audio/al_fatiha_1_1_7_review.mp3",
+    "preview_only": true,
+    "approved": false,
+    "exact_recording_user_reviewed": false,
+    "rights_verified": true
   },
   "visual": {
     "format": "9:16",
@@ -109,15 +152,15 @@
     "include_description": true,
     "include_relevant_hashtags": true,
     "mention_reciter": false,
-    "arabic": "سورة الشرح | الآيتان 5–6\nفإن مع العسر يسرا.",
-    "english": "Surah Ash-Sharh | Verses 5–6\nIndeed, with hardship comes ease.",
+    "arabic": "سورة الفاتحة | الآيات 1–7\nبِسْمِ ٱللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+    "english": "Surah Al-Fatihah | Verses 1–7\nIn the name of Allah, the Entirely Merciful, the Especially Merciful.",
     "hashtags_ar": [
       "#القرآن_الكريم",
-      "#سورة_الشرح"
+      "#سورة_الفاتحة"
     ],
     "hashtags_en": [
       "#Quran",
-      "#AshSharh"
+      "#AlFatihah"
     ],
     "status": "draft_for_review"
   }

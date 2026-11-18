@@ -320,3 +320,7 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Review artifact: `quran-launcher-original-engine-review`, artifact ID `14424505862`, size 52,844,269 bytes. GitHub reports creation at 2026-11-18 11:39:38 UTC and expiry at 2026-11-21 11:39:36 UTC, confirming the new approximately 3-day retention policy for this fresh artifact.
 - This confirms a technically valid MP4 was rendered and uploaded and that new artifact expiry is 3 days. It does not by itself constitute visual inspection of the frame across every ayah; do not claim the frame-flicker issue is visually resolved until the output is inspected.
 - Review-only. No production activation, UI/Pages, Telegram, scheduler, TikTok publishing, `main`, or original source repository was changed.
+
+
+- Follow-up visual inspection of the downloaded review MP4: extracted representative frames at 2-second through 51-second checkpoints. The decorative ayah panel/frame stayed in the same screen position and no obvious fade-out/fade-in flicker was visible in these sampled frames across ayah changes. Moving backgrounds changed through the sequence, and Arabic/English overlays remained visible in the sampled timeline. This is a sampled visual check, not a frame-by-frame proof.
+- The inspected MP4 metadata reports H.264 video, AAC audio, 1080x1920, 30 fps, and 51.946 seconds duration. The complete Al-Fatihah output is therefore longer than 40 seconds; this matches the explicit full-surah/no-splitting decision for this review test and must not be treated as a global duration cap.

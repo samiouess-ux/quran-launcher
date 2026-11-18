@@ -2,6 +2,14 @@ name: Quran Background Photo Review
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - feature/islamic-tiktok-engine-port
+    paths:
+      - ".github/workflows/quran-background-photo-review.yml"
+      - "engine/src/build_photo_review_gallery.py"
+      - "engine/data/background_photos_manifest.json"
+      - "engine/assets/background_photos/**"
 
 permissions:
   contents: read

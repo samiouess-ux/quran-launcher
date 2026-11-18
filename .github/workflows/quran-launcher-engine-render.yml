@@ -139,6 +139,7 @@ jobs:
           from zipfile import ZipFile
           from build_official_audio_inventory import create_archive_session, download_verified_archive
           import json, re, subprocess
+          from prepare_quran_review_batch_audio import trim_edge_silence
           inventory = json.loads(Path('output/official_verse_audio_inventory.json').read_text(encoding='utf-8'))
           archive_path = inventory.get('archive_path')
           if not archive_path:
@@ -152,6 +153,7 @@ jobs:
           work = Path('build/audio')
           work.mkdir(parents=True, exist_ok=True)
           durations = {}
+          processed_durations = {}
           silence_report = {}
           with ZipFile(archive_path) as archive:
               names = archive.namelist()
@@ -165,7 +167,8 @@ jobs:
                   with archive.open(matches[0]) as src, source.open('wb') as dst:
                       while chunk := src.read(1024 * 1024):
                           dst.write(chunk)
-                  # Inspect silence; do not trim, time-stretch, or re-encode the recitation.
+                  # Reuse the original engine's tested edge-silence treatment.
+                  # Keep 0.12s at both edges; never trim inside the recitation.
                   probe = subprocess.run([
                       'ffmpeg', '-hide_banner', '-i', str(source),
                       '-af', 'silencedetect=noise=-50dB:d=0.25', '-f', 'null', '-'
@@ -173,15 +176,25 @@ jobs:
                   intervals = []
                   starts = re.findall(r'silence_start: ([0-9.]+)', probe.stderr)
                   ends = re.findall(r'silence_end: ([0-9.]+)', probe.stderr)
-                  for index, start in enumerate(starts):
+                  for index, start_time in enumerate(starts):
                       finish = float(ends[index]) if index < len(ends) else None
-                      intervals.append({'start': float(start), 'end': finish})
-                  durations[str(verse)] = float(subprocess.check_output([
+                      intervals.append({'start': float(start_time), 'end': finish})
+                  source_duration = float(subprocess.check_output([
                       'ffprobe', '-v', 'error', '-show_entries', 'format=duration',
                       '-of', 'default=nw=1:nk=1', str(source)
                   ], text=True).strip())
-                  silence_report[str(verse)] = intervals
-                  concat_lines.append(f"file '{source.resolve()}'")
+                  processed = work / 'processed' / f'verse_{verse:02d}.mp3'
+                  processed_duration = trim_edge_silence(source, processed, source_duration)
+                  durations[str(verse)] = source_duration
+                  processed_durations[str(verse)] = processed_duration
+                  silence_report[str(verse)] = {
+                      'detected_intervals': intervals,
+                      'original_duration_seconds': source_duration,
+                      'processed_duration_seconds': processed_duration,
+                      'edge_silence_removed_seconds': round(source_duration - processed_duration, 3),
+                      'retained_edge_margin_seconds': 0.12
+                  }
+                  concat_lines.append(f"file '{processed.resolve()}'")
           concat = work / 'concat_full_fatiha.txt'
           concat.write_text('\n'.join(concat_lines) + '\n', encoding='utf-8')
           combined = Path('output/al_fatiha_1_7_review_audio.mp3')
@@ -194,8 +207,9 @@ jobs:
                          ensure_ascii=False, indent=2), encoding='utf-8'
           )
           print('Original per-ayah audio durations (seconds):', json.dumps(durations))
-          print('Detected silence intervals per ayah (seconds):', json.dumps(silence_report))
-          print('Complete Al-Fatihah audio created without trimming or splitting:', combined)
+          print('Processed per-ayah audio durations (seconds):', json.dumps(processed_durations))
+          print('Detected and safely removed edge silence per ayah:', json.dumps(silence_report))
+          print('Complete Al-Fatihah audio created with original engine edge-silence handling; no splitting:', combined)
           PY
 
       - name: Render one complete cinematic Al-Fatihah review video
@@ -214,8 +228,14 @@ jobs:
                   '-of', 'default=nw=1:nk=1', f'build/audio/verse_{n:02d}.mp3'
               ], text=True).strip()) for n in range(1, 8)
           }
+          processed_durations = {
+              str(n): float(subprocess.check_output([
+                  'ffprobe', '-v', 'error', '-show_entries', 'format=duration',
+                  '-of', 'default=nw=1:nk=1', f'build/audio/processed/verse_{n:02d}.mp3'
+              ], text=True).strip()) for n in range(1, 8)
+          }
           manifest['audio']['production_audio_file'] = 'output/al_fatiha_1_7_review_audio.mp3'
-          manifest['audio']['processed_verse_durations_seconds'] = durations
+          manifest['audio']['processed_verse_durations_seconds'] = processed_durations
           manifest['audio']['inter_verse_silence_seconds'] = 0.0
           Path('build/launcher_manifest_full_fatiha.json').write_text(
               json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8'

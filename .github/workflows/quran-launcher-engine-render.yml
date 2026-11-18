@@ -171,8 +171,8 @@ jobs:
           ready = [item for item in report.get('items', []) if item.get('status', '').startswith('audio_prepared')]
           if len(ready) != 3 or len({int(item['surah_number']) for item in ready}) != 3:
               raise SystemExit('Expected three prepared, distinct-surah whole-ayah audio candidates.')
-          if report.get('inter_verse_silence_seconds', 0) != 0:
-              raise SystemExit('Artificial inter-ayah silence must remain zero.')
+          if any(item.get('inter_verse_silence_seconds') != 0 for item in ready):
+              raise SystemExit('Artificial inter-ayah silence must remain zero for every prepared passage.')
           if report.get('rendering_allowed') is not False or report.get('auto_publish') is not False:
               raise SystemExit('Audio preparation must remain review-only.')
           print('PASS: three distinct audio candidates, original edge-silence processing, zero added inter-ayah silence.')

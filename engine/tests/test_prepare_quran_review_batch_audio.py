@@ -163,7 +163,7 @@ class QuranBatchAudioTests(unittest.TestCase):
             }
             inventory = {
                 "mapped_verse_count": 6236,
-                "verses": {f"41:{n}": f"manifest/10-{41:03d}{n:03d}-A08.mp3" for n in (1, 2, 3)},
+                "verses": {f"41:{n}": f"manifest/10-{41:03d}{n:03d}-A08.mp3" for n in (1, 2, 3, 4)},
             }
             batch_path, inventory_path = root / "batch.json", root / "inventory.json"
             batch_path.write_text(json.dumps(batch), encoding="utf-8")

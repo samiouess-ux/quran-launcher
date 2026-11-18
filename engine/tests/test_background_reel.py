@@ -41,7 +41,7 @@ class BackgroundReelTests(unittest.TestCase):
                     10.0, work, destination
                 )
 
-            self.assertEqual(selected, "clip-a")
+            self.assertEqual(selected, ["clip-a"])
             self.assertTrue(destination.is_file())
             self.assertEqual(run.call_count, 1)
             command = run.call_args.args[0]

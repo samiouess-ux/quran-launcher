@@ -359,31 +359,31 @@ class ReviewPreviewRendererTests(unittest.TestCase):
                 render(batch, report, root / "out")
 
     @patch("render_quran_review_previews.subprocess.check_output", return_value=json.dumps({
-        "format": {"duration": "45.000"},
+        "format": {"duration": "40.000"},
         "streams": [
             {"codec_name": "h264", "width": 1080, "height": 1920},
             {"codec_name": "mp3"}
         ],
     }))
-    def test_probe_accepts_video_at_45_second_maximum(self, _check):
+    def test_probe_accepts_video_at_40_second_maximum(self, _check):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "preview.mp4"
             path.write_bytes(b"video")
             info = probe(path)
-            self.assertEqual(info["duration_seconds"], 45.0)
+            self.assertEqual(info["duration_seconds"], 40.0)
 
     @patch("render_quran_review_previews.subprocess.check_output", return_value=json.dumps({
-        "format": {"duration": "45.001"},
+        "format": {"duration": "40.001"},
         "streams": [
             {"codec_name": "h264", "width": 1080, "height": 1920},
             {"codec_name": "mp3"}
         ],
     }))
-    def test_probe_rejects_video_over_45_seconds(self, _check):
+    def test_probe_rejects_video_over_40_seconds(self, _check):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "preview.mp4"
             path.write_bytes(b"video")
-            with self.assertRaisesRegex(RuntimeError, "exceeds the 45-second maximum"):
+            with self.assertRaisesRegex(RuntimeError, "exceeds the 40-second maximum"):
                 probe(path)
 
     @patch("render_quran_review_previews.subprocess.check_output", return_value=json.dumps({

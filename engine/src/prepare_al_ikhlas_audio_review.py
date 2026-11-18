@@ -204,8 +204,7 @@ def main() -> None:
     inventory = json.loads(args.inventory.read_text(encoding="utf-8"))
     report = prepare_audio_review(inventory, args.output_dir)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "
-", encoding="utf-8")
+    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\\n", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 

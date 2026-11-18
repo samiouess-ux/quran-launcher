@@ -283,6 +283,10 @@ def build_background_reel(
             continue
         prepared.append((candidate["id"], raw_path, measured))
         total_coverage += measured
+        if measured < duration:
+            # Prefer looping one approved clip over introducing an unnecessary
+            # second scene solely to fill a short duration gap.
+            break
 
     if len(prepared) == 1 and prepared[0][2] < duration:
         # A single approved clip may loop to cover the narration; keep its

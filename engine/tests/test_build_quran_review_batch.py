@@ -328,11 +328,12 @@ class BatchTests(unittest.TestCase):
         }
         result = build_review_batch(
             source, count=1, seed="only-surah-two",
-            used_ayah_references=["1:1", "1:2"],
+            used_ayah_references=["2:1", "2:2"],
+            used_surahs={2},
             only_surahs=[2],
         )
         self.assertEqual(result["passages"][0]["surah_number"], 2)
-        self.assertEqual(result["passages"][0]["verse_numbers"], [1, 2, 3])
+        self.assertEqual(result["passages"][0]["verse_numbers"], [3])
 
 if __name__ == "__main__":
     unittest.main()

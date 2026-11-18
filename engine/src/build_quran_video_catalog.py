@@ -35,7 +35,7 @@ def _validate_verse_keys(keys, expected_count: int) -> set[str]:
             raise ValueError(f"Invalid Quran verse key: {key!r}; expected surah:ayah.")
         surah, ayah = map(int, match.groups())
         if not 1 <= surah <= 114:
-            raise ValueError(f"Quran verse key has invalid surah number: {key}.")
+            raise ValueError(f"Invalid Quran verse key with out-of-range surah number: {key}.")
         if expected_count == 6236 and ayah > CANONICAL_SURAH_VERSE_COUNTS[surah - 1]:
             raise ValueError(f"Quran verse key is outside the canonical surah range: {key}.")
         parsed.add(key)

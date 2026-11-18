@@ -211,3 +211,10 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - This closes a gap where three equally sized catalogs could previously join successfully even if they shared invalid or non-canonical verse keys.
 - Added regression coverage for malformed keys and out-of-range surah numbers. The existing human-review, translation-rights, exact-audio approval, and rendering-disabled gates remain unchanged.
 - Pending GitHub Actions validation; no Quran text, translation, audio, content approvals, UI, default branch, source repository, Telegram, scheduler, or publishing behavior changed.
+
+
+## Canonical-reference regression assertion correction — 2026-11-18
+- Actions run 44260228601 exposed a test-only assertion mismatch: the validator correctly rejected `115:1`, but its more specific error wording did not match the test's generic expected phrase.
+- Updated the out-of-range-surah error to consistently identify the input as an invalid Quran verse key. Validation behavior is unchanged.
+- The canonical surah verse-count table was independently checked: 114 entries totaling exactly 6,236 ayahs.
+- Re-run the complete feature-branch workflow before treating this correction as verified.

@@ -204,3 +204,10 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Aligned the audio preparation cap, deferred-status labels, report metadata, and regression-test expectations to a strict 40-second maximum. Complete ayahs remain intact; no ayah is truncated and short passages are not padded to an artificial minimum.
 - No production content was approved or enabled by this change. The single approved sample workflow remains separate.
 - Validation will be reported only after the queued GitHub Actions run completes.
+
+
+## Canonical Quran catalog join validation — 2026-11-18
+- Hardened `build_quran_video_catalog.py` so the join validates every key as a numeric `surah:ayah` reference, rejects malformed/out-of-range surah references, and—when joining the full 6,236-ayah corpus—requires the exact canonical 114-surah verse-reference set.
+- This closes a gap where three equally sized catalogs could previously join successfully even if they shared invalid or non-canonical verse keys.
+- Added regression coverage for malformed keys and out-of-range surah numbers. The existing human-review, translation-rights, exact-audio approval, and rendering-disabled gates remain unchanged.
+- Pending GitHub Actions validation; no Quran text, translation, audio, content approvals, UI, default branch, source repository, Telegram, scheduler, or publishing behavior changed.

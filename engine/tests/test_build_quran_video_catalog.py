@@ -34,6 +34,15 @@ class QuranVideoCatalogTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "exactly 2 entries"):
             build_joined_catalog(arabic, translation, audio, expected_count=2)
 
+    def test_rejects_malformed_or_out_of_range_verse_keys(self):
+        for bad_key in ("1:0", "115:1", "one:1", "1-1"):
+            arabic, translation, audio = catalogs()
+            arabic["verses"][bad_key] = arabic["verses"].pop("1:2")
+            translation["verses"][bad_key] = translation["verses"].pop("1:2")
+            audio["verses"][bad_key] = audio["verses"].pop("1:2")
+            with self.subTest(key=bad_key), self.assertRaisesRegex(ValueError, "Invalid Quran verse key"):
+                build_joined_catalog(arabic, translation, audio, expected_count=2)
+
     def test_rejects_unreviewed_arabic_being_marked_renderable(self):
         arabic, translation, audio = catalogs()
         arabic["rendering_allowed"] = True

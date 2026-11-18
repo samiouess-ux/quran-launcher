@@ -7,7 +7,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
+
+CANONICAL_SURAH_VERSE_COUNTS = [7,286,200,176,120,165,206,75,129,109,123,111,43,52,99,128,111,110,98,135,112,78,118,64,77,227,93,88,69,60,34,30,73,54,45,83,182,88,75,85,54,53,89,59,37,35,38,29,18,45,60,49,62,55,78,96,29,22,24,13,14,11,11,18,12,12,30,52,52,44,28,28,20,56,40,31,50,40,46,42,29,19,36,25,22,17,19,26,30,20,15,21,11,8,8,19,5,8,8,11,11,8,3,9,5,4,7,3,6,3,5,4,5,6]
+VERSE_KEY = re.compile(r"^([1-9][0-9]*):([1-9][0-9]*)$")
 
 
 def load(path: Path) -> dict:
@@ -15,6 +19,39 @@ def load(path: Path) -> dict:
     if not isinstance(value, dict):
         raise ValueError(f"Expected JSON object: {path}")
     return value
+
+
+def _validate_verse_keys(keys, expected_count: int) -> set[str]:
+    if isinstance(expected_count, bool) or not isinstance(expected_count, int) or expected_count < 1:
+        raise ValueError("Expected verse count must be a positive integer.")
+    if len(keys) != expected_count:
+        raise ValueError(f"All catalogs must contain exactly {expected_count} entries.")
+    parsed = set()
+    for key in keys:
+        if not isinstance(key, str):
+            raise ValueError(f"Invalid Quran verse key: {key!r}.")
+        match = VERSE_KEY.fullmatch(key)
+        if not match:
+            raise ValueError(f"Invalid Quran verse key: {key!r}; expected surah:ayah.")
+        surah, ayah = map(int, match.groups())
+        if not 1 <= surah <= 114:
+            raise ValueError(f"Quran verse key has invalid surah number: {key}.")
+        if expected_count == 6236 and ayah > CANONICAL_SURAH_VERSE_COUNTS[surah - 1]:
+            raise ValueError(f"Quran verse key is outside the canonical surah range: {key}.")
+        parsed.add(key)
+    if len(parsed) != expected_count:
+        raise ValueError("Quran verse keys contain duplicates.")
+    if expected_count == 6236:
+        canonical = {
+            f"{surah}:{ayah}"
+            for surah, count in enumerate(CANONICAL_SURAH_VERSE_COUNTS, 1)
+            for ayah in range(1, count + 1)
+        }
+        if parsed != canonical:
+            missing = sorted(canonical - parsed)[:5]
+            extra = sorted(parsed - canonical)[:5]
+            raise ValueError(f"Catalog does not match the canonical 6,236 Quran references; missing={missing}, extra={extra}.")
+    return parsed
 
 
 def build_joined_catalog(arabic: dict, translation: dict, audio: dict, expected_count: int = 6236) -> dict:
@@ -33,15 +70,13 @@ def build_joined_catalog(arabic: dict, translation: dict, audio: dict, expected_
     audio_verses = audio.get("verses")
     if not all(isinstance(value, dict) for value in (arabic_verses, translations, audio_verses)):
         raise ValueError("All three catalogs must contain verse dictionaries.")
-    expected_keys = set()
-    # Keys are numeric surah:ayah references, validated by canonical count order
-    # in the source builders. The join refuses any discrepancy between catalogs.
-    if len(arabic_verses) != expected_count or len(translations) != expected_count or len(audio_verses) != expected_count:
-        raise ValueError(f"All catalogs must contain exactly {expected_count} entries.")
-    if set(arabic_verses) != set(translations) or set(arabic_verses) != set(audio_verses):
+    arabic_keys = _validate_verse_keys(arabic_verses, expected_count)
+    translation_keys = _validate_verse_keys(translations, expected_count)
+    audio_keys = _validate_verse_keys(audio_verses, expected_count)
+    if arabic_keys != translation_keys or arabic_keys != audio_keys:
         raise ValueError("Arabic, translation and audio keys do not match exactly.")
     joined = {}
-    for key in sorted(arabic_verses, key=lambda value: tuple(map(int, value.split(":")))):
+    for key in sorted(arabic_keys, key=lambda value: tuple(map(int, value.split(":")))):
         arabic_text, english_text, audio_member = arabic_verses[key], translations[key], audio_verses[key]
         if not isinstance(arabic_text, str) or not arabic_text.strip():
             raise ValueError(f"Empty Arabic text for {key}.")

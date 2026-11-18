@@ -183,7 +183,7 @@ jobs:
                   silence_report[str(verse)] = intervals
                   concat_lines.append(f"file '{source.resolve()}'")
           concat = work / 'concat_full_fatiha.txt'
-          concat.write_text('\\n'.join(concat_lines) + '\\n', encoding='utf-8')
+          concat.write_text('\n'.join(concat_lines) + '\n', encoding='utf-8')
           combined = Path('output/al_fatiha_1_7_review_audio.mp3')
           subprocess.run([
               'ffmpeg', '-hide_banner', '-y', '-f', 'concat', '-safe', '0',

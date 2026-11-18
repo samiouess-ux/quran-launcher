@@ -173,14 +173,14 @@ class QuranBatchAudioTests(unittest.TestCase):
                 Path(command[-1]).write_bytes(b"combined")
                 return None
 
-            trimmed = iter([18.0, 17.0, 11.0])
+            trimmed = iter([30.0, 30.0, 11.0])
             def fake_trim(source, destination, source_duration):
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 destination.write_bytes(b"trimmed")
                 return next(trimmed)
 
             with patch.object(module, "RemoteZip", return_value=FakeArchive()), \
-                 patch.object(module, "probe", side_effect=[20.0, 18.0, 10.0, 35.0]), \
+                 patch.object(module, "probe", side_effect=[32.0, 32.0, 12.0, 60.0]), \
                  patch.object(module, "trim_edge_silence", side_effect=fake_trim), \
                  patch.object(module.subprocess, "run", side_effect=fake_run):
                 report = module.prepare_batch(batch_path, inventory_path, root / "out", target_count=1)
@@ -189,8 +189,8 @@ class QuranBatchAudioTests(unittest.TestCase):
             self.assertEqual(item["selected_verses"], [1, 2])
             self.assertEqual(item["requested_verses"], [1, 2, 3, 4])
             self.assertEqual(item["remaining_verses"], [3, 4])
-            self.assertEqual(item["duration_seconds"], 35.0)
-            self.assertEqual(item["processed_verse_durations_seconds"], {1: 18.0, 2: 17.0})
+            self.assertEqual(item["duration_seconds"], 60.0)
+            self.assertEqual(item["processed_verse_durations_seconds"], {1: 30.0, 2: 30.0})
             # Ayah 3 establishes the overflow boundary but is not part of the
             # selected output; ayah 4 must never be fetched or processed.
             self.assertEqual(set(item["processed_audio_files"]), {"1", "2"})

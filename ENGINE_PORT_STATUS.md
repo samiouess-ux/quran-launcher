@@ -312,3 +312,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - This retention setting applies to artifacts created by future workflow runs after this change. Existing artifacts keep their original expiry dates unless manually deleted.
 - This does not change repository Git history or automatically delete existing committed files. No repository-wide retention setting, default branch, source repository, Pages, Telegram, scheduler, or publishing behavior was changed.
 - Validation is pending the next feature-branch workflow runs; no claim is made yet that the new retention setting has been exercised by a fresh artifact.
+
+
+## Al-Fatihah render and 3-day artifact retention verified — 2026-11-18
+- Feature-branch workflow run `44296263880` completed successfully on commit `9f4eb7cf805c41e7471c1c1e2efb3b57b3d716ae`.
+- All steps passed: renderer safety regression tests, Quran text/manifest validation, checksum-pinned official Hafs archive inventory, complete review-only Al-Fatihah recitation preparation, cinematic MP4 rendering, technical MP4 verification, and artifact upload.
+- Review artifact: `quran-launcher-original-engine-review`, artifact ID `14424505862`, size 52,844,269 bytes. GitHub reports creation at 2026-11-18 11:39:38 UTC and expiry at 2026-11-21 11:39:36 UTC, confirming the new approximately 3-day retention policy for this fresh artifact.
+- This confirms a technically valid MP4 was rendered and uploaded and that new artifact expiry is 3 days. It does not by itself constitute visual inspection of the frame across every ayah; do not claim the frame-flicker issue is visually resolved until the output is inspected.
+- Review-only. No production activation, UI/Pages, Telegram, scheduler, TikTok publishing, `main`, or original source repository was changed.

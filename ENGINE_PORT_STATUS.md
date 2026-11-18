@@ -151,3 +151,13 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Fix commit: `7396a178dcc84410d21cd8146f7bc3168f62ba08` on `feature/islamic-tiktok-engine-port`.
 - The existing regression test already asserts that only `clip-a` is selected, output duration is the full 10 seconds, FFmpeg loops the source, and only one render is performed. GitHub Actions validation for the fix is pending; do not call this fix verified until the new run completes.
 - No launcher UI, `main`, source `IslamicTikTokAutomation` repository, Telegram integration, scheduler, Pages settings, or TikTok publishing was changed.
+
+
+## Renderer regression fix verified — 2026-11-18
+- GitHub Actions run 44252972286 completed successfully on commit 7396a178dcc84410d21cd8146f7bc3168f62ba08.
+- All renderer safety regression suites passed, including the short-background-clip loop regression that failed in the preceding run.
+- Quran manifest validation, checksum-pinned official Hafs archive inventory, exact approved Maher Al-Muaiqly audio preparation, moving-background render, MP4 technical verification, and review-only artifact upload all completed successfully.
+- Render log confirms the selected moving-video background was `pexels-islamic-dome-geometric-40564360`. Output passed as H.264/AAC, 1080x1920, 30 FPS, with Quran audio, duration 9.51 seconds.
+- Review-only artifact: `quran-launcher-original-engine-review`, artifact ID `14405510851`, expires 2026-11-25. Run URL: https://github.com/samiouess-ux/quran-launcher/actions/runs/44252972286
+- This verifies the isolated renderer workflow and regression fix only. The launcher remains a limited sample launcher; full interactive surah/ayah/reciter/background controls and the complete original-engine integration are not yet finished. The approved sample remains 9.51s, not the intended 30–40s range.
+- No source repository, `main`, launcher UI, Telegram bot/webhook, scheduler, Pages settings, or TikTok publishing was changed.

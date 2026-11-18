@@ -5,6 +5,7 @@ on:
     branches: [feature/islamic-tiktok-engine-port]
     paths:
       - '.github/workflows/al-ikhlas-audio-review.yml'
+      - 'engine/content/candidate_surah_al_ikhlas_112_1_4.json'
       - 'engine/src/prepare_al_ikhlas_audio_review.py'
       - 'engine/tests/test_prepare_al_ikhlas_audio_review.py'
   workflow_dispatch:
@@ -44,6 +45,26 @@ jobs:
 
       - name: Install audio inventory dependencies
         run: python -m pip install --disable-pip-version-check requests remotezip
+
+      - name: Validate the Al-Ikhlas candidate stays review-only and uses Maher Hafs
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          manifest = json.loads(Path('content/candidate_surah_al_ikhlas_112_1_4.json').read_text(encoding='utf-8'))
+          if manifest.get('content_type') != 'quran':
+              raise SystemExit('Al-Ikhlas candidate must be Quran content.')
+          if manifest.get('source', {}).get('surah_number') != 112 or manifest.get('source', {}).get('verses') != [1, 2, 3, 4]:
+              raise SystemExit('Expected complete Al-Ikhlas 112:1–4.')
+          audio = manifest.get('audio', {})
+          if audio.get('reciter_name') != 'ماهر المعيقلي' or audio.get('riwaya') != 'حفص عن عاصم':
+              raise SystemExit('Al-Ikhlas audio candidate must use Maher Al-Muaiqly Hafs.')
+          if audio.get('approved') is not False or audio.get('exact_recording_user_reviewed') is not False:
+              raise SystemExit('Al-Ikhlas audio must remain unapproved pending exact-file listening review.')
+          if manifest.get('rotation_approved') is not False or manifest.get('publishing', {}).get('auto_publish') is not False:
+              raise SystemExit('Al-Ikhlas must remain excluded from rotation and auto-publishing.')
+          print('PASS: complete Al-Ikhlas candidate uses Maher Hafs and remains review-only.')
+          PY
 
       - name: Test isolated Al-Ikhlas audio review preparation
         env:

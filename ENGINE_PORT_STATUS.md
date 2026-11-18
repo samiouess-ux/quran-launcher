@@ -161,3 +161,13 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Review-only artifact: `quran-launcher-original-engine-review`, artifact ID `14405510851`, expires 2026-11-25. Run URL: https://github.com/samiouess-ux/quran-launcher/actions/runs/44252972286
 - This verifies the isolated renderer workflow and regression fix only. The launcher remains a limited sample launcher; full interactive surah/ayah/reciter/background controls and the complete original-engine integration are not yet finished. The approved sample remains 9.51s, not the intended 30–40s range.
 - No source repository, `main`, launcher UI, Telegram bot/webhook, scheduler, Pages settings, or TikTok publishing was changed.
+
+
+## Opening cover preview regression test — 2026-11-18
+- Ported the source repository's `test_opening_cover_previews.py` into the isolated launcher engine test suite.
+- Made the test self-contained by creating a temporary reference image and patching the preview module's reference-image path; the test no longer depends on an untracked local image file.
+- Added the test to the active root GitHub Actions workflow.
+- Workflow run 44255158636 (run 106, commit 44fbefe02a0aac63cc3aa362f43a16c6391c7a9d) completed successfully. All renderer regression tests, Quran/manifest validation, official audio preparation, moving-background render, MP4 technical checks, and artifact upload passed.
+- The cover preview test verifies four distinct 1080x1920 templates and rejects empty titles or invalid ayah ranges. These are preview-only templates and are not yet connected to production video rendering or launcher controls.
+- The launcher remains a manual GitHub Actions handoff; the sample passage remains Ash-Sharh 94:5–6 at 9.51 seconds. No new surah/audio was approved.
+- Scope unchanged: no edits to `main`, the source IslamicTikTokAutomation repository, Telegram bot, scheduler, GitHub Pages settings, or TikTok publishing.

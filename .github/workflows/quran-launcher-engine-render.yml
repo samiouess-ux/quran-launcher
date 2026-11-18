@@ -78,6 +78,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_prepare_background_review_previews.py' -v
           python -m unittest discover -s tests -p 'test_render_quran_review_batch.py' -v
           python -m unittest discover -s tests -p 'test_render_quran_review_previews.py' -v
+          python -m unittest discover -s tests -p 'test_opening_cover_previews.py' -v
           python -m unittest discover -s tests -p 'test_render_dua_video.py' -v
           python -m unittest discover -s tests -p 'test_select_requested_quran_range.py' -v
           python -m unittest discover -s tests -p 'test_validate_quran_reference.py' -v

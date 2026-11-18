@@ -247,5 +247,39 @@ class BatchTests(unittest.TestCase):
         self.assertEqual(result["passages"][0]["surah_number"], 3)
         self.assertEqual(result["passages"][0]["verse_numbers"], [3, 4])
 
+
+    def test_production_continuation_skips_later_used_ayah_after_a_gap(self):
+        verses = {}
+        for surah in range(1, 5):
+            for ayah in range(1, 7):
+                key = f"{surah}:{ayah}"
+                verses[key] = {
+                    "arabic_uthmani": f"AR {key}",
+                    "english_saheeh_international": f"EN {key}",
+                    "audio_archive_member": f"{key}.mp3",
+                }
+        source = {
+            "status": "complete_join_candidate_requires_human_review_and_recording_approval",
+            "rendering_allowed": False,
+            "expected_verse_count": len(verses),
+            "verses": verses,
+        }
+        result = build_review_batch(
+            source, count=1, seed="production-gap-continuation",
+            used_ayah_references=["3:1", "3:2", "3:4"],
+            used_surahs={3},
+        )
+        self.assertEqual(result["passages"][0]["surah_number"], 3)
+        self.assertEqual(result["passages"][0]["verse_numbers"], [5, 6])
+        selected = {
+            verse["reference"]
+            for passage in result["passages"]
+            for verse in passage["verses"]
+        }
+        self.assertTrue(selected.isdisjoint({"3:1", "3:2", "3:4"}))
+        self.assertFalse(result["rendering_allowed"])
+        self.assertFalse(result["telegram_delivery"])
+        self.assertFalse(result["auto_publish"])
+
 if __name__ == "__main__":
     unittest.main()

@@ -189,9 +189,13 @@ class QuranBatchAudioTests(unittest.TestCase):
             self.assertEqual(item["requested_verses"], [1, 2, 3, 4])
             self.assertEqual(item["remaining_verses"], [3, 4])
             self.assertEqual(item["duration_seconds"], 35.0)
-            self.assertEqual(item["processed_verse_durations_seconds"], {1: 18.0, 2: 17.0, 3: 11.0})
-            # Ayah 3 establishes the overflow boundary; ayah 4 must never be fetched.
-            self.assertEqual(set(item["processed_audio_files"]), {"1", "2", "3"})
+            self.assertEqual(item["processed_verse_durations_seconds"], {1: 18.0, 2: 17.0})
+            # Ayah 3 establishes the overflow boundary but is not part of the
+            # selected output; ayah 4 must never be fetched or processed.
+            self.assertEqual(set(item["processed_audio_files"]), {"1", "2"})
+            self.assertTrue((root / "out" / "variable-length" / "041_003.mp3").exists())
+            self.assertFalse((root / "out" / "variable-length" / "041_004.mp3").exists())
+            self.assertFalse((root / "out" / "variable-length" / "processed" / "041_003.mp3").exists())
 
     def test_accepts_short_complete_surah_without_artificial_30_second_minimum(self):
         with tempfile.TemporaryDirectory() as tmp:

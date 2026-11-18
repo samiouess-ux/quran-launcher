@@ -249,3 +249,5 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - GitHub Actions validation is required before considering this optimization verified.
 
 - Follow-up defensive correction: the overlong-single-ayah status now uses the measured duration of the first inspected ayah rather than comparing inspected and full candidate list lengths, which differ after bounded inspection.
+
+- Regression-test expectation corrected to match the report contract: the overflow ayah is downloaded/probed only to establish the boundary, but only selected ayahs are exposed in the prepared-audio report. The test now checks the overflow source exists, no later source is fetched, and overflow audio is not included in the output mapping.

@@ -157,7 +157,7 @@ jobs:
           silence_report = {}
           with ZipFile(archive_path) as archive:
               names = archive.namelist()
-              concat_lines = []
+              processed_audio_files = []
               for verse in range(1, 8):
                   suffix = f'10-001{verse:03d}-A08.mp3'
                   matches = [name for name in names if name.endswith(suffix)]
@@ -194,13 +194,16 @@ jobs:
                       'edge_silence_removed_seconds': round(source_duration - processed_duration, 3),
                       'retained_edge_margin_seconds': 0.12
                   }
-                  concat_lines.append(f"file '{processed.resolve()}'")
-          concat = work / 'concat_full_fatiha.txt'
-          concat.write_text('\n'.join(concat_lines) + '\n', encoding='utf-8')
-          combined = Path('output/al_fatiha_1_7_review_audio.mp3')
+                  processed_audio_files.append(processed)
+          combined = Path('output/al_fatiha_1_7_review_audio.wav')
+          concat_inputs = ['ffmpeg', '-hide_banner', '-y']
+          for processed in processed_audio_files:
+              concat_inputs += ['-i', str(processed)]
+          concat_labels = ''.join(f'[{index}:a]' for index in range(len(processed_audio_files)))
+          concat_filter = f'{concat_labels}concat=n={len(processed_audio_files)}:v=0:a=1[outa]'
           subprocess.run([
-              'ffmpeg', '-hide_banner', '-y', '-f', 'concat', '-safe', '0',
-              '-i', str(concat), '-c:a', 'copy', str(combined)
+              *concat_inputs, '-filter_complex', concat_filter, '-map', '[outa]',
+              '-c:a', 'pcm_s16le', str(combined)
           ], check=True)
           Path('output/al_fatiha_silence_report.json').write_text(
               json.dumps({'verse_durations_seconds': durations, 'silence_intervals': silence_report},

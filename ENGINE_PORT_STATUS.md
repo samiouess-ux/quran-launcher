@@ -304,3 +304,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Preserved the existing soft fade behavior for the English translation overlay and did not change background/photo/video transitions.
 - The feature-branch review render workflow is running as #162 / run `44295292022`; initial regression tests, Quran text/manifest validation, and audio inventory preparation passed. Final MP4 verification and visual review are pending. Do not mark this change visually validated until the run completes and the resulting video is inspected.
 - Review-only; no production activation, UI/Pages, Telegram, scheduler, TikTok publishing, `main`, or original source repository changes.
+
+
+## Temporary review artifact storage policy — 2026-11-18
+- Reduced GitHub Actions artifact retention for both the cinematic Quran MP4 review workflow and the background-photo review gallery from 7/14 days to 3 days.
+- Generated MP4s and review galleries remain Actions artifacts only; they are not committed into the Git repository. Source code, manifests, and approved assets remain in the repository as before.
+- This retention setting applies to artifacts created by future workflow runs after this change. Existing artifacts keep their original expiry dates unless manually deleted.
+- This does not change repository Git history or automatically delete existing committed files. No repository-wide retention setting, default branch, source repository, Pages, Telegram, scheduler, or publishing behavior was changed.
+- Validation is pending the next feature-branch workflow runs; no claim is made yet that the new retention setting has been exercised by a fresh artifact.

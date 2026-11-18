@@ -133,3 +133,13 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Added all of these suites to the feature-branch Actions test step. Latest workflow update commit: `fb5aed40ea3ab529a2777ea5706a84f325cceb9e`.
 - GitHub Actions run `44190756265` was observed in progress on an earlier test-file commit; it is not the final validation for the expanded test list. The workflow run for commit `fb5aed40ea3ab529a2777ea5706a84f325cceb9e` remains the required validation target.
 - The original source's non-Telegram `src/` modules now all have destination counterparts. Six Telegram-only modules remain deliberately excluded pending a separate safe integration.
+
+
+## Continued port and background-reel regression repair — 2026-11-18
+- Added the standalone Quran request parser dependency and its regression test under `engine/src/` and `engine/tests/`. This parser is not wired to Telegram delivery; the original bot, webhook, and credentials remain untouched.
+- Updated the feature-branch workflow to execute the parser regression test.
+- Transferred 34 of the 36 source background-photo/cover-archive binary assets into `engine/assets/background_photos/` using Git's base64 blob API, preserving binary data. Two source JPEGs (`pexels-28975736.jpg` and `pexels-37099396.jpg`) returned empty content from the source file endpoint and were deliberately not committed as empty/corrupt files; they remain outstanding for a different binary retrieval method.
+- Fixed the destination renderer's short-clip background logic so a single approved moving clip can loop to cover the narration duration rather than forcing an extra scene. Kept the final-duration verification in place and aligned the test's expected selected-ID list with the renderer's existing return contract.
+- The first expanded test run exposed the short-clip regression; a follow-up run then showed the initial selection loop still fetched a second clip. That was corrected in commit `59e7e90e6e59690a024c210cc0fe1679ed7cf111`.
+- Latest observed Actions run: `44250015150` on commit `59e7e90e6e59690a024c210cc0fe1679ed7cf111`, in progress at the time of this update. Do not consider the renderer regression or overall port validated until this run completes successfully.
+- No UI, `main`, source repository, Telegram integration, scheduler, TikTok publishing, Pages settings, or approved Ash-Sharh sample was changed.

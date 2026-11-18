@@ -80,6 +80,13 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
     verse_map = inventory.get("verses")
     if not isinstance(verse_map, dict):
         raise ValueError("Official audio inventory has no verse mapping.")
+    requested_members: dict[int, str] = {}
+    for ayah in AYAHS:
+        reference = f"{SURAH}:{ayah}"
+        requested = verse_map.get(reference)
+        if not isinstance(requested, str) or not requested:
+            raise ValueError(f"Official Maher Hafs inventory is missing {reference}.")
+        requested_members[ayah] = requested
 
     output_dir.mkdir(parents=True, exist_ok=True)
     durations: dict[str, float] = {}
@@ -90,11 +97,7 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
     with open_verified_archive(inventory) as archive:
         names = archive.namelist()
         for ayah in AYAHS:
-            reference = f"{SURAH}:{ayah}"
-            requested = verse_map.get(reference)
-            if not isinstance(requested, str) or not requested:
-                raise ValueError(f"Official Maher Hafs inventory is missing {reference}.")
-            member = resolve_member(names, requested)
+            member = resolve_member(names, requested_members[ayah])
             destination = output_dir / f"al_ikhlas_112_{ayah:02d}.mp3"
             with archive.open(member) as source, destination.open("wb") as target:
                 shutil.copyfileobj(source, target)

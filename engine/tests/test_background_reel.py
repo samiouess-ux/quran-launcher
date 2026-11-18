@@ -20,7 +20,37 @@ class BackgroundReelTests(unittest.TestCase):
             "direct_video_url": f"https://cdn.example/{name}.mp4",
         }
 
-    def test_loops_one_short_clip_to_cover_full_audio(self):
+    def test_uses_distinct_short_clips_instead_of_repeating_first_scene(self):
+        with tempfile.TemporaryDirectory() as directory:
+            work = Path(directory)
+            destination = work / "background.mp4"
+
+            def fake_download(url, path):
+                path.write_bytes(b"mock video")
+
+            def fake_run(command):
+                Path(command[-1]).write_bytes(b"mock output")
+
+            with (
+                patch("render_video_scenes.download", side_effect=fake_download),
+                patch("render_video_scenes.probe_media_duration", side_effect=[6.0, 10.0, 10.0]),
+                patch("render_video_scenes.run", side_effect=fake_run) as run,
+            ):
+                selected = build_background_reel(
+                    [self._candidate("clip-a"), self._candidate("clip-b")],
+                    10.0, work, destination
+                )
+
+            self.assertEqual(selected, ["clip-a", "clip-b"])
+            self.assertTrue(destination.is_file())
+            command = run.call_args.args[0]
+            self.assertEqual(command.count("-stream_loop"), 2)
+            graph = command[command.index("-filter_complex") + 1]
+            self.assertIn("xfade=transition=fade", graph)
+            self.assertEqual(command[command.index("-t") + 1], "10.000000")
+            self.assertFalse((work / "background_concat.txt").exists())
+
+    def test_loops_only_when_a_single_approved_clip_is_available(self):
         with tempfile.TemporaryDirectory() as directory:
             work = Path(directory)
             destination = work / "background.mp4"
@@ -37,19 +67,13 @@ class BackgroundReelTests(unittest.TestCase):
                 patch("render_video_scenes.run", side_effect=fake_run) as run,
             ):
                 selected = build_background_reel(
-                    [self._candidate("clip-a"), self._candidate("clip-b")],
-                    10.0, work, destination
+                    [self._candidate("only-clip")], 10.0, work, destination
                 )
 
-            self.assertEqual(selected, ["clip-a"])
-            self.assertTrue(destination.is_file())
-            self.assertEqual(run.call_count, 1)
+            self.assertEqual(selected, ["only-clip"])
             command = run.call_args.args[0]
             self.assertEqual(command[command.index("-stream_loop") + 1], "-1")
-            self.assertEqual(command[command.index("-t") + 1],
-                "10.000000",
-            )
-            self.assertFalse((work / "background_concat.txt").exists())
+            self.assertEqual(command[command.index("-t") + 1], "10.000000")
 
     def test_arabic_keyword_tags_are_literal_and_conservative(self):
         self.assertEqual(infer_background_tags("وَإِلَى الْجِبَالِ كَيْفَ نُصِبَتْ"), {"mountains"})

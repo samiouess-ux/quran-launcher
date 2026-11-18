@@ -203,7 +203,7 @@ jobs:
           from pathlib import Path
           manifest_path = Path('content/first_video.json')
           manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
-          audio = Path('output/ash_sharh_94_5_6_approved_audio.mp3')
+          audio = Path('output/al_fatiha_1_1_7_review_audio.mp3')
           manifest['audio']['production_audio_file'] = str(audio)
           manifest['audio']['processed_verse_durations_seconds'] = {
               str(n): float(__import__('subprocess').check_output([

@@ -36,20 +36,12 @@ def run(command: list[str]) -> None:
     subprocess.run(command, check=True)
 
 
-MAX_VIDEO_SECONDS = 40.0
-
-
-def validate_video_duration(duration: float, maximum: float = MAX_VIDEO_SECONDS) -> None:
-    """Reject non-finite, non-positive, or over-limit render durations."""
+def validate_video_duration(duration: float) -> None:
+    """Match the original renderer: validate media duration, not an arbitrary cap."""
     if not math.isfinite(duration):
         raise SystemExit("Video duration must be a finite number.")
     if duration <= 0:
         raise SystemExit("Video duration must be positive.")
-    if duration > maximum:
-        raise SystemExit(
-            f"Video duration {duration:.3f}s exceeds the {maximum:.0f}-second maximum; "
-            "select a shorter contiguous verse passage before rendering."
-        )
 
 
 def validate_quran_audio_approval(audio: dict) -> None:

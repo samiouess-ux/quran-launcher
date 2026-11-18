@@ -17,18 +17,18 @@ def validate_content_manifest(data: dict[str, Any]) -> None:
     if not isinstance(data, dict):
         raise SystemExit("Manifest must be a JSON object.")
 
-    content_type = data.get("content_type", "quran")
+    content_type = data.get("content_type")
     if content_type not in CONTENT_TYPES:
-        raise SystemExit("content_type must be quran, dua, or dhikr.")
+        raise SystemExit("content_type must be explicitly set to quran, dua, or dhikr.")
 
     source = data.get("source")
     visual = data.get("visual")
     audio = data.get("audio")
-    publishing = data.get("publishing", {})
+    publishing = data.get("publishing")
     if not all(isinstance(x, dict) for x in (source, visual, audio, publishing)):
         raise SystemExit("source, visual, audio and publishing must be objects.")
 
-    if publishing.get("auto_publish", False):
+    if publishing.get("auto_publish") is not False:
         raise SystemExit("Auto-publishing must remain disabled.")
     if publishing.get("approval_required") is not True:
         raise SystemExit("Every video must require explicit user review.")
@@ -49,7 +49,7 @@ def validate_content_manifest(data: dict[str, Any]) -> None:
     if background.get("download_verified") is not True:
         raise SystemExit("Background file must be downloaded and technically verified.")
 
-    kind = audio.get("kind", "quran_recitation" if content_type == "quran" else None)
+    kind = audio.get("kind")
     if kind not in AUDIO_KINDS:
         raise SystemExit("audio.kind must explicitly identify the audio type.")
     if audio.get("music_allowed", False):

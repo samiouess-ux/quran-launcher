@@ -247,3 +247,5 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Expanded the duration-boundary regression test with a fourth ayah that deliberately has no inventory mapping: successful preparation proves the code stops after inspecting the first overflow ayah and does not fetch later material.
 - This is a preparation-efficiency change only. Candidate approval, rendering, Telegram delivery, and auto-publishing remain disabled.
 - GitHub Actions validation is required before considering this optimization verified.
+
+- Follow-up defensive correction: the overlong-single-ayah status now uses the measured duration of the first inspected ayah rather than comparing inspected and full candidate list lengths, which differ after bounded inspection.

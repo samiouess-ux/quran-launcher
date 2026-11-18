@@ -24,7 +24,7 @@ from quran_audio_parts import partition_contiguous_ayahs
 
 DEFAULT_ARCHIVE = "https://download.qurancomplex.gov.sa/new-sounds/muaiqly-08/hafs/ayat-12-1-2020.zip"
 MIN_SECONDS = 0.0
-MAX_SECONDS = 60.0  # Allows complete passages such as Al-Fatihah (~52s); never split an ayah.
+MAX_SECONDS = 40.0  # Short-form limit; retain only complete ayahs, never split an ayah.
 
 
 def probe(path: Path) -> float:

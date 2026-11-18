@@ -265,7 +265,7 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
                     "candidate_id": candidate["candidate_id"],
                     "source_candidate_id": candidate["candidate_id"],
                     "surah_number": surah,
-                    "status": "deferred_single_ayah_exceeds_40_seconds" if remaining and processed_durations.get(int(remaining[0]["ayah"]), 0) > MAX_SECONDS else "deferred_no_next_complete_ayah_fits_40_seconds",
+                    "status": "deferred_single_ayah_exceeds_40_seconds" if boundary_duration is not None and boundary_duration > MAX_SECONDS else "deferred_no_next_complete_ayah_fits_40_seconds",
                     "requested_verses": requested_verses,
                     "selected_verses": [],
                     "remaining_verses": requested_verses,

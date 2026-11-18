@@ -171,3 +171,12 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - The cover preview test verifies four distinct 1080x1920 templates and rejects empty titles or invalid ayah ranges. These are preview-only templates and are not yet connected to production video rendering or launcher controls.
 - The launcher remains a manual GitHub Actions handoff; the sample passage remains Ash-Sharh 94:5–6 at 9.51 seconds. No new surah/audio was approved.
 - Scope unchanged: no edits to `main`, the source IslamicTikTokAutomation repository, Telegram bot, scheduler, GitHub Pages settings, or TikTok publishing.
+
+
+## Content rotation approval gate hardening — 2026-11-18
+- Tightened `engine/src/content_rotation.py`: a manifest is eligible only when `content_type`, `rotation_approved`, `publishing.approval_required`, and `publishing.auto_publish` are all explicitly present with the required values.
+- Removed the permissive default that treated a missing `content_type` as Quran and a missing `auto_publish` flag as safe. Missing metadata now fails closed and cannot enter the review rotation.
+- Added regression tests for absent content type and absent auto-publish metadata.
+- Commits: `6e93a0e0d51394096ac6461999b5cf5d0ac13ede`, `83b5d044a5af398a0152467d89081e3466e398da`, `ad5280bbfb137fe0e8aa942a0957db4325ab6acc`.
+- GitHub Actions verification is pending. The fixed Ash-Sharh sample workflow remains unchanged; this hardening does not enable unreviewed Quran content or change the UI.
+- Scope unchanged: no edits to `main`, source IslamicTikTokAutomation, Telegram, scheduler, Pages settings, or TikTok publishing.

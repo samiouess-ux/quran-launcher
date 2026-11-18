@@ -1,0 +1,244 @@
+name: Quran Launcher — Original Engine MP4 Render
+
+on:
+  push:
+    branches: [feature/islamic-tiktok-engine-port]
+    paths:
+      - '.github/workflows/quran-launcher-engine-render.yml'
+      - 'engine/**'
+      - 'ENGINE_PORT_STATUS.md'
+  workflow_dispatch:
+    inputs:
+      background_rotation_key:
+        description: Optional seed for rotating the approved moving-video backgrounds
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quran-launcher-engine-render
+  # A stale runner must not block validation of the latest branch head.
+  cancel-in-progress: true
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: engine
+    steps:
+      - name: Check out isolated launcher branch
+        uses: actions/checkout@v4
+
+      - name: Restore checksum-pinned official audio archive cache
+        uses: actions/cache@v4
+        with:
+          path: engine/output/kfgqpc_maher_verified.zip
+          key: kfgqpc-maher-archive-3edcc70407f9d19c972c002c69a43cc245a62a0fcc497d3c719406a69965e18e
+
+      - name: Install FFmpeg and approved Arabic fonts
+        run: |
+          # GitHub's Ubuntu runner often already has FFmpeg and the fonts.
+          # Verify first so a healthy runner does not wait on apt mirrors.
+          needs_install=0
+          command -v ffmpeg >/dev/null 2>&1 || needs_install=1
+          fc-match -f '%{family}|%{style}' 'Amiri:style=Bold' | grep -qi 'Amiri.*Bold' || needs_install=1
+          if [ "$needs_install" -eq 1 ]; then
+            sudo timeout 8m apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 update
+            sudo timeout 8m apt-get -o Acquire::Retries=2 install -y ffmpeg fonts-hosny-amiri fonts-noto-core fonts-dejavu-core
+          fi
+          command -v ffmpeg
+          ffmpeg -version | head -n 1
+          fc-cache -f
+          python - <<'PY'
+          import subprocess
+          match = subprocess.check_output(
+              ['fc-match', '-f', '%{family}|%{style}|%{file}', 'Amiri:style=Bold'],
+              text=True
+          ).strip()
+          print('Resolved Arabic font:', match)
+          family, style, path = match.split('|', 2)
+          if 'Amiri' not in family or 'Bold' not in style or not path.endswith(('.ttf', '.otf')):
+              raise SystemExit('Required Amiri Bold font unavailable; refusing fallback.')
+          PY
+
+      - name: Install Python renderer dependencies
+        run: python -m pip install --disable-pip-version-check pillow remotezip requests
+
+      - name: Run original renderer safety regression tests
+        env:
+          PYTHONPATH: src
+        run: |
+          python -m unittest discover -s tests -p 'test_render_video_duration.py' -v
+          python -m unittest discover -s tests -p 'test_background_rotation.py' -v
+          python -m unittest discover -s tests -p 'test_validate_content_manifest.py' -v
+          python -m unittest discover -s tests -p 'test_build_official_audio_inventory.py' -v
+          python -m unittest discover -s tests -p 'test_prepare_official_quran_passage.py' -v
+          python -m unittest discover -s tests -p 'test_content_rotation.py' -v
+          python -m unittest discover -s tests -p 'test_asset_rotation.py' -v
+          python -m unittest discover -s tests -p 'test_background_candidates.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_review_batch.py' -v
+          python -m unittest discover -s tests -p 'test_build_requested_quran_passage.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_draft_manifests.py' -v
+          python -m unittest discover -s tests -p 'test_prepare_background_review_batch.py' -v
+          python -m unittest discover -s tests -p 'test_prepare_background_review_previews.py' -v
+          python -m unittest discover -s tests -p 'test_render_quran_review_batch.py' -v
+          python -m unittest discover -s tests -p 'test_render_quran_review_previews.py' -v
+          python -m unittest discover -s tests -p 'test_opening_cover_previews.py' -v
+          python -m unittest discover -s tests -p 'test_render_dua_video.py' -v
+          python -m unittest discover -s tests -p 'test_select_requested_quran_range.py' -v
+          python -m unittest discover -s tests -p 'test_validate_quran_reference.py' -v
+          python -m unittest discover -s tests -p 'test_select_review_manifest.py' -v
+          python -m unittest discover -s tests -p 'test_orchestrator.py' -v
+          python -m unittest discover -s tests -p 'test_quran_visual_templates.py' -v
+          python -m unittest discover -s tests -p 'test_quran_social_caption.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_tunisian_day_status.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_translation_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_uthmani_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_build_quran_video_catalog.py' -v
+          python -m unittest discover -s tests -p 'test_quran_audio_parts.py' -v
+          python -m unittest discover -s tests -p 'test_prepare_quran_review_batch_audio.py' -v
+          python -m unittest discover -s tests -p 'test_content_rotation_repository_safety.py' -v
+          python -m unittest discover -s tests -p 'test_background_reel.py' -v
+          python -m unittest discover -s tests -p 'test_background_additions_review.py' -v
+          python -m unittest discover -s tests -p 'test_al_ikhlas_reference.py' -v
+          python -m unittest discover -s tests -p 'test_validate_quran_text.py' -v
+          python -m unittest discover -s tests -p 'test_parse_telegram_quran_request.py' -v
+
+      - name: Build complete Uthmani Arabic and Saheeh International corpora
+        env:
+          PYTHONPATH: src
+        run: |
+          python src/build_quran_uthmani_catalog.py --output output/quran_uthmani_candidate.json
+          python src/build_quran_translation_catalog.py --output output/saheeh_international_translation.json
+          python src/build_official_audio_inventory.py output/official_verse_audio_inventory.json
+          python src/build_quran_video_catalog.py \
+            --arabic output/quran_uthmani_candidate.json \
+            --translation output/saheeh_international_translation.json \
+            --audio output/official_verse_audio_inventory.json \
+            --output output/quran_joined_candidate.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          joined = json.loads(Path('output/quran_joined_candidate.json').read_text(encoding='utf-8'))
+          if joined.get('joined_verse_count') != 6236 or len(joined.get('verses', {})) != 6236:
+              raise SystemExit('The joined Arabic + Saheeh + official audio corpus must contain all 6,236 ayahs.')
+          if joined.get('rendering_allowed') is not False:
+              raise SystemExit('Unreviewed source corpus must remain blocked from production rendering.')
+          print('PASS: complete 6,236-ayah Arabic/English/audio joined corpus; review gates preserved.')
+          PY
+
+      - name: Select three distinct Quran surah candidates from the complete corpus
+        env:
+          PYTHONPATH: src
+        run: |
+          python src/build_quran_review_batch.py \
+            --catalog output/quran_joined_candidate.json \
+            --output output/quran_review_batch.json \
+            --count 3 \
+            --seed "launcher-${GITHUB_RUN_ID}"
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          batch = json.loads(Path('output/quran_review_batch.json').read_text(encoding='utf-8'))
+          passages = batch.get('passages', [])
+          surahs = [int(item['surah_number']) for item in passages]
+          if len(passages) != 3 or len(set(surahs)) != 3:
+              raise SystemExit(f'Expected three distinct-surah candidates, got {surahs}')
+          if batch.get('batch_status') != 'review_candidates_only':
+              raise SystemExit('Passage selection must remain review-only.')
+          print('Selected three distinct Quran surahs:', surahs)
+          PY
+
+      - name: Prepare original Maher Al-Muaiqly Hafs audio for all three candidates
+        env:
+          PYTHONPATH: src
+        run: |
+          python src/prepare_quran_review_batch_audio.py \
+            --batch output/quran_review_batch.json \
+            --inventory output/official_verse_audio_inventory.json \
+            --output-dir output/quran_batch_audio \
+            --report output/quran_batch_audio_report.json \
+            --target-count 3
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('output/quran_batch_audio_report.json').read_text(encoding='utf-8'))
+          ready = [item for item in report.get('items', []) if item.get('status', '').startswith('audio_prepared')]
+          if len(ready) != 3 or len({int(item['surah_number']) for item in ready}) != 3:
+              raise SystemExit('Expected three prepared, distinct-surah whole-ayah audio candidates.')
+          if any(item.get('inter_verse_silence_seconds') != 0 for item in ready):
+              raise SystemExit('Artificial inter-ayah silence must remain zero for every prepared passage.')
+          if report.get('rendering_allowed') is not False or report.get('auto_publish') is not False:
+              raise SystemExit('Audio preparation must remain review-only.')
+          print('PASS: three distinct audio candidates, original edge-silence processing, zero added inter-ayah silence.')
+          PY
+
+      - name: Render three cinematic review-only Quran videos
+        env:
+          PYTHONPATH: src
+        run: |
+          python src/render_quran_review_previews.py \
+            --batch output/quran_review_batch.json \
+            --audio-report output/quran_batch_audio_report.json \
+            --output-dir output/quran_review_previews \
+            --minimum-previews 3
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('output/quran_review_previews/preview_report.json').read_text(encoding='utf-8'))
+          items = report.get('items', [])
+          if len(items) != 3 or len({int(item['surah_number']) for item in items}) != 3:
+              raise SystemExit('Expected exactly three distinct-surah review videos.')
+          for item in items:
+              path = Path(item['file'])
+              if not path.is_file() or path.stat().st_size == 0:
+                  raise SystemExit(f'Missing review MP4: {path}')
+              if item.get('audio_approved') is not False or item.get('rendering_approved') is not False:
+                  raise SystemExit('Preview approval flags must remain false.')
+          print('PASS: three non-empty cinematic MP4 review previews; no approval or publishing.')
+          PY
+
+      - name: Generate matching non-approved draft manifests
+        env:
+          PYTHONPATH: src
+        run: |
+          python src/build_quran_draft_manifests.py \
+            --batch output/quran_review_batch.json \
+            --audio-report output/quran_batch_audio_report.json \
+            --output-dir output/quran_draft_manifests \
+            --report output/quran_draft_manifest_report.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          report = json.loads(Path('output/quran_draft_manifest_report.json').read_text(encoding='utf-8'))
+          items = report.get('items', [])
+          if len(items) != 3 or len({int(item['surah_number']) for item in items}) != 3:
+              raise SystemExit('Expected three distinct-surah draft manifests.')
+          for item in items:
+              data = json.loads(Path(item['manifest']).read_text(encoding='utf-8'))
+              if data.get('rotation_approved') is not False or data.get('audio', {}).get('approved') is not False:
+                  raise SystemExit('Draft manifests must never be promoted to approved content automatically.')
+          print('PASS: three review drafts generated with all human approval gates closed.')
+          PY
+
+      - name: Upload complete Quran review package
+        uses: actions/upload-artifact@v4
+        with:
+          name: quran-launcher-full-quran-review
+          path: |
+            engine/output/quran_uthmani_candidate.json
+            engine/output/saheeh_international_translation.json
+            engine/output/official_verse_audio_inventory.json
+            engine/output/quran_joined_candidate.json
+            engine/output/quran_review_batch.json
+            engine/output/quran_batch_audio/
+            engine/output/quran_batch_audio_report.json
+            engine/output/quran_review_previews/
+            engine/output/quran_draft_manifests/
+            engine/output/quran_draft_manifest_report.json
+          retention-days: 3

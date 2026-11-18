@@ -12,18 +12,10 @@ from PIL import Image, ImageDraw, ImageFont, features
 from background_rotation import select_background_sequence
 
 
-MAX_VIDEO_SECONDS = 40.0
-
-
-def validate_video_duration(duration: float, maximum: float = MAX_VIDEO_SECONDS) -> None:
-    """Enforce the documented hard cap without truncating Quran recitation."""
+def validate_video_duration(duration: float) -> None:
+    """Match the original renderer: validate media duration, not an arbitrary cap."""
     if duration <= 0:
         raise SystemExit("Video duration must be positive.")
-    if duration > maximum:
-        raise SystemExit(
-            f"Video duration {duration:.3f}s exceeds the {maximum:.0f}-second maximum; "
-            "select a shorter contiguous verse passage before rendering."
-        )
 
 
 def download(url: str, destination: Path) -> None:

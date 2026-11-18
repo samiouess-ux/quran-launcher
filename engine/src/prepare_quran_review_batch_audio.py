@@ -226,6 +226,8 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
             # enter this contiguous <=40s prefix and must not be fetched.
             inspected_verses = []
             inspected_duration = 0.0
+            boundary_ayah = None
+            boundary_duration = None
             for verse in candidate["verses"]:
                 number = int(verse["ayah"])
                 key = f"{surah}:{number}"
@@ -240,16 +242,22 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
                 source_duration = probe(target)
                 processed_target = candidate_dir / "processed" / f"{surah:03d}_{number:03d}.mp3"
                 processed_duration = trim_edge_silence(target, processed_target, source_duration)
+                # The overflow ayah is inspected whole to establish the boundary,
+                # but it is not retained as processed output. It remains available
+                # in the raw staging file and will be retried in the next batch.
+                if inspected_duration + processed_duration > MAX_SECONDS:
+                    processed_target.unlink(missing_ok=True)
+                    boundary_ayah = number
+                    boundary_duration = round(processed_duration, 3)
+                    break
                 durations[number] = round(source_duration, 3)
                 processed_durations[number] = round(processed_duration, 3)
                 removed_edge_silence[str(number)] = round(source_duration - processed_duration, 3)
                 processed_audio_files[str(number)] = str(processed_target)
                 inspected_verses.append(verse)
                 inspected_duration += processed_duration
-                if inspected_duration > MAX_SECONDS:
-                    break
 
-            parts, remaining = partition_contiguous_ayahs(
+            parts, _ = partition_contiguous_ayahs(
                 inspected_verses, processed_durations, MAX_SECONDS
             )
             if not parts:
@@ -261,8 +269,8 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
                     "requested_verses": requested_verses,
                     "selected_verses": [],
                     "remaining_verses": requested_verses,
-                    "blocked_ayah": int(remaining[0]["ayah"]) if remaining else None,
-                    "blocked_ayah_duration_seconds": processed_durations.get(int(remaining[0]["ayah"])) if remaining else None,
+                    "blocked_ayah": boundary_ayah if boundary_ayah is not None else (requested_verses[0] if requested_verses else None),
+                    "blocked_ayah_duration_seconds": boundary_duration,
                     "passage_complete": False,
                     "duration_seconds": 0,
                     "audio_file": None,
@@ -307,8 +315,8 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
                 "requested_verses": requested_verses,
                 "selected_verses": selected,
                 "remaining_verses": requested_verses[last_position:],
-                "blocked_ayah": requested_verses[last_position] if last_position < len(requested_verses) else None,
-                "blocked_ayah_duration_seconds": processed_durations.get(requested_verses[last_position]) if last_position < len(requested_verses) else None,
+                "blocked_ayah": boundary_ayah if boundary_ayah is not None else (requested_verses[last_position] if last_position < len(requested_verses) else None),
+                "blocked_ayah_duration_seconds": boundary_duration if boundary_ayah is not None else (processed_durations.get(requested_verses[last_position]) if last_position < len(requested_verses) else None),
                 "passage_complete": last_position == len(requested_verses),
                 "continuation_policy": "retry_same_first_unconfirmed_ayahs_until_confirmed_delivery",
                 "verse_durations_seconds": {n: durations[n] for n in selected},

@@ -158,7 +158,7 @@ def build_review_batch(
             if int(key.split(":")[0]) == surah
         )
         # Production mode supplies the entire remaining contiguous suffix;
-        # audio preparation chooses the longest contiguous whole-ayah prefix up to 40 seconds.
+        # audio preparation chooses the longest contiguous whole-ayah prefix up to 60 seconds.
         # The optional fixed-size argument is retained only for legacy unit tests.
         window_size = verses_per_passage
         if window_size is None:
@@ -231,7 +231,7 @@ def build_review_batch(
         "candidate_count": len(passages),
         "distinct_surah_count": len({item["surah_number"] for item in passages}),
         "verses_per_passage": verses_per_passage,
-        "passage_selection": ("first_unused_contiguous_suffix_then_40_second_duration_limit" if sequential_unused else "seed_varied_unused_contiguous_suffix_then_40_second_duration_limit") if verses_per_passage is None else "legacy_fixed_count",
+        "passage_selection": ("first_unused_contiguous_suffix_then_60_second_duration_limit" if sequential_unused else "seed_varied_unused_contiguous_suffix_then_60_second_duration_limit") if verses_per_passage is None else "legacy_fixed_count",
         "source_catalog_status": joined["status"],
         "rendering_allowed": False,
         "auto_publish": False,

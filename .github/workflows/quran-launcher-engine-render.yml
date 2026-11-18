@@ -44,12 +44,18 @@ jobs:
         run: |
           # GitHub's Ubuntu runner often already has FFmpeg and the fonts.
           # Verify first so a healthy runner does not wait on apt mirrors.
-          needs_install=0
-          command -v ffmpeg >/dev/null 2>&1 || needs_install=1
-          fc-match -f '%{family}|%{style}' 'Amiri:style=Bold' | grep -qi 'Amiri.*Bold' || needs_install=1
-          if [ "$needs_install" -eq 1 ]; then
-            sudo timeout 8m apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 update
-            sudo timeout 8m apt-get -o Acquire::Retries=2 install -y ffmpeg fonts-hosny-amiri fonts-noto-core fonts-dejavu-core
+          # Keep the runner's preinstalled FFmpeg; do not reinstall its large codec stack
+          # merely because the Amiri font is absent. Install only missing components.
+          packages=()
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            packages+=(ffmpeg)
+          fi
+          if ! fc-match -f '%{family}|%{style}' 'Amiri:style=Bold' | grep -qi 'Amiri.*Bold'; then
+            packages+=(fonts-hosny-amiri fonts-noto-core)
+          fi
+          if [ "${#packages[@]}" -gt 0 ]; then
+            echo "Installing missing runner packages: ${packages[*]}"
+            sudo timeout 8m apt-get -o Acquire::Retries=2 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 install -y --no-install-recommends "${packages[@]}"
           fi
           command -v ffmpeg
           ffmpeg -version | head -n 1

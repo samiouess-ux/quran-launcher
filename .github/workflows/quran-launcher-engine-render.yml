@@ -96,6 +96,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_background_additions_review.py' -v
           python -m unittest discover -s tests -p 'test_al_ikhlas_reference.py' -v
           python -m unittest discover -s tests -p 'test_validate_quran_text.py' -v
+          python -m unittest discover -s tests -p 'test_parse_telegram_quran_request.py' -v
 
       - name: Validate approved Quran text and manifest
         env:

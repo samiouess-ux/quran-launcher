@@ -239,3 +239,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Corrected validation order in the review-batch builder: it now validates each catalog key before parsing or sorting surah numbers. Previously a non-string or malformed key could raise an incidental Python parsing error before the intended fail-closed validation message.
 - Expanded regression coverage for malformed strings, out-of-range surah numbers, zero ayah numbers, and non-string keys.
 - This is defensive input validation only; review-only status and all approval gates remain unchanged. Feature-branch Actions validation is pending.
+
+
+## Bounded review-audio preparation — 2026-11-18
+- Optimized `prepare_quran_review_batch_audio.py` to inspect contiguous whole ayahs sequentially only until the first ayah that takes the passage over the 40-second cap. It no longer downloads and trims the rest of a long surah suffix when those later ayahs cannot be part of the current video.
+- The first non-fitting ayah is still inspected to establish the exact continuation boundary; selected audio remains a contiguous prefix, with no ayah truncation. Remaining ayahs stay queued for a future candidate batch.
+- Expanded the duration-boundary regression test with a fourth ayah that deliberately has no inventory mapping: successful preparation proves the code stops after inspecting the first overflow ayah and does not fetch later material.
+- This is a preparation-efficiency change only. Candidate approval, rendering, Telegram delivery, and auto-publishing remain disabled.
+- GitHub Actions validation is required before considering this optimization verified.

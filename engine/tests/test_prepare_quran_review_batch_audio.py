@@ -157,7 +157,7 @@ class QuranBatchAudioTests(unittest.TestCase):
                 "passages": [{
                     "candidate_id": "variable-length",
                     "surah_number": 41,
-                    "verses": [{"ayah": 1}, {"ayah": 2}, {"ayah": 3}],
+                    "verses": [{"ayah": 1}, {"ayah": 2}, {"ayah": 3}, {"ayah": 4}],
                 }],
             }
             inventory = {
@@ -186,9 +186,12 @@ class QuranBatchAudioTests(unittest.TestCase):
 
             item = report["items"][0]
             self.assertEqual(item["selected_verses"], [1, 2])
+            self.assertEqual(item["requested_verses"], [1, 2, 3, 4])
+            self.assertEqual(item["remaining_verses"], [3, 4])
             self.assertEqual(item["duration_seconds"], 35.0)
-            self.assertEqual(item["processed_verse_durations_seconds"], {1: 18.0, 2: 17.0})
-            self.assertEqual(set(item["processed_audio_files"]), {"1", "2"})
+            self.assertEqual(item["processed_verse_durations_seconds"], {1: 18.0, 2: 17.0, 3: 11.0})
+            # Ayah 3 establishes the overflow boundary; ayah 4 must never be fetched.
+            self.assertEqual(set(item["processed_audio_files"]), {"1", "2", "3"})
 
     def test_accepts_short_complete_surah_without_artificial_30_second_minimum(self):
         with tempfile.TemporaryDirectory() as tmp:

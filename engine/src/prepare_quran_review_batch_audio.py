@@ -221,8 +221,11 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
             processed_audio_files = {}
             blocked_reason = None
 
-            # Fetch and inspect every requested whole ayah. Partition only after
-            # all measured processed durations are known. Never split an ayah.
+            # Inspect whole ayahs in order only until the first duration overflow.
+            # The first non-fitting ayah establishes the boundary; later ayahs cannot
+            # enter this contiguous <=40s prefix and must not be fetched.
+            inspected_verses = []
+            inspected_duration = 0.0
             for verse in candidate["verses"]:
                 number = int(verse["ayah"])
                 key = f"{surah}:{number}"
@@ -241,9 +244,13 @@ def prepare_batch(batch_path: Path, inventory_path: Path, output_dir: Path, targ
                 processed_durations[number] = round(processed_duration, 3)
                 removed_edge_silence[str(number)] = round(source_duration - processed_duration, 3)
                 processed_audio_files[str(number)] = str(processed_target)
+                inspected_verses.append(verse)
+                inspected_duration += processed_duration
+                if inspected_duration > MAX_SECONDS:
+                    break
 
             parts, remaining = partition_contiguous_ayahs(
-                candidate["verses"], processed_durations, MAX_SECONDS
+                inspected_verses, processed_durations, MAX_SECONDS
             )
             if not parts:
                 results.append({

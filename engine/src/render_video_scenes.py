@@ -270,8 +270,13 @@ def build_background_reel(
     if not prepared:
         raise SystemExit("No approved background has a usable positive duration.")
 
+    # A lone short approved clip is intentionally looped below. Do not fetch
+    # another candidate merely to fill its duration before applying that loop.
+    single_clip_will_loop = len(prepared) == 1 and prepared[0][2] < duration
+
     # Keep enough source time to cover the final duration after crossfade overlap.
-    while total_coverage - transition * (len(prepared) - 1) < duration:
+    while (not single_clip_will_loop
+           and total_coverage - transition * (len(prepared) - 1) < duration):
         if next_candidate_index >= len(candidates):
             break
         candidate = candidates[next_candidate_index]

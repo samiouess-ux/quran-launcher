@@ -229,7 +229,7 @@ jobs:
       - name: Upload complete Quran review package
         uses: actions/upload-artifact@v4
         with:
-          name: quran-launcher-three-surah-review
+          name: quran-launcher-full-quran-review
           path: |
             engine/output/quran_uthmani_candidate.json
             engine/output/saheeh_international_translation.json

@@ -1,5 +1,6 @@
 {
   "id": "test_surah_ash_sharh_94_5_6",
+  "content_type": "quran",
   "source": {
     "surah_number": 94,
     "surah_name_ar": "الشرح",
@@ -27,6 +28,7 @@
     }
   ],
   "audio": {
+    "kind": "quran_recitation",
     "required": true,
     "music_allowed": false,
     "preferred_reciters": [],

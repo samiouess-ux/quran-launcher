@@ -155,8 +155,7 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
 
     concat_list = output_dir / "concat.txt"
     concat_list.write_text(
-        "".join(f"file '{path.resolve().as_posix()}'
-" for path in audio_files),
+        "".join(f"file '{path.resolve().as_posix()}'\\n" for path in audio_files),
         encoding="utf-8",
     )
     combined = output_dir / "al_ikhlas_112_1_4_maher_hafs_review.mp3"

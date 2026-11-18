@@ -281,5 +281,56 @@ class BatchTests(unittest.TestCase):
         self.assertFalse(result["telegram_delivery"])
         self.assertFalse(result["auto_publish"])
 
+    def test_selects_last_partial_surah_when_no_fresh_surahs_remain(self):
+        verses = {}
+        for surah in (1, 2):
+            for ayah in range(1, 4):
+                key = f"{surah}:{ayah}"
+                verses[key] = {
+                    "arabic_uthmani": f"AR {key}",
+                    "english_saheeh_international": f"EN {key}",
+                    "audio_archive_member": f"{key}.mp3",
+                }
+        source = {
+            "status": "complete_join_candidate_requires_human_review_and_recording_approval",
+            "rendering_allowed": False,
+            "expected_verse_count": len(verses),
+            "verses": verses,
+        }
+        result = build_review_batch(
+            source, count=1, seed="only-partial-left",
+            used_ayah_references=["1:1", "1:2", "2:1", "2:2", "2:3"],
+            used_surahs={1, 2},
+        )
+        self.assertEqual(result["passages"][0]["surah_number"], 1)
+        self.assertEqual(result["passages"][0]["verse_numbers"], [3])
+        self.assertFalse(result["rendering_allowed"])
+        self.assertFalse(result["telegram_delivery"])
+        self.assertFalse(result["auto_publish"])
+
+    def test_only_surahs_request_is_a_hard_boundary_for_partial_continuation(self):
+        verses = {}
+        for surah in (1, 2):
+            for ayah in range(1, 4):
+                key = f"{surah}:{ayah}"
+                verses[key] = {
+                    "arabic_uthmani": f"AR {key}",
+                    "english_saheeh_international": f"EN {key}",
+                    "audio_archive_member": f"{key}.mp3",
+                }
+        source = {
+            "status": "complete_join_candidate_requires_human_review_and_recording_approval",
+            "rendering_allowed": False,
+            "expected_verse_count": len(verses),
+            "verses": verses,
+        }
+        result = build_review_batch(
+            source, count=1, seed="only-surah-two",
+            used_ayah_references=["1:1", "1:2"],
+            only_surahs=[2],
+        )
+        self.assertEqual(result["passages"][0]["surah_number"], 2)
+        self.assertEqual(result["passages"][0]["verse_numbers"], [1, 2, 3])
+
 if __name__ == "__main__":
     unittest.main()

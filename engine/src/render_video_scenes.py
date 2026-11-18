@@ -234,10 +234,13 @@ def build_background_reel(
     transition = 0.55
     prepared = []
     total_coverage = 0.0
-    next_candidate_index = 0
+
+    # Measure and use distinct approved clips until the reel covers the
+    # narration after crossfade overlap. A short first clip must NOT cause
+    # the whole video to repeat that same scene when other approved clips
+    # are available.
     for index, candidate in enumerate(candidates):
-        next_candidate_index = index + 1
-        if total_coverage >= duration + transition * max(0, len(prepared) - 1):
+        if prepared and total_coverage - transition * (len(prepared) - 1) >= duration:
             break
         candidate_id = candidate["id"]
         raw_path = work / f"background_source_{index}.mp4"
@@ -250,52 +253,23 @@ def build_background_reel(
         if not math.isfinite(measured) or measured <= 0:
             print(f"Skipping background with unusable duration: {candidate_id}.")
             continue
-        # Trust measured media duration, not catalog estimates. Loop only that
-        # clip if it is shorter than the remaining reel, then transition onward.
         prepared.append((candidate_id, raw_path, measured))
         total_coverage += measured
-        if measured < duration:
-            # Loop this approved clip rather than fetching a second clip just
-            # to fill the remaining seconds of the same narration.
-            break
 
     if not prepared:
         raise SystemExit("No approved background has a usable positive duration.")
 
-    # A lone short approved clip is intentionally looped below. Do not fetch
-    # another candidate merely to fill its duration before applying that loop.
-    single_clip_will_loop = len(prepared) == 1 and prepared[0][2] < duration
-
-    # Keep enough source time to cover the final duration after crossfade overlap.
-    while (not single_clip_will_loop
-           and total_coverage - transition * (len(prepared) - 1) < duration):
-        if next_candidate_index >= len(candidates):
-            break
-        candidate = candidates[next_candidate_index]
-        raw_path = work / f"background_source_{next_candidate_index}.mp4"
-        next_candidate_index += 1
-        try:
-            download(candidate["direct_video_url"], raw_path)
-            measured = probe_media_duration(raw_path)
-        except Exception as exc:
-            print(f"Skipping unusable background {candidate['id']}: {exc}")
-            continue
-        if measured <= 0 or not math.isfinite(measured):
-            continue
-        prepared.append((candidate["id"], raw_path, measured))
-        total_coverage += measured
-        if measured < duration:
-            # Prefer looping one approved clip over introducing an unnecessary
-            # second scene solely to fill a short duration gap.
-            break
-
+    # Keep backward-compatible looping only when exactly one approved clip
+    # exists. With multiple candidates, prefer distinct scenes and fail safely
+    # if their verified footage cannot cover the full narration.
     if len(prepared) == 1 and prepared[0][2] < duration:
-        # A single approved clip may loop to cover the narration; keep its
-        # measured source duration for validation, but render the full target.
         prepared[0] = (prepared[0][0], prepared[0][1], duration)
         total_coverage = duration
     if total_coverage - transition * (len(prepared) - 1) < duration:
-        raise SystemExit("Approved moving backgrounds do not cover the full video duration.")
+        raise SystemExit(
+            "Approved moving backgrounds do not cover the full video duration "
+            "without repeating a scene."
+        )
 
     inputs, filters = [], []
     for index, (_, path, clip_duration) in enumerate(prepared):

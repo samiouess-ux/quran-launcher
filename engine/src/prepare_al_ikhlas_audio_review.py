@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import shutil
 import subprocess
 from contextlib import contextmanager
@@ -27,6 +28,44 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: source.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def trim_edge_silence(source: Path, destination: Path, source_duration: float,
+                      keep_seconds: float = 0.12) -> float:
+    """Port the original engine rule: trim detected file-edge silence only."""
+    detection = subprocess.run([
+        "ffmpeg", "-hide_banner", "-i", str(source),
+        "-af", "silencedetect=noise=-50dB:d=0.25",
+        "-f", "null", "-"
+    ], capture_output=True, text=True)
+    if detection.returncode != 0:
+        raise RuntimeError(f"Unable to inspect edge silence in {source}: {detection.stderr[-1000:]}")
+
+    starts = [float(value) for value in re.findall(r"silence_start:\\s*([0-9.]+)", detection.stderr)]
+    ends = [float(value) for value in re.findall(r"silence_end:\\s*([0-9.]+)", detection.stderr)]
+    trim_start, trim_end = 0.0, source_duration
+    if starts and ends and starts[0] <= 0.05:
+        trim_start = max(0.0, ends[0] - keep_seconds)
+    if starts and ends and ends[-1] >= source_duration - 0.08:
+        trim_end = min(source_duration, starts[-1] + keep_seconds)
+
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if trim_start <= 0.02 and trim_end >= source_duration - 0.02:
+        shutil.copyfile(source, destination)
+        return source_duration
+    if trim_end - trim_start < 0.5:
+        raise ValueError(f"Edge-silence detection left too little recitation in {source}")
+    subprocess.run([
+        "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+        "-ss", f"{trim_start:.3f}", "-i", str(source),
+        "-t", f"{trim_end - trim_start:.3f}",
+        "-map", "0:a:0", "-c:a", "copy", "-avoid_negative_ts", "make_zero",
+        str(destination)
+    ], check=True)
+    processed_duration = probe_duration(destination)
+    if processed_duration <= 0 or processed_duration > source_duration + 0.10:
+        raise ValueError(f"Unexpected duration after edge-silence handling: {destination}")
+    return processed_duration
 
 
 def probe_duration(path: Path) -> float:
@@ -90,6 +129,8 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
 
     output_dir.mkdir(parents=True, exist_ok=True)
     durations: dict[str, float] = {}
+    processed_durations: dict[str, float] = {}
+    removed_edge_silence: dict[str, float] = {}
     hashes: dict[str, str] = {}
     members: dict[str, str] = {}
     audio_files: list[Path] = []
@@ -103,10 +144,14 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
                 shutil.copyfileobj(source, target)
             # Reading each member to EOF makes zipfile/RemoteZip validate its CRC.
             duration = probe_duration(destination)
+            processed = output_dir / "processed" / destination.name
+            processed_duration = trim_edge_silence(destination, processed, duration)
             durations[str(ayah)] = duration
-            hashes[str(ayah)] = sha256_file(destination)
+            processed_durations[str(ayah)] = round(processed_duration, 3)
+            removed_edge_silence[str(ayah)] = round(duration - processed_duration, 3)
+            hashes[str(ayah)] = sha256_file(processed)
             members[str(ayah)] = member
-            audio_files.append(destination)
+            audio_files.append(processed)
 
     concat_list = output_dir / "concat.txt"
     concat_list.write_text(
@@ -131,7 +176,7 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
         "riwaya": "Hafs",
         "archive_sha256": EXPECTED_ARCHIVE_SHA256,
         "archive_members": members,
-        "verse_durations_seconds": durations,
+        "verse_durations_seconds": durations,\n        "processed_verse_durations_seconds": processed_durations,\n        "edge_silence_removed_seconds": removed_edge_silence,\n        "inter_verse_silence_seconds": 0.0,\n        "edge_silence_policy": "original_engine: silencedetect -50dB for 0.25s; retain 0.12s guard at detected file edges; never trim internal silence or recitation",
         "verse_sha256": hashes,
         "combined_audio_file": str(combined),
         "combined_audio_duration_seconds": combined_duration,

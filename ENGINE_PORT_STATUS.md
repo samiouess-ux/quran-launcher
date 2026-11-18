@@ -395,3 +395,13 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Kept the existing authenticated GitHub Actions handoff. The static launcher does not contain a GitHub token and does not claim to dispatch a workflow directly from the page.
 - No tests were run, no workflow was dispatched, and no changes were made to `main`, the original engine repository, Telegram, cron, or TikTok.
 - UI commit: `2a10fef33461f722f61b6fa89d4017c5efbcb467`.
+
+
+## Review-video duration failure and correction — 2026-11-18
+- Inspected failed Actions run `44315256616` (job `134839694431`) and its complete logs. The complete Quran catalog build, three-surah selection, and preparation of three original Maher Al-Muaiqly/Hafs whole-ayah audio candidates all passed. Rendering then failed because a preview measured `51.260s` while `render_quran_review_previews.py` enforced a 45-second maximum.
+- Root cause: the audio preparation stage had been raised to 60 seconds to accommodate a complete Al-Fatihah sample, while the preview renderer had a separate 45-second cap. This contradicted the approved short-form limit of 40 seconds. Al-Fatihah's earlier 51.95-second full-surah render was a specific review sample, not permission to exceed the general production duration.
+- Corrected the general audio-preparation ceiling to 40 seconds. The selector retains the longest opening contiguous prefix of complete ayahs that fits; overflow ayahs remain queued for a later passage. No verse splitting, speed change, internal silence trimming, or artificial inter-ayah silence was introduced.
+- Corrected the final MP4 probe guard to 40 seconds as well, so audio preparation and final video verification now enforce the same maximum.
+- Updated existing regression expectations for the 40-second boundary and README duration wording.
+- Commits: audio cap `7330371c18ae7c49538475aa60429199e2b1d388`; renderer cap `8e84c834ea4b95e9d014f55dd22ae174d75c74bc`; audio boundary tests `8e385b9900958bac24a511e02f5983c9c810a36c`; renderer boundary tests `55565034dc2672c5c2fc1625506c08a798613bfa`; README `493f1f1d319c3db89af97d43350ba31253e18a9d`.
+- All changed files were fetched back and content-verified. No tests were manually run. The push-triggered Actions run after these corrections must complete successfully before the three MP4s or artifact are considered available.

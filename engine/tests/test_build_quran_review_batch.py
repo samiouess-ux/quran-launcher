@@ -223,7 +223,7 @@ class BatchTests(unittest.TestCase):
         self.assertTrue(set(selected).isdisjoint({1, 2}))
         self.assertEqual(len(set(selected)), 2)
 
-    def test_rotation_does_not_continue_partially_delivered_surah(self):
+    def test_rotation_continues_partially_delivered_surah_before_fresh_surahs(self):
         verses = {}
         for surah in range(1, 5):
             for ayah in range(1, 5):
@@ -240,11 +240,12 @@ class BatchTests(unittest.TestCase):
             "verses": verses,
         }
         result = build_review_batch(
-            source, count=1, seed="no-continuation",
+            source, count=1, seed="continue-partial",
             used_ayah_references=["3:1", "3:2"],
             used_surahs=[3],
         )
-        self.assertNotEqual(result["passages"][0]["surah_number"], 3)
+        self.assertEqual(result["passages"][0]["surah_number"], 3)
+        self.assertEqual(result["passages"][0]["verse_numbers"], [3, 4])
 
 if __name__ == "__main__":
     unittest.main()

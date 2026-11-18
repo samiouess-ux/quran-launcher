@@ -37,13 +37,15 @@ def choose_manifest(
         publishing = data.get("publishing")
         if not isinstance(publishing, dict):
             continue
-        if data.get("content_type", "quran") != content_type:
+        # Every eligibility field must be explicit. Missing metadata is not
+        # equivalent to user approval or a confirmed no-auto-publish setting.
+        if data.get("content_type") != content_type:
             continue
         if data.get("rotation_approved") is not True:
             continue
         if publishing.get("approval_required") is not True:
             continue
-        if publishing.get("auto_publish", False) is not False:
+        if publishing.get("auto_publish") is not False:
             continue
 
         item_id = data.get("id")

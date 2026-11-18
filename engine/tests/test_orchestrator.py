@@ -9,7 +9,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 import orchestrator
-from orchestrator import build_plan, load_history
+from orchestrator import build_plan, load_history, render_plan
 
 
 class OrchestratorTests(unittest.TestCase):
@@ -71,6 +71,32 @@ class OrchestratorTests(unittest.TestCase):
             with self.assertRaisesRegex(SystemExit, "must be a list"):
                 load_history(path)
 
+
+    def test_render_plan_uses_one_batch_renderer_for_all_three_manifests(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            outputs = [folder / f"video-{index}.mp4" for index in range(3)]
+            for output in outputs:
+                output.write_bytes(b"mp4")
+            plan = [
+                {"content_type": "quran", "manifest": str(folder / f"quran-{i}.json"), "content_id": f"quran-{i}"}
+                for i in range(3)
+            ]
+            batch_result = {
+                "status": "multi_video_batch_rendered_for_manual_review",
+                "videos": [{"video": str(path)} for path in outputs],
+            }
+            with patch("orchestrator.render_batch", return_value=batch_result) as render:
+                result = render_plan(plan, folder / "out")
+            render.assert_called_once_with([Path(item["manifest"]) for item in plan], folder / "out")
+            self.assertEqual([item["output"] for item in result], [str(path) for path in outputs])
+
+    def test_render_plan_rejects_partial_batch_before_rendering(self):
+        plan = [{"content_type": "quran", "manifest": "one.json", "content_id": "one"}]
+        with patch("orchestrator.render_batch") as render:
+            with self.assertRaisesRegex(ValueError, "exactly 3 distinct manifests"):
+                render_plan(plan, Path("output"))
+            render.assert_not_called()
 
     def test_render_does_not_mark_content_as_delivered_or_mutate_history(self):
         with tempfile.TemporaryDirectory() as tmp:

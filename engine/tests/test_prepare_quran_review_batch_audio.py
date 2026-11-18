@@ -148,7 +148,7 @@ class QuranBatchAudioTests(unittest.TestCase):
             self.assertFalse(report["auto_publish"])
             self.assertTrue(all(not item.get("audio_approved", True) for item in report["items"]))
 
-    def test_selects_longest_contiguous_processed_ayah_prefix_up_to_60_seconds(self):
+    def test_selects_longest_contiguous_processed_ayah_prefix_up_to_40_seconds(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             batch = {
@@ -173,30 +173,30 @@ class QuranBatchAudioTests(unittest.TestCase):
                 Path(command[-1]).write_bytes(b"combined")
                 return None
 
-            trimmed = iter([30.0, 30.0, 11.0])
+            trimmed = iter([30.0, 30.0])
             def fake_trim(source, destination, source_duration):
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 destination.write_bytes(b"trimmed")
                 return next(trimmed)
 
             with patch.object(module, "RemoteZip", return_value=FakeArchive()), \
-                 patch.object(module, "probe", side_effect=[32.0, 32.0, 12.0, 60.0]), \
+                 patch.object(module, "probe", side_effect=[32.0, 32.0, 30.0]), \
                  patch.object(module, "trim_edge_silence", side_effect=fake_trim), \
                  patch.object(module.subprocess, "run", side_effect=fake_run):
                 report = module.prepare_batch(batch_path, inventory_path, root / "out", target_count=1)
 
             item = report["items"][0]
-            self.assertEqual(item["selected_verses"], [1, 2])
+            self.assertEqual(item["selected_verses"], [1])
             self.assertEqual(item["requested_verses"], [1, 2, 3, 4])
-            self.assertEqual(item["remaining_verses"], [3, 4])
-            self.assertEqual(item["duration_seconds"], 60.0)
-            self.assertEqual(item["processed_verse_durations_seconds"], {1: 30.0, 2: 30.0})
+            self.assertEqual(item["remaining_verses"], [2, 3, 4])
+            self.assertEqual(item["duration_seconds"], 30.0)
+            self.assertEqual(item["processed_verse_durations_seconds"], {1: 30.0})
             # Ayah 3 establishes the overflow boundary but is not part of the
             # selected output; ayah 4 must never be fetched or processed.
-            self.assertEqual(set(item["processed_audio_files"]), {"1", "2"})
-            self.assertTrue((root / "out" / "variable-length" / "041_003.mp3").exists())
-            self.assertFalse((root / "out" / "variable-length" / "041_004.mp3").exists())
-            self.assertFalse((root / "out" / "variable-length" / "processed" / "041_003.mp3").exists())
+            self.assertEqual(set(item["processed_audio_files"]), {"1"})
+            self.assertTrue((root / "out" / "variable-length" / "041_002.mp3").exists())
+            self.assertFalse((root / "out" / "variable-length" / "041_003.mp3").exists())
+            self.assertFalse((root / "out" / "variable-length" / "processed" / "041_002.mp3").exists())
 
     def test_accepts_short_complete_surah_without_artificial_30_second_minimum(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -239,9 +239,9 @@ class QuranBatchAudioTests(unittest.TestCase):
             self.assertEqual(item["selected_verses"], [1, 2, 3, 4])
             self.assertEqual(item["duration_seconds"], 12.0)
             self.assertEqual(report["minimum_seconds"], 0.0)
-            self.assertEqual(report["maximum_seconds"], 60.0)
+            self.assertEqual(report["maximum_seconds"], 40.0)
 
-    def test_defers_a_single_ayah_that_exceeds_60_seconds_without_truncating(self):
+    def test_defers_a_single_ayah_that_exceeds_40_seconds_without_truncating(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             batch = {

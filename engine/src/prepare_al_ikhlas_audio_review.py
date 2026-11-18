@@ -155,7 +155,8 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
 
     concat_list = output_dir / "concat.txt"
     concat_list.write_text(
-        "".join(f"file '{path.resolve().as_posix()}'\n" for path in audio_files),
+        "".join(f"file '{path.resolve().as_posix()}'
+" for path in audio_files),
         encoding="utf-8",
     )
     combined = output_dir / "al_ikhlas_112_1_4_maher_hafs_review.mp3"
@@ -176,7 +177,11 @@ def prepare_audio_review(inventory: dict, output_dir: Path) -> dict:
         "riwaya": "Hafs",
         "archive_sha256": EXPECTED_ARCHIVE_SHA256,
         "archive_members": members,
-        "verse_durations_seconds": durations,\n        "processed_verse_durations_seconds": processed_durations,\n        "edge_silence_removed_seconds": removed_edge_silence,\n        "inter_verse_silence_seconds": 0.0,\n        "edge_silence_policy": "original_engine: silencedetect -50dB for 0.25s; retain 0.12s guard at detected file edges; never trim internal silence or recitation",
+        "verse_durations_seconds": durations,
+        "processed_verse_durations_seconds": processed_durations,
+        "edge_silence_removed_seconds": removed_edge_silence,
+        "inter_verse_silence_seconds": 0.0,
+        "edge_silence_policy": "original_engine: silencedetect -50dB for 0.25s; retain 0.12s guard at detected file edges; never trim internal silence or recitation",
         "verse_sha256": hashes,
         "combined_audio_file": str(combined),
         "combined_audio_duration_seconds": combined_duration,
@@ -200,7 +205,8 @@ def main() -> None:
     inventory = json.loads(args.inventory.read_text(encoding="utf-8"))
     report = prepare_audio_review(inventory, args.output_dir)
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "
+", encoding="utf-8")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
 

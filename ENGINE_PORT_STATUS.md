@@ -296,3 +296,11 @@ Build and verify a secure, low-cost authenticated workflow trigger before promis
 - Visual inspection of extracted frames across the complete video confirmed the four backgrounds and the Arabic/English verse overlays remain present in sequence. The fourth background naturally occupies the final longer section; no missing overlay interval was observed in the sampled timeline.
 - Review artifact: `quran-launcher-original-engine-review`, artifact ID `14422146662`, expires 2026-11-25. URL: https://github.com/samiouess-ux/quran-launcher/actions/runs/44292617353/artifacts/14422146662
 - This remains a review-only test. Al-Fatihah is not approved for production, and no photos were activated. The 33-image photo gallery still requires the user's individual approval. No UI, Pages settings, Telegram, scheduler, TikTok publishing, `main`, or original source repository was changed.
+
+
+## Keep Quran verse frame steady between ayahs — 2026-11-18
+- Commit: `724e3cee48c2d2dd614d6a11002c92871fcfc9f8` on `feature/islamic-tiktok-engine-port`.
+- Removed the per-ayah fade-in/fade-out from the Arabic overlay layer. This prevents the shared decorative frame from fading out and back in at every ayah boundary, which was perceived as a small flicker.
+- Preserved the existing soft fade behavior for the English translation overlay and did not change background/photo/video transitions.
+- The feature-branch review render workflow is running as #162 / run `44295292022`; initial regression tests, Quran text/manifest validation, and audio inventory preparation passed. Final MP4 verification and visual review are pending. Do not mark this change visually validated until the run completes and the resulting video is inspected.
+- Review-only; no production activation, UI/Pages, Telegram, scheduler, TikTok publishing, `main`, or original source repository changes.
